@@ -8,7 +8,7 @@ COPY . .
 
 RUN yarn install --production
 
-RUN yarn @backend schema:generate
+# RUN yarn @backend schema:generate
 
 RUN yarn @backend build
 
