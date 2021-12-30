@@ -1,0 +1,173 @@
+{
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    ".next",
+    "prisma",
+    "packages/frontend/graphql/generated.ts"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript"
+  ],
+  "plugins": [
+    "@typescript-eslint",
+    "prettier"
+  ],
+  "env": {
+    "node": true,
+    "jest": true,
+    "es6": true
+  },
+  "rules": {
+    "eqeqeq": [
+      "error"
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "args": "none"
+      }
+    ],
+    "@typescript-eslint/explicit-function-return-type": [
+      "off"
+    ],
+    "@typescript-eslint/explicit-module-boundary-types": [
+      "off"
+    ],
+    "sort-imports": [
+      "error",
+      {
+        "ignoreDeclarationSort": true
+      }
+    ],
+    "import/order": [
+      "error",
+      {
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc"
+        },
+        "pathGroupsExcludedImportTypes": [
+          "builtin"
+        ]
+      }
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        "semi": true,
+        "printWidth": 120,
+        "trailingComma": "all"
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "project": "packages/*/tsconfig.json"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.ts",
+        "**/*.tsx"
+      ],
+      "parserOptions": {
+        "project": [
+          "./packages/*/tsconfig.json"
+        ]
+      },
+      "rules": {
+        "@typescript-eslint/strict-boolean-expressions": [
+          "error",
+          {
+            "allowString": false,
+            "allowNumber": false,
+            "allowNullableObject": false
+          }
+        ],
+        "@typescript-eslint/no-unnecessary-condition": [
+          "warn"
+        ],
+        "no-console": [
+          "warn"
+        ]
+      }
+    },
+    {
+      "files": [
+        // resolverに返り値の型定義を明記することでIFを担保する
+        "packages/backend/src/resolvers/**/*[.js,.jsx,.ts,.tsx]"
+      ],
+      "rules": {
+        "@typescript-eslint/explicit-function-return-type": [
+          "error"
+        ]
+      }
+    },
+    {
+      "files": [
+        // frontend向けの設定
+        "packages/frontend/**/*[.js,.jsx,.ts,.tsx]"
+      ],
+      "extends": [
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "next/core-web-vitals"
+      ],
+      "plugins": [
+        "react",
+        "react-hooks",
+        "@emotion"
+      ],
+      "env": {
+        "browser": true
+      },
+      "rules": {
+        "react/display-name": [
+          "off"
+        ],
+        "react/prop-types": [
+          "error",
+          {
+            "skipUndeclared": true
+          }
+        ],
+        "import/order": [
+          "error",
+          {
+            "newlines-between": "always",
+            "alphabetize": {
+              "order": "asc"
+            },
+            "pathGroups": [
+              {
+                "pattern": "react",
+                "group": "external",
+                "position": "before"
+              }
+            ],
+            "pathGroupsExcludedImportTypes": [
+              "builtin"
+            ]
+          }
+        ]
+      },
+      "settings": {
+        "react": {
+          "version": "detect"
+        },
+        "next": {
+          "rootDir": "./packages/frontend/"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "name": "whos-who",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": "16"
+  },
+  "scripts": {
+    "@backend": "yarn workspace backend",
+    "@frontend": "yarn workspace frontend",
+    "lint": "eslint --max-warnings=0 .",
+    "lint:backend": "eslint --max-warnings=0 ./packages/backend",
+    "lint:frontend": "eslint --max-warnings=0 ./packages/frontend"
+  },
+  "resolutions": {
+    "eslint-plugin-react": "7.27.1",
+    "eslint-plugin-react-hooks": "4.3.0"
+  },
+  "dependencies": {
+    "@types/node": "16.11.9",
+    "dayjs": "1.10.7",
+    "graphql": "15.7.2"
+  },
+  "devDependencies": {
+    "@emotion/eslint-plugin": "11.5.0",
+    "@typescript-eslint/eslint-plugin": "5.4.0",
+    "@typescript-eslint/parser": "5.4.0",
+    "eslint": "8.2.0",
+    "eslint-config-next": "11.1.2",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-import-resolver-typescript": "2.5.0",
+    "eslint-import-resolver-webpack": "0.13.2",
+    "eslint-plugin-emotion": "11.0.0",
+    "eslint-plugin-import": "2.25.3",
+    "eslint-plugin-prettier": "4.0.0",
+    "eslint-plugin-react": "7.27.1",
+    "eslint-plugin-react-hooks": "4.3.0",
+    "prettier": "2.4.1",
+    "ts-node": "10.4.0",
+    "tsconfig-paths": "3.12.0",
+    "typescript": "4.5.2"
+  }
+}
