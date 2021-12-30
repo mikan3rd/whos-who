@@ -100,8 +100,8 @@ jobs:
       - run: yarn lint:frontend
         working-directory: ./typescript
 
-      - run: yarn @frontend codegen
-        working-directory: ./typescript
+      # - run: yarn @frontend codegen
+      #   working-directory: ./typescript
 
       - run: yarn @frontend build
         working-directory: ./typescript
