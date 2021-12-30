@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "stylelint.vscode-stylelint",
+    "kumar-harsh.graphql-for-vscode",
+    "prisma.prisma",
+    "redhat.vscode-yaml"
+  ],
+  "unwantedRecommendations": []
+}
