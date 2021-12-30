@@ -14,14 +14,14 @@ x-ts-base: &ts-base
     - /app/packages/frontend/.next
 
 services:
-  # backend-prod:
-  #   <<: *ts-base
-  #   build:
-  #     context: ./typescript
-  #     dockerfile: ./packages/backend/Dockerfile.prod
-  #   tty: true
-  #   ports:
-  #     - "3301:3301"
+  backend-prod:
+    <<: *ts-base
+    build:
+      context: ./typescript
+      dockerfile: ./packages/backend/Dockerfile.prod
+    tty: true
+    ports:
+      - "3301:3301"
 
   frontend-prod:
     <<: *ts-base

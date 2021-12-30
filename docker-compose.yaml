@@ -13,15 +13,15 @@ x-ts-base: &ts-base
     - /app/packages/frontend/.next
 
 services:
-  # backend:
-  #   <<: *ts-base
-  #   build:
-  #     context: ./typescript
-  #     dockerfile: ./packages/backend/Dockerfile
-  #   command: yarn @backend start
-  #   tty: true
-  #   ports:
-  #     - "3300:3300"
+  backend:
+    <<: *ts-base
+    build:
+      context: ./typescript
+      dockerfile: ./packages/backend/Dockerfile
+    command: yarn @backend start
+    tty: true
+    ports:
+      - "3300:3300"
 
   frontend:
     <<: *ts-base
