@@ -36,8 +36,8 @@ jobs:
       - run: yarn @backend install
         working-directory: ./typescript
 
-      - run: yarn @backend schema:generate
-        working-directory: ./typescript
+      # - run: yarn @backend schema:generate
+      #   working-directory: ./typescript
 
       - run: yarn @backend type-check
         working-directory: ./typescript
