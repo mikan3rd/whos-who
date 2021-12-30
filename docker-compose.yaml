@@ -1,0 +1,42 @@
+version: "3"
+
+x-ts-base: &ts-base
+  environment:
+    TZ: Asia/Tokyo
+    DATABASE_URL: mysql://user:pass@mysql:3306/whos-who
+  volumes:
+    - ./typescript:/app
+    - /app/node_modules
+    - /app/packages/backend/node_modules
+    - /app/packages/backend/dist
+    - /app/packages/frontend/node_modules
+    - /app/packages/frontend/.next
+
+services:
+  # backend:
+  #   <<: *ts-base
+  #   build:
+  #     context: ./typescript
+  #     dockerfile: ./packages/backend/Dockerfile
+  #   command: yarn @backend start
+  #   tty: true
+  #   ports:
+  #     - "3300:3300"
+
+  frontend:
+    <<: *ts-base
+    build:
+      context: ./typescript
+      dockerfile: ./packages/frontend/Dockerfile
+    command: yarn @frontend start
+    tty: true
+    # depends_on:
+    #   - backend
+    ports:
+      - "3400:3400"
+
+volumes:
+  # backend:
+  #   driver: local
+  frontend:
+    driver: local
