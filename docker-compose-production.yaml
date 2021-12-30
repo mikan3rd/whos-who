@@ -1,0 +1,41 @@
+version: "3"
+
+x-ts-base: &ts-base
+  environment:
+    TZ: Asia/Tokyo
+    DATABASE_URL: mysql://user:pass@mysql:3306/harutaka_development
+    REDIS_URL: "redis://redis:6379/2"
+  volumes:
+    - ./typescript:/app
+    - /app/node_modules
+    - /app/packages/backend/node_modules
+    - /app/packages/backend/dist
+    - /app/packages/frontend/node_modules
+    - /app/packages/frontend/.next
+
+services:
+  # backend-prod:
+  #   <<: *ts-base
+  #   build:
+  #     context: ./typescript
+  #     dockerfile: ./packages/backend/Dockerfile.prod
+  #   tty: true
+  #   ports:
+  #     - "3301:3301"
+
+  frontend-prod:
+    <<: *ts-base
+    build:
+      context: ./typescript
+      dockerfile: ./packages/frontend/Dockerfile.prod
+    tty: true
+    # depends_on:
+    #   - backend-prod
+    ports:
+      - "3401:3401"
+
+volumes:
+  # backend-prod:
+  #   driver: local
+  frontend-prod:
+    driver: local
