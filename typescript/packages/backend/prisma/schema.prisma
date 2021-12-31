@@ -13,3 +13,17 @@ generator nestgraphql {
   output      = "./model"
   purgeOutput = true
 }
+
+enum UserRole {
+  NONE
+  ADMIN
+}
+
+model User {
+  uid         String   @id @db.VarChar(255)
+  displayName String?  @db.VarChar(255)
+  email       String?  @db.VarChar(255)
+  role        UserRole @default(NONE)
+  createdAt   DateTime @default(now()) @db.DateTime(0)
+  updatedAt   DateTime @default(now()) @updatedAt @db.DateTime(0)
+}

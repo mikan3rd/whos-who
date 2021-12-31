@@ -1,9 +1,16 @@
 version: "3"
 
-x-ts-base: &ts-base
+x-base: &base
   environment:
     TZ: Asia/Tokyo
-    DATABASE_URL: mysql://user:pass@mysql:3306/whos-who
+    MYSQL_ROOT_PASSWORD: docker_root_password
+    MYSQL_USER: docker_user
+    MYSQL_PASSWORD: docker_password
+    MYSQL_DATABASE: whos-who
+    DATABASE_URL: mysql://docker_user:docker_password@mysql:3306/whos-who
+
+x-ts-base: &ts-base
+  <<: *base
   volumes:
     - ./typescript:/app
     - /app/node_modules
@@ -13,6 +20,16 @@ x-ts-base: &ts-base
     - /app/packages/frontend/.next
 
 services:
+  mysql:
+    <<: *base
+    image: mysql:8.0
+    command: mysqld
+    ports:
+      - 4306:3306
+    volumes:
+      - ./database/mysql/data:/var/lib/mysql
+      - ./database/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+
   backend:
     <<: *ts-base
     build:
@@ -20,6 +37,8 @@ services:
       dockerfile: ./packages/backend/Dockerfile
     command: yarn @backend start
     tty: true
+    depends_on:
+      - mysql
     ports:
       - "3300:3300"
 
@@ -30,13 +49,13 @@ services:
       dockerfile: ./packages/frontend/Dockerfile
     command: yarn @frontend start
     tty: true
-    # depends_on:
-    #   - backend
+    depends_on:
+      - backend
     ports:
       - "3400:3400"
 
 volumes:
-  # backend:
-  #   driver: local
+  backend:
+    driver: local
   frontend:
     driver: local
