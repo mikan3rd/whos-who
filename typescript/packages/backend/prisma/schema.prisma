@@ -20,10 +20,60 @@ enum UserRole {
 }
 
 model User {
-  uid         String   @id @db.VarChar(255)
+  id          String   @id @db.VarChar(255)
   displayName String?  @db.VarChar(255)
   email       String?  @db.VarChar(255)
   role        UserRole @default(NONE)
+  verified    Boolean  @default(false)
   createdAt   DateTime @default(now()) @db.DateTime(0)
   updatedAt   DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  requestedImages RequestedImage[]
+}
+
+model RequestedImage {
+  id              String   @id @default(uuid())
+  userId          String   @db.VarChar(255)
+  uploadedImageId String?  @unique @db.VarChar(255)
+  externalImageId String?  @unique @db.VarChar(255)
+  personId        String?  @unique @db.VarChar(255)
+  createdAt       DateTime @default(now()) @db.DateTime(0)
+  updatedAt       DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  user          User           @relation(fields: [userId], references: [id])
+  uploadedImage UploadedImage? @relation(fields: [uploadedImageId], references: [id])
+  externalImage ExternalImage? @relation(fields: [externalImageId], references: [id])
+  person        Person?        @relation(fields: [personId], references: [id])
+}
+
+model UploadedImage {
+  id         String   @id @default(uuid())
+  bucketName String   @db.VarChar(255)
+  filePath   String   @db.Text
+  createdAt  DateTime @default(now()) @db.DateTime(0)
+  updatedAt  DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  requestedImage RequestedImage?
+}
+
+model ExternalImage {
+  id         String   @id @default(uuid())
+  url        String   @db.Text
+  statusCode Int      @db.Int
+  createdAt  DateTime @default(now()) @db.DateTime(0)
+  updatedAt  DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  requestedImage RequestedImage?
+}
+
+model Person {
+  id           String   @id @default(uuid())
+  name         String   @db.VarChar(255)
+  nameHiragana String?  @db.VarChar(255)
+  nameKatakana String?  @db.VarChar(255)
+  nameAlphabet String?  @db.VarChar(255)
+  createdAt    DateTime @default(now()) @db.DateTime(0)
+  updatedAt    DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  requestedImage RequestedImage[]
 }
