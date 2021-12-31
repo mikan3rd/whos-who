@@ -1,10 +1,16 @@
 version: "3"
 
-x-ts-base: &ts-base
+x-base: &base
   environment:
     TZ: Asia/Tokyo
-    DATABASE_URL: mysql://user:pass@mysql:3306/harutaka_development
-    REDIS_URL: "redis://redis:6379/2"
+    MYSQL_ROOT_PASSWORD: docker_root_password
+    MYSQL_USER: docker_user
+    MYSQL_PASSWORD: docker_password
+    MYSQL_DATABASE: whos-who
+    DATABASE_URL: mysql://docker_user:docker_password@mysql:3306/whos-who
+
+x-ts-base: &ts-base
+  <<: *base
   volumes:
     - ./typescript:/app
     - /app/node_modules
@@ -14,6 +20,16 @@ x-ts-base: &ts-base
     - /app/packages/frontend/.next
 
 services:
+  mysql-prod:
+    <<: *base
+    image: mysql:8.0
+    command: mysqld
+    ports:
+      - 4306:3306
+    volumes:
+      - ./database/mysql/data:/var/lib/mysql
+      - ./database/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+
   backend-prod:
     <<: *ts-base
     build:
@@ -29,13 +45,13 @@ services:
       context: ./typescript
       dockerfile: ./packages/frontend/Dockerfile.prod
     tty: true
-    # depends_on:
-    #   - backend-prod
+    depends_on:
+      - backend-prod
     ports:
       - "3401:3401"
 
 volumes:
-  # backend-prod:
-  #   driver: local
+  backend-prod:
+    driver: local
   frontend-prod:
     driver: local
