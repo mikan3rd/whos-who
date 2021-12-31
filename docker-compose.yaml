@@ -37,6 +37,8 @@ services:
       dockerfile: ./packages/backend/Dockerfile
     command: yarn @backend start
     tty: true
+    depends_on:
+      - mysql
     ports:
       - "3300:3300"
 

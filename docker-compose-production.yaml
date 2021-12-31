@@ -36,6 +36,8 @@ services:
       context: ./typescript
       dockerfile: ./packages/backend/Dockerfile.prod
     tty: true
+    depends_on:
+      - mysql
     ports:
       - "3301:3301"
 
