@@ -31,7 +31,7 @@
     "@nestjs/schematics": "8.0.5",
     "@prisma/client": "3.7.0",
     "@types/morgan": "1.9.3",
-    "apollo-server-express": "3.6.0",
+    "apollo-server-express": "3.6.1",
     "graphql-tools": "8.2.0",
     "morgan": "1.10.0",
     "mysql": "2.18.1",
