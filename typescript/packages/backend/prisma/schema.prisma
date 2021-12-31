@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// https://github.com/unlight/prisma-nestjs-graphql
+generator nestgraphql {
+  provider    = "node ../../node_modules/prisma-nestjs-graphql"
+  output      = "./model"
+  purgeOutput = true
+}
