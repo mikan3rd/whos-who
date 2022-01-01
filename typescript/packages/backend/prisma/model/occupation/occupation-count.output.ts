@@ -3,8 +3,8 @@ import { ObjectType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
 
 @ObjectType()
-export class UserCount {
+export class OccupationCount {
 
     @Field(() => Int, {nullable:false})
-    requestedTickets!: number;
+    Person!: number;
 }

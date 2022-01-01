@@ -7,7 +7,7 @@ import { ExternalImage } from '../external-image/external-image.model';
 import { Person } from '../person/person.model';
 
 @ObjectType()
-export class RequestedImage {
+export class RequestedTicket {
 
     @Field(() => ID, {nullable:false})
     id!: string;

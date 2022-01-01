@@ -1,7 +1,7 @@
 overwrite: true
-# schema: "../backend/schema.graphql"
-# documents:
-  # - ./graphql/queries/*.graphql
+schema: "../backend/schema.graphql"
+documents:
+  - ./graphql/queries/*.graphql
   # - ./graphql/mutations/*.graphql
 generates:
   graphql/generated.ts:

@@ -16,6 +16,7 @@ generator nestgraphql {
 
 enum UserRole {
   NONE
+  MEMBER
   ADMIN
 }
 
@@ -24,14 +25,13 @@ model User {
   displayName String?  @db.VarChar(255)
   email       String?  @db.VarChar(255)
   role        UserRole @default(NONE)
-  verified    Boolean  @default(false)
   createdAt   DateTime @default(now()) @db.DateTime(0)
   updatedAt   DateTime @default(now()) @updatedAt @db.DateTime(0)
 
-  requestedImages RequestedImage[]
+  requestedTickets RequestedTicket[]
 }
 
-model RequestedImage {
+model RequestedTicket {
   id              String   @id @default(uuid())
   userId          String   @db.VarChar(255)
   uploadedImageId String?  @unique @db.VarChar(255)
@@ -53,7 +53,7 @@ model UploadedImage {
   createdAt  DateTime @default(now()) @db.DateTime(0)
   updatedAt  DateTime @default(now()) @updatedAt @db.DateTime(0)
 
-  requestedImage RequestedImage?
+  requestedTicket RequestedTicket?
 }
 
 model ExternalImage {
@@ -63,10 +63,25 @@ model ExternalImage {
   createdAt  DateTime @default(now()) @db.DateTime(0)
   updatedAt  DateTime @default(now()) @updatedAt @db.DateTime(0)
 
-  requestedImage RequestedImage?
+  requestedTicket RequestedTicket?
 }
 
 model Person {
+  id           String    @id @default(uuid())
+  name         String    @db.VarChar(255)
+  nameHiragana String?   @db.VarChar(255)
+  nameKatakana String?   @db.VarChar(255)
+  nameAlphabet String?   @db.VarChar(255)
+  birthDate    DateTime? @db.Date
+  occupationId String?   @db.VarChar(255)
+  createdAt    DateTime  @default(now()) @db.DateTime(0)
+  updatedAt    DateTime  @default(now()) @updatedAt @db.DateTime(0)
+
+  requestedTicket RequestedTicket[]
+  occupation      Occupation?       @relation(fields: [occupationId], references: [id])
+}
+
+model Occupation {
   id           String   @id @default(uuid())
   name         String   @db.VarChar(255)
   nameHiragana String?  @db.VarChar(255)
@@ -75,5 +90,5 @@ model Person {
   createdAt    DateTime @default(now()) @db.DateTime(0)
   updatedAt    DateTime @default(now()) @updatedAt @db.DateTime(0)
 
-  requestedImage RequestedImage[]
+  Person Person[]
 }
