@@ -1,6 +1,7 @@
 import React from "react";
 
 import { css } from "@emotion/react";
+import Image from "next/image";
 import Link from "next/link";
 import { Menu } from "semantic-ui-react";
 
@@ -8,22 +9,21 @@ import { useAuthContext } from "@/context/auth";
 
 export const SidebarContent = React.memo(() => {
   const {
-    state: { firebaseUser, currentUser },
+    state: { currentUser },
     logout,
   } = useAuthContext();
 
   return (
     <>
       <Link href="/" passHref>
-        <Menu.Item>
-          <img
-            src="/vercel.svg"
-            alt="Vercel"
-            css={css`
+        <Menu.Item
+          css={css`
+            &&& {
               height: 60px;
-              margin: 0;
-            `}
-          />
+            }
+          `}
+        >
+          <Image src="/vercel.svg" alt="Vercel" layout="fill" />
         </Menu.Item>
       </Link>
 
@@ -31,13 +31,17 @@ export const SidebarContent = React.memo(() => {
         <Menu.Item content="TOP" />
       </Link>
 
-      {currentUser && (
+      <Link href="/ticket/create" passHref>
+        <Menu.Item content="画像を登録する" />
+      </Link>
+
+      {currentUser !== null && currentUser.role === "ADMIN" && (
         <Link href="/admin" passHref>
           <Menu.Item content="管理用" />
         </Link>
       )}
 
-      {firebaseUser && <Menu.Item content="ログアウト" onClick={logout} />}
+      {currentUser !== null && currentUser.role !== "NONE" && <Menu.Item content="ログアウト" onClick={logout} />}
     </>
   );
 });
