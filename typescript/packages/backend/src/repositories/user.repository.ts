@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 
-import { PrismaService } from "@/interfaces/services/prisma.service";
+import { Prisma, PrismaService } from "@/interfaces/services/prisma.service";
 
 @Injectable()
 export class UserRepository {
@@ -10,5 +10,9 @@ export class UserRepository {
     return await this.prisma.user.findUnique({
       where: { id },
     });
+  }
+
+  async create(data: Prisma.UserCreateInput) {
+    return await this.prisma.user.create({ data });
   }
 }

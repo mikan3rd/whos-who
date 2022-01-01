@@ -1,5 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 
+import { Prisma } from "@/interfaces/services/prisma.service";
 import { UserRepository } from "@/repositories/user.repository";
 
 @Injectable()
@@ -8,5 +9,9 @@ export class UserUsecase {
 
   async getDetailById(id: string) {
     return await this.userRepository.findById(id);
+  }
+
+  async create(data: Prisma.UserCreateInput) {
+    return await this.userRepository.create(data);
   }
 }

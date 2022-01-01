@@ -20,9 +20,6 @@ export class User {
     @Field(() => UserRole, {nullable:false,defaultValue:'NONE'})
     role!: keyof typeof UserRole;
 
-    @Field(() => Boolean, {nullable:false,defaultValue:false})
-    verified!: boolean;
-
     @Field(() => Date, {nullable:false})
     createdAt!: Date;
 

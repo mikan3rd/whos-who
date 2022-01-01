@@ -83,7 +83,6 @@ type User {
   displayName: String
   email: String
   role: UserRole!
-  verified: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   requestedTickets: [RequestedTicket!]
