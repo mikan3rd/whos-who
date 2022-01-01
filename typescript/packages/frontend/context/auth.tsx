@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
 
 import { ApolloError } from "@apollo/client";
 import { toast } from "react-semantic-toasts";
 
 import firebase from "@/firebase/clientApp";
+import { client } from "@/graphql/client";
 import { GetCurrentUserQuery, useGetCurrentUserLazyQuery } from "@/graphql/generated";
 
 type State = {
@@ -61,11 +62,14 @@ export const AuthProvider: React.FC = ({ children }) => {
   });
   const { firebaseUser } = state;
 
-  const logout = React.useCallback(async () => {
+  const logout = useCallback(async () => {
     await firebase.auth().signOut();
+
+    localStorage.removeItem("token");
+    client.clearStore();
+
     dispatch({ type: "SetFirebaseUser", payload: null });
     dispatch({ type: "SetCurrentUser", payload: null });
-    localStorage.removeItem("token");
 
     toast({
       type: "success",
@@ -73,7 +77,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     });
   }, []);
 
-  const handleCompleteCurrentUser = React.useCallback((data: GetCurrentUserQuery) => {
+  const handleCompleteCurrentUser = useCallback((data: GetCurrentUserQuery) => {
     dispatch({ type: "SetCurrentUser", payload: data.getCurrentUser });
     dispatch({ type: "SetAuthStatus", payload: "completed" });
 
@@ -85,7 +89,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
   }, []);
 
-  const handleErrorCurrentUser = React.useCallback(
+  const handleErrorCurrentUser = useCallback(
     (error: ApolloError) => {
       logout();
       dispatch({ type: "SetAuthStatus", payload: "completed" });
@@ -101,10 +105,10 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [fetchCurrentUser] = useGetCurrentUserLazyQuery({
     onCompleted: handleCompleteCurrentUser,
     onError: handleErrorCurrentUser,
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "no-cache",
   });
 
-  const setCurrentUser = React.useCallback(async () => {
+  const setCurrentUser = useCallback(async () => {
     dispatch({ type: "SetAuthStatus", payload: "loading" });
 
     firebase.auth().onAuthStateChanged(async (currentUser) => {
@@ -120,28 +124,18 @@ export const AuthProvider: React.FC = ({ children }) => {
     });
   }, [fetchCurrentUser]);
 
-  const loginWithGoogle = React.useCallback(async () => {
+  const loginWithGoogle = useCallback(async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     await firebase.auth().signInWithPopup(provider);
-    const credential = await firebaseUser?.linkWithPopup(provider);
-
-    if (credential !== undefined) {
-      // TODO: 初回のみ displayName, email, role を更新
-    }
-
+    await firebaseUser?.linkWithPopup(provider);
     await setCurrentUser();
   }, [setCurrentUser, firebaseUser]);
 
-  const loginWithTwitter = React.useCallback(async () => {
+  const loginWithTwitter = useCallback(async () => {
     const provider = new firebase.auth.TwitterAuthProvider();
     provider.setCustomParameters({ force_login: true });
     await firebase.auth().signInWithPopup(provider);
-    const credential = await firebaseUser?.linkWithPopup(provider);
-
-    if (credential !== undefined) {
-      // TODO: 初回のみ displayName, email, role を更新
-    }
-
+    await firebaseUser?.linkWithPopup(provider);
     await setCurrentUser();
   }, [setCurrentUser, firebaseUser]);
 
