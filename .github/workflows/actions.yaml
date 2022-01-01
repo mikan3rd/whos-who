@@ -36,8 +36,8 @@ jobs:
       - run: yarn @backend install
         working-directory: ./typescript
 
-      # - run: yarn @backend schema:generate
-      #   working-directory: ./typescript
+      - run: yarn @backend schema:generate
+        working-directory: ./typescript
 
       - run: yarn @backend type-check
         working-directory: ./typescript
@@ -100,8 +100,8 @@ jobs:
       - run: yarn lint:frontend
         working-directory: ./typescript
 
-      # - run: yarn @frontend codegen
-      #   working-directory: ./typescript
+      - run: yarn @frontend codegen
+        working-directory: ./typescript
 
       - run: yarn @frontend build
         working-directory: ./typescript

@@ -25,7 +25,6 @@ model User {
   displayName String?  @db.VarChar(255)
   email       String?  @db.VarChar(255)
   role        UserRole @default(NONE)
-  verified    Boolean  @default(false)
   createdAt   DateTime @default(now()) @db.DateTime(0)
   updatedAt   DateTime @default(now()) @updatedAt @db.DateTime(0)
 

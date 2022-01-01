@@ -4,12 +4,12 @@ import { ApolloError } from "@apollo/client";
 import { toast } from "react-semantic-toasts";
 
 import firebase from "@/firebase/clientApp";
-import { GetCurrentUserQuery, UserModel, useGetCurrentUserLazyQuery } from "@/graphql/generated";
+import { GetCurrentUserQuery, useGetCurrentUserLazyQuery } from "@/graphql/generated";
 
 type State = {
   authStatus: "initial" | "loading" | "completed";
   firebaseUser: firebase.User | null;
-  currentUser: UserModel | null;
+  currentUser: GetCurrentUserQuery["getCurrentUser"] | null;
 };
 
 type Action =
@@ -61,18 +61,16 @@ export const AuthProvider: React.FC = ({ children }) => {
   });
   const { firebaseUser } = state;
 
-  const logout = React.useCallback(async (withToast = true) => {
+  const logout = React.useCallback(async () => {
     await firebase.auth().signOut();
     dispatch({ type: "SetFirebaseUser", payload: null });
     dispatch({ type: "SetCurrentUser", payload: null });
     localStorage.removeItem("token");
 
-    if (withToast) {
-      toast({
-        type: "success",
-        title: "ログアウトしました！",
-      });
-    }
+    toast({
+      type: "success",
+      title: "ログアウトしました！",
+    });
   }, []);
 
   const handleCompleteCurrentUser = React.useCallback((data: GetCurrentUserQuery) => {
@@ -89,7 +87,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const handleErrorCurrentUser = React.useCallback(
     (error: ApolloError) => {
-      logout(false);
+      logout();
       dispatch({ type: "SetAuthStatus", payload: "completed" });
       toast({
         type: "error",
