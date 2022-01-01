@@ -5,9 +5,11 @@ import { User } from '../user/user.model';
 import { UploadedImage } from '../uploaded-image/uploaded-image.model';
 import { ExternalImage } from '../external-image/external-image.model';
 import { Person } from '../person/person.model';
+import { TicketUserLike } from '../ticket-user-like/ticket-user-like.model';
+import { TicketCount } from './ticket-count.output';
 
 @ObjectType()
-export class RequestedTicket {
+export class Ticket {
 
     @Field(() => ID, {nullable:false})
     id!: string;
@@ -41,4 +43,10 @@ export class RequestedTicket {
 
     @Field(() => Person, {nullable:true})
     person?: Person | null;
+
+    @Field(() => [TicketUserLike], {nullable:true})
+    ticketUserLikes?: Array<TicketUserLike>;
+
+    @Field(() => TicketCount, {nullable:false})
+    _count?: TicketCount;
 }

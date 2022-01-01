@@ -20,30 +20,38 @@ enum UserRole {
   ADMIN
 }
 
-model User {
-  id          String   @id @db.VarChar(255)
-  displayName String?  @db.VarChar(255)
-  email       String?  @db.VarChar(255)
-  role        UserRole @default(NONE)
-  createdAt   DateTime @default(now()) @db.DateTime(0)
-  updatedAt   DateTime @default(now()) @updatedAt @db.DateTime(0)
-
-  requestedTickets RequestedTicket[]
+enum UserStatus {
+  ACTIVE
+  DISABLED
 }
 
-model RequestedTicket {
+model User {
+  id          String     @id @db.VarChar(255)
+  displayName String?    @db.VarChar(255)
+  email       String?    @db.VarChar(255)
+  role        UserRole   @default(NONE)
+  status      UserStatus @default(ACTIVE)
+  createdAt   DateTime   @default(now()) @db.DateTime(0)
+  updatedAt   DateTime   @default(now()) @updatedAt @db.DateTime(0)
+
+  tickets         Ticket[]
+  ticketUserLikes TicketUserLike[]
+}
+
+model Ticket {
   id              String   @id @default(uuid())
   userId          String   @db.VarChar(255)
   uploadedImageId String?  @unique @db.VarChar(255)
   externalImageId String?  @unique @db.VarChar(255)
-  personId        String?  @unique @db.VarChar(255)
+  personId        String?  @db.VarChar(255)
   createdAt       DateTime @default(now()) @db.DateTime(0)
   updatedAt       DateTime @default(now()) @updatedAt @db.DateTime(0)
 
-  user          User           @relation(fields: [userId], references: [id])
-  uploadedImage UploadedImage? @relation(fields: [uploadedImageId], references: [id])
-  externalImage ExternalImage? @relation(fields: [externalImageId], references: [id])
-  person        Person?        @relation(fields: [personId], references: [id])
+  user            User             @relation(fields: [userId], references: [id])
+  uploadedImage   UploadedImage?   @relation(fields: [uploadedImageId], references: [id])
+  externalImage   ExternalImage?   @relation(fields: [externalImageId], references: [id])
+  person          Person?          @relation(fields: [personId], references: [id])
+  ticketUserLikes TicketUserLike[]
 }
 
 model UploadedImage {
@@ -53,7 +61,7 @@ model UploadedImage {
   createdAt  DateTime @default(now()) @db.DateTime(0)
   updatedAt  DateTime @default(now()) @updatedAt @db.DateTime(0)
 
-  requestedTicket RequestedTicket?
+  ticket Ticket?
 }
 
 model ExternalImage {
@@ -63,7 +71,7 @@ model ExternalImage {
   createdAt  DateTime @default(now()) @db.DateTime(0)
   updatedAt  DateTime @default(now()) @updatedAt @db.DateTime(0)
 
-  requestedTicket RequestedTicket?
+  ticket Ticket?
 }
 
 model Person {
@@ -77,8 +85,8 @@ model Person {
   createdAt    DateTime  @default(now()) @db.DateTime(0)
   updatedAt    DateTime  @default(now()) @updatedAt @db.DateTime(0)
 
-  requestedTicket RequestedTicket[]
-  occupation      Occupation?       @relation(fields: [occupationId], references: [id])
+  tickets    Ticket[]
+  occupation Occupation? @relation(fields: [occupationId], references: [id])
 }
 
 model Occupation {
@@ -91,4 +99,17 @@ model Occupation {
   updatedAt    DateTime @default(now()) @updatedAt @db.DateTime(0)
 
   Person Person[]
+}
+
+model TicketUserLike {
+  id        String   @id @default(uuid())
+  ticketId  String   @db.VarChar(255)
+  userId    String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  ticket Ticket @relation(fields: [ticketId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([ticketId, userId])
 }

@@ -1,6 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-export enum RequestedTicketScalarFieldEnum {
+export enum TicketScalarFieldEnum {
     id = "id",
     userId = "userId",
     uploadedImageId = "uploadedImageId",
@@ -11,4 +11,4 @@ export enum RequestedTicketScalarFieldEnum {
 }
 
 
-registerEnumType(RequestedTicketScalarFieldEnum, { name: 'RequestedTicketScalarFieldEnum', description: undefined })
+registerEnumType(TicketScalarFieldEnum, { name: 'TicketScalarFieldEnum', description: undefined })
