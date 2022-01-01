@@ -2,13 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type UploadedImage {
+type TicketUserLike {
   id: ID!
-  bucketName: String!
-  filePath: String!
+  ticketId: String!
+  userId: String!
   createdAt: DateTime!
   updatedAt: DateTime!
-  requestedTicket: RequestedTicket
+  ticket: Ticket!
+  user: User!
 }
 
 """
@@ -16,13 +17,51 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type UserCount {
+  tickets: Int!
+  ticketUserLikes: Int!
+}
+
+type User {
+  id: ID!
+  displayName: String
+  email: String
+  role: UserRole!
+  status: UserStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  tickets: [Ticket!]
+  ticketUserLikes: [TicketUserLike!]
+  _count: UserCount!
+}
+
+enum UserRole {
+  NONE
+  MEMBER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+type UploadedImage {
+  id: ID!
+  bucketName: String!
+  filePath: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  ticket: Ticket
+}
+
 type ExternalImage {
   id: ID!
   url: String!
   statusCode: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
-  requestedTicket: RequestedTicket
+  ticket: Ticket
 }
 
 type OccupationCount {
@@ -42,7 +81,7 @@ type Occupation {
 }
 
 type PersonCount {
-  requestedTicket: Int!
+  tickets: Int!
 }
 
 type Person {
@@ -55,12 +94,16 @@ type Person {
   occupationId: String
   createdAt: DateTime!
   updatedAt: DateTime!
-  requestedTicket: [RequestedTicket!]
+  tickets: [Ticket!]
   occupation: Occupation
   _count: PersonCount!
 }
 
-type RequestedTicket {
+type TicketCount {
+  ticketUserLikes: Int!
+}
+
+type Ticket {
   id: ID!
   userId: String!
   uploadedImageId: String
@@ -72,29 +115,14 @@ type RequestedTicket {
   uploadedImage: UploadedImage
   externalImage: ExternalImage
   person: Person
-}
-
-type UserCount {
-  requestedTickets: Int!
-}
-
-type User {
-  id: ID!
-  displayName: String
-  email: String
-  role: UserRole!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  requestedTickets: [RequestedTicket!]
-  _count: UserCount!
-}
-
-enum UserRole {
-  NONE
-  MEMBER
-  ADMIN
+  ticketUserLikes: [TicketUserLike!]
+  _count: TicketCount!
 }
 
 type Query {
   getCurrentUser: User!
+}
+
+type Mutation {
+  createTicketByExternalImageUrl(externalImageUrl: String!): Ticket!
 }

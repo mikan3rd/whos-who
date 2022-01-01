@@ -1,7 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
-import { RequestedTicket } from '../requested-ticket/requested-ticket.model';
+import { Ticket } from '../ticket/ticket.model';
 import { Occupation } from '../occupation/occupation.model';
 import { PersonCount } from './person-count.output';
 
@@ -35,8 +35,8 @@ export class Person {
     @Field(() => Date, {nullable:false})
     updatedAt!: Date;
 
-    @Field(() => [RequestedTicket], {nullable:true})
-    requestedTicket?: Array<RequestedTicket>;
+    @Field(() => [Ticket], {nullable:true})
+    tickets?: Array<Ticket>;
 
     @Field(() => Occupation, {nullable:true})
     occupation?: Occupation | null;

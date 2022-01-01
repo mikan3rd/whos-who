@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  reactStrictMode: true,
+  reactStrictMode: false, // FIXME: react-semantic-uiが常にWarningとなるため
   eslint: {
     ignoreDuringBuilds: true,
   },

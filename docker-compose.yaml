@@ -57,6 +57,8 @@ services:
       - "3400:3400"
 
 volumes:
+  mysql:
+    driver: local
   backend:
     driver: local
   frontend:

@@ -2,8 +2,8 @@ import React from "react";
 
 import type { NextPage } from "next";
 
-const PersonEdit: NextPage = () => {
+const MyPageIndex: NextPage = () => {
   return <>TEST</>;
 };
 
-export default PersonEdit;
+export default MyPageIndex;

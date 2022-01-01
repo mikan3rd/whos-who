@@ -20,10 +20,19 @@ export type Scalars = {
 export type ExternalImage = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  requestedTicket?: Maybe<RequestedTicket>;
   statusCode: Scalars['Int'];
+  ticket?: Maybe<Ticket>;
   updatedAt: Scalars['DateTime'];
   url: Scalars['String'];
+};
+
+export type Mutation = {
+  createTicketByExternalImageUrl: Ticket;
+};
+
+
+export type MutationCreateTicketByExternalImageUrlArgs = {
+  externalImageUrl: Scalars['String'];
 };
 
 export type Occupation = {
@@ -53,28 +62,44 @@ export type Person = {
   nameKatakana?: Maybe<Scalars['String']>;
   occupation?: Maybe<Occupation>;
   occupationId?: Maybe<Scalars['String']>;
-  requestedTicket?: Maybe<Array<RequestedTicket>>;
+  tickets?: Maybe<Array<Ticket>>;
   updatedAt: Scalars['DateTime'];
 };
 
 export type PersonCount = {
-  requestedTicket: Scalars['Int'];
+  tickets: Scalars['Int'];
 };
 
 export type Query = {
   getCurrentUser: User;
 };
 
-export type RequestedTicket = {
+export type Ticket = {
+  _count: TicketCount;
   createdAt: Scalars['DateTime'];
   externalImage?: Maybe<ExternalImage>;
   externalImageId?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   person?: Maybe<Person>;
   personId?: Maybe<Scalars['String']>;
+  ticketUserLikes?: Maybe<Array<TicketUserLike>>;
   updatedAt: Scalars['DateTime'];
   uploadedImage?: Maybe<UploadedImage>;
   uploadedImageId?: Maybe<Scalars['String']>;
+  user: User;
+  userId: Scalars['String'];
+};
+
+export type TicketCount = {
+  ticketUserLikes: Scalars['Int'];
+};
+
+export type TicketUserLike = {
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  ticket: Ticket;
+  ticketId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];
 };
@@ -84,7 +109,7 @@ export type UploadedImage = {
   createdAt: Scalars['DateTime'];
   filePath: Scalars['String'];
   id: Scalars['ID'];
-  requestedTicket?: Maybe<RequestedTicket>;
+  ticket?: Maybe<Ticket>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -94,14 +119,16 @@ export type User = {
   displayName?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  requestedTickets?: Maybe<Array<RequestedTicket>>;
   role: UserRole;
+  status: UserStatus;
+  ticketUserLikes?: Maybe<Array<TicketUserLike>>;
+  tickets?: Maybe<Array<Ticket>>;
   updatedAt: Scalars['DateTime'];
-  verified: Scalars['Boolean'];
 };
 
 export type UserCount = {
-  requestedTickets: Scalars['Int'];
+  ticketUserLikes: Scalars['Int'];
+  tickets: Scalars['Int'];
 };
 
 export enum UserRole {
@@ -110,12 +137,57 @@ export enum UserRole {
   None = 'NONE'
 }
 
+export enum UserStatus {
+  Active = 'ACTIVE',
+  Disabled = 'DISABLED'
+}
+
+export type CreateTicketByExternalImageUrlMutationVariables = Exact<{
+  externalImageUrl: Scalars['String'];
+}>;
+
+
+export type CreateTicketByExternalImageUrlMutation = { createTicketByExternalImageUrl: { id: string } };
+
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCurrentUserQuery = { getCurrentUser: { id: string, displayName?: string | null | undefined, role: UserRole } };
 
 
+export const CreateTicketByExternalImageUrlDocument = gql`
+    mutation createTicketByExternalImageUrl($externalImageUrl: String!) {
+  createTicketByExternalImageUrl(externalImageUrl: $externalImageUrl) {
+    id
+  }
+}
+    `;
+export type CreateTicketByExternalImageUrlMutationFn = Apollo.MutationFunction<CreateTicketByExternalImageUrlMutation, CreateTicketByExternalImageUrlMutationVariables>;
+
+/**
+ * __useCreateTicketByExternalImageUrlMutation__
+ *
+ * To run a mutation, you first call `useCreateTicketByExternalImageUrlMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTicketByExternalImageUrlMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTicketByExternalImageUrlMutation, { data, loading, error }] = useCreateTicketByExternalImageUrlMutation({
+ *   variables: {
+ *      externalImageUrl: // value for 'externalImageUrl'
+ *   },
+ * });
+ */
+export function useCreateTicketByExternalImageUrlMutation(baseOptions?: Apollo.MutationHookOptions<CreateTicketByExternalImageUrlMutation, CreateTicketByExternalImageUrlMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTicketByExternalImageUrlMutation, CreateTicketByExternalImageUrlMutationVariables>(CreateTicketByExternalImageUrlDocument, options);
+      }
+export type CreateTicketByExternalImageUrlMutationHookResult = ReturnType<typeof useCreateTicketByExternalImageUrlMutation>;
+export type CreateTicketByExternalImageUrlMutationResult = Apollo.MutationResult<CreateTicketByExternalImageUrlMutation>;
+export type CreateTicketByExternalImageUrlMutationOptions = Apollo.BaseMutationOptions<CreateTicketByExternalImageUrlMutation, CreateTicketByExternalImageUrlMutationVariables>;
 export const GetCurrentUserDocument = gql`
     query getCurrentUser {
   getCurrentUser {

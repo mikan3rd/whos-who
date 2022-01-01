@@ -1,0 +1,5 @@
+mutation createTicketByExternalImageUrl($externalImageUrl: String!) {
+  createTicketByExternalImageUrl(externalImageUrl: $externalImageUrl) {
+    id
+  }
+}

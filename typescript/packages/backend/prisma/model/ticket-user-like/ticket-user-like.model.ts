@@ -1,20 +1,20 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
-import { Int } from '@nestjs/graphql';
 import { Ticket } from '../ticket/ticket.model';
+import { User } from '../user/user.model';
 
 @ObjectType()
-export class ExternalImage {
+export class TicketUserLike {
 
     @Field(() => ID, {nullable:false})
     id!: string;
 
     @Field(() => String, {nullable:false})
-    url!: string;
+    ticketId!: string;
 
-    @Field(() => Int, {nullable:false})
-    statusCode!: number;
+    @Field(() => String, {nullable:false})
+    userId!: string;
 
     @Field(() => Date, {nullable:false})
     createdAt!: Date;
@@ -22,6 +22,9 @@ export class ExternalImage {
     @Field(() => Date, {nullable:false})
     updatedAt!: Date;
 
-    @Field(() => Ticket, {nullable:true})
-    ticket?: Ticket | null;
+    @Field(() => Ticket, {nullable:false})
+    ticket?: Ticket;
+
+    @Field(() => User, {nullable:false})
+    user?: User;
 }
