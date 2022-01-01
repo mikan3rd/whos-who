@@ -1,0 +1,101 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UploadedImage {
+  id: ID!
+  bucketName: String!
+  filePath: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  requestedTicket: RequestedTicket
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type ExternalImage {
+  id: ID!
+  url: String!
+  statusCode: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  requestedTicket: RequestedTicket
+}
+
+type OccupationCount {
+  Person: Int!
+}
+
+type Occupation {
+  id: ID!
+  name: String!
+  nameHiragana: String
+  nameKatakana: String
+  nameAlphabet: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  Person: [Person!]
+  _count: OccupationCount!
+}
+
+type PersonCount {
+  requestedTicket: Int!
+}
+
+type Person {
+  id: ID!
+  name: String!
+  nameHiragana: String
+  nameKatakana: String
+  nameAlphabet: String
+  birthDate: DateTime
+  occupationId: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  requestedTicket: [RequestedTicket!]
+  occupation: Occupation
+  _count: PersonCount!
+}
+
+type RequestedTicket {
+  id: ID!
+  userId: String!
+  uploadedImageId: String
+  externalImageId: String
+  personId: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User!
+  uploadedImage: UploadedImage
+  externalImage: ExternalImage
+  person: Person
+}
+
+type UserCount {
+  requestedTickets: Int!
+}
+
+type User {
+  id: ID!
+  displayName: String
+  email: String
+  role: UserRole!
+  verified: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  requestedTickets: [RequestedTicket!]
+  _count: UserCount!
+}
+
+enum UserRole {
+  NONE
+  MEMBER
+  ADMIN
+}
+
+type Query {
+  getCurrentUser: User!
+}

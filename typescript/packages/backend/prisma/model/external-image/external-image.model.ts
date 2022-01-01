@@ -2,7 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
-import { RequestedImage } from '../requested-image/requested-image.model';
+import { RequestedTicket } from '../requested-ticket/requested-ticket.model';
 
 @ObjectType()
 export class ExternalImage {
@@ -22,6 +22,6 @@ export class ExternalImage {
     @Field(() => Date, {nullable:false})
     updatedAt!: Date;
 
-    @Field(() => RequestedImage, {nullable:true})
-    requestedImage?: RequestedImage | null;
+    @Field(() => RequestedTicket, {nullable:true})
+    requestedTicket?: RequestedTicket | null;
 }
