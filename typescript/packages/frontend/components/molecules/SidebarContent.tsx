@@ -32,7 +32,7 @@ export const SidebarContent = React.memo(() => {
       </Link>
 
       <Link href="/ticket/create" passHref>
-        <Menu.Item content="画像を登録する" />
+        <Menu.Item content="画像から人物を探す" />
       </Link>
 
       {currentUser !== null && currentUser.role === "ADMIN" && (
