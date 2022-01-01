@@ -1,7 +1,9 @@
+import React from "react";
+
 import type { NextPage } from "next";
 
 const UserDetail: NextPage = () => {
-  return <div>TEST</div>;
+  return <>TEST</>;
 };
 
 export default UserDetail;

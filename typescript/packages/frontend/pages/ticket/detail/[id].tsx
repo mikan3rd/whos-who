@@ -1,7 +1,9 @@
+import React from "react";
+
 import type { NextPage } from "next";
 
 const TicketDetail: NextPage = () => {
-  return <div>TEST</div>;
+  return <>TEST</>;
 };
 
 export default TicketDetail;
