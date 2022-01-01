@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
 
 import { ApolloError } from "@apollo/client";
+import firebase from "firebase/compat/app";
 import { toast } from "react-semantic-toasts";
 
-import firebase from "@/firebase/clientApp";
 import { client } from "@/graphql/client";
 import { GetCurrentUserQuery, useGetCurrentUserLazyQuery } from "@/graphql/generated";
+import { useFirebase } from "@/hooks/useFirebase";
 
 type State = {
   authStatus: "initial" | "loading" | "completed";
@@ -55,6 +56,8 @@ export const AuthContext = React.createContext<
 >(undefined);
 
 export const AuthProvider: React.FC = ({ children }) => {
+  const { firebase } = useFirebase();
+
   const [state, dispatch] = React.useReducer(reducer, {
     authStatus: "initial",
     firebaseUser: null,
@@ -75,7 +78,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       type: "success",
       title: "ログアウトしました！",
     });
-  }, []);
+  }, [firebase]);
 
   const handleCompleteCurrentUser = useCallback((data: GetCurrentUserQuery) => {
     dispatch({ type: "SetCurrentUser", payload: data.getCurrentUser });
@@ -122,14 +125,14 @@ export const AuthProvider: React.FC = ({ children }) => {
         await firebase.auth().signInAnonymously();
       }
     });
-  }, [fetchCurrentUser]);
+  }, [fetchCurrentUser, firebase]);
 
   const loginWithGoogle = useCallback(async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     await firebase.auth().signInWithPopup(provider);
     await firebaseUser?.linkWithPopup(provider);
     await setCurrentUser();
-  }, [setCurrentUser, firebaseUser]);
+  }, [firebase, firebaseUser, setCurrentUser]);
 
   const loginWithTwitter = useCallback(async () => {
     const provider = new firebase.auth.TwitterAuthProvider();
@@ -137,7 +140,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     await firebase.auth().signInWithPopup(provider);
     await firebaseUser?.linkWithPopup(provider);
     await setCurrentUser();
-  }, [setCurrentUser, firebaseUser]);
+  }, [firebase, firebaseUser, setCurrentUser]);
 
   React.useEffect(() => {
     setCurrentUser();

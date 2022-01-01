@@ -22,3 +22,5 @@ prisma/model/**/*.input.ts
 prisma/model/**/*.output.ts
 prisma/model/**/*.args.ts
 !prisma/model/**/*-count.output.ts
+
+.env
