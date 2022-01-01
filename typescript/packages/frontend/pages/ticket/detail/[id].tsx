@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 
-const ImageNew: NextPage = () => {
+const TicketDetail: NextPage = () => {
   return <div>TEST</div>;
 };
 
-export default ImageNew;
+export default TicketDetail;

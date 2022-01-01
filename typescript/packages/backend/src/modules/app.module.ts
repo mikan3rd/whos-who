@@ -3,6 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
 
 import { PrismaModule } from "@/modules/prisma.module";
+import { TicketModule } from "@/modules/ticket.module";
 import { UserModule } from "@/modules/user.module";
 
 @Module({
@@ -18,6 +19,7 @@ import { UserModule } from "@/modules/user.module";
     }),
     PrismaModule,
     UserModule,
+    TicketModule,
   ],
   controllers: [],
   providers: [],

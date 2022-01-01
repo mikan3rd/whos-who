@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 
-const ImagesDetail: NextPage = () => {
+const MyPageIndex: NextPage = () => {
   return <div>TEST</div>;
 };
 
-export default ImagesDetail;
+export default MyPageIndex;
