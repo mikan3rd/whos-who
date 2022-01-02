@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 
 import { Prisma } from "@/interfaces/services/prisma.service";
-import { PersonSuggestionRepository } from "@/repositories/personSuggention.repository";
+import { PersonSuggestionRepository } from "@/repositories/personSuggestion.repository";
 
 @Injectable()
 export class PersonSuggestionUsecase {

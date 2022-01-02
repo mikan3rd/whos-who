@@ -17,43 +17,6 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type OccupationCount {
-  persons: Int!
-}
-
-type Occupation {
-  id: ID!
-  name: String!
-  nameHiragana: String
-  nameKatakana: String
-  nameAlphabet: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  persons: [Person!]
-  _count: OccupationCount!
-}
-
-type PersonCount {
-  tickets: Int!
-  personSuggestions: Int!
-}
-
-type Person {
-  id: ID!
-  name: String!
-  nameHiragana: String
-  nameKatakana: String
-  nameAlphabet: String
-  birthDate: DateTime
-  occupationId: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  tickets: [Ticket!]
-  occupation: Occupation
-  personSuggestions: [PersonSuggestion!]
-  _count: PersonCount!
-}
-
 type PersonSuggestionLike {
   id: ID!
   ticketId: String!
@@ -162,12 +125,57 @@ type Ticket {
   _count: TicketCount!
 }
 
+type OccupationCount {
+  persons: Int!
+}
+
+type Occupation {
+  id: ID!
+  name: String!
+  nameHiragana: String
+  nameKatakana: String
+  nameAlphabet: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  persons: [Person!]
+  _count: OccupationCount!
+}
+
+type PersonCount {
+  tickets: Int!
+  personSuggestions: Int!
+}
+
+type Person {
+  id: ID!
+  name: String!
+  nameHiragana: String
+  nameKatakana: String
+  nameAlphabet: String
+  birthDate: DateTime
+  occupationId: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  tickets: [Ticket!]
+  occupation: Occupation
+  personSuggestions: [PersonSuggestion!]
+  _count: PersonCount!
+}
+
 type Query {
   getCurrentUser: User!
   getTicketByExternalImageUrl(externalImageUrl: String!): Ticket
   getTicketById(id: String!): Ticket
+  searchPersonByWord(word: String!): [Person!]!
 }
 
 type Mutation {
   createTicketByExternalImageUrl(externalImageUrl: String!): Ticket!
+  createPersonSuggestion(personSuggestionCreate: PersonSuggestionCreateInput!): PersonSuggestion!
+}
+
+input PersonSuggestionCreateInput {
+  ticketId: String!
+  personId: String!
+  personName: String!
 }
