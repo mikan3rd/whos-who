@@ -178,7 +178,7 @@ export type GetTicketByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTicketByIdQuery = { getTicketById?: { id: string, createdAt: any, updatedAt: any, externalImage?: { id: string, url: string } | null | undefined, uploadedImage?: { id: string, bucketName: string, filePath: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined } | null | undefined };
+export type GetTicketByIdQuery = { getTicketById?: { id: string, createdAt: any, updatedAt: any, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, bucketName: string, filePath: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined } | null | undefined };
 
 
 export const CreateTicketByExternalImageUrlDocument = gql`
@@ -294,6 +294,7 @@ export const GetTicketByIdDocument = gql`
     externalImage {
       id
       url
+      statusCode
     }
     uploadedImage {
       id

@@ -2,12 +2,14 @@ import React from "react";
 
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
+import { Props, TicketDetailPage } from "@/components/pages/TicketDetailPage";
+import { Meta } from "@/components/templates/Meta";
 import { client } from "@/graphql/client";
 import { GetTicketByIdDocument, GetTicketByIdQuery, GetTicketByIdQueryVariables } from "@/graphql/generated";
 
-type Props = { getTicketByIdData: NonNullable<GetTicketByIdQuery["getTicketById"]> };
+type ServerSideProps = Pick<Props, "getTicketByIdData">;
 
-export const getServerSideProps: GetServerSideProps<Props, { id: string }> = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps<ServerSideProps, { id: string }> = async ({ params }) => {
   if (params === undefined) {
     return { redirect: { permanent: false, destination: "/" } };
   }
@@ -30,7 +32,24 @@ export const getServerSideProps: GetServerSideProps<Props, { id: string }> = asy
 };
 
 const TicketDetail = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  return <>TEST</>;
+  const {
+    getTicketByIdData: { person, externalImage },
+  } = props;
+
+  const isAccepting = person === undefined || person === null;
+
+  return (
+    <>
+      <Meta
+        title={isAccepting ? `回答者募集中の投稿` : `回答済みの投稿`}
+        description={
+          isAccepting ? `この画像の人物の名前を知っている人を探しています！` : `この画像の人物の名前を確認してみよう！`
+        }
+        imageUrl={externalImage?.url} // TODO: uploadedImageに対応
+      />
+      <TicketDetailPage {...props} isAccepting={isAccepting} />
+    </>
+  );
 };
 
 export default TicketDetail;
