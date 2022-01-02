@@ -5,9 +5,9 @@ export class PersonSuggestionCreateInput {
   @Field()
   ticketId!: string;
 
-  @Field()
+  @Field({ nullable: true })
   personId?: string;
 
-  @Field()
+  @Field({ nullable: true })
   personName?: string;
 }

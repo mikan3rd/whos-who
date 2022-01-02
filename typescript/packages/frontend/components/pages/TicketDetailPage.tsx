@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { css } from "@emotion/react";
 import dayjs from "dayjs";
 import Link from "next/link";
+import { toast } from "react-semantic-toasts";
 import {
   Button,
   Divider,
@@ -16,7 +17,13 @@ import {
   Segment,
 } from "semantic-ui-react";
 
-import { GetTicketByIdQuery, useSearchPersonByWordLazyQuery } from "@/graphql/generated";
+import {
+  GetTicketByIdQuery,
+  useCreatePersonSuggestionMutation,
+  useSearchPersonByWordLazyQuery,
+} from "@/graphql/generated";
+
+const NewPersonValue = "new" as const;
 
 export type Props = {
   getTicketByIdData: NonNullable<GetTicketByIdQuery["getTicketById"]>;
@@ -25,12 +32,13 @@ export type Props = {
 
 export const TicketDetailPage: React.VFC<Props> = (props) => {
   const {
-    getTicketByIdData: { user, externalImage, personSuggestions, createdAt, _count },
+    getTicketByIdData: { id: ticketId, user, externalImage, personSuggestions, createdAt, _count },
     isAccepting,
   } = props;
 
   // TODO: debounce
-  const [searchPersonByWord, { data: searchPersonResult, loading }] = useSearchPersonByWordLazyQuery();
+  const [searchPersonByWord, { data: searchPersonResult, loading: searchLoading }] = useSearchPersonByWordLazyQuery();
+  const [createPersonSuggestion, { loading: createLoading }] = useCreatePersonSuggestionMutation();
 
   const [newPerson, setNewPerson] = useState<DropdownItemProps | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<DropdownItemProps | null>(null);
@@ -57,7 +65,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
   );
 
   const handleAddPerson = useCallback((event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-    const option: DropdownItemProps = { value: "new", text: data.value };
+    const option: DropdownItemProps = { value: NewPersonValue, text: data.value };
     setNewPerson(option);
     setSelectedPerson(option);
   }, []);
@@ -66,6 +74,32 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
     const option = data.options?.find((option) => option.value === data.value) ?? null;
     setSelectedPerson(option);
   }, []);
+
+  const handleCreatePersonSuggestion = useCallback(async () => {
+    if (selectedPerson === null) {
+      return;
+    }
+
+    let personId;
+    let personName;
+
+    if (selectedPerson.value === NewPersonValue) {
+      personName = selectedPerson.text as string;
+    } else {
+      personId = selectedPerson.value as string;
+    }
+
+    const { data } = await createPersonSuggestion({
+      variables: { personSuggestionCreate: { ticketId, personId, personName } },
+    });
+
+    if (data !== undefined && data !== null) {
+      toast({
+        type: "success",
+        title: "名前を登録しました！",
+      });
+    }
+  }, [createPersonSuggestion, selectedPerson, ticketId]);
 
   return (
     <>
@@ -152,6 +186,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
         {(personSuggestions === null || personSuggestions === undefined || personSuggestions.length === 0) && (
           <Message warning header="回答はまだありません" content="あなたが最初の回答者になりませんか？" />
         )}
+
         <Form>
           <Form.Field>
             <label>
@@ -163,19 +198,23 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
               options={personOptions}
               placeholder="人物名を入力してください"
               additionLabel="新規登録: "
-              re
               search
               selection
               fluid
               allowAdditions
               clearable
               value={selectedPerson?.value}
-              loading={loading}
+              loading={searchLoading}
               onSearchChange={handleSearchPersonByWord}
               onAddItem={handleAddPerson}
               onChange={handleChangePerson}
             />
-            <Form.Button content="上記の名前で新規登録する" color="blue" disabled={selectedPerson === null} />
+            <Form.Button
+              content="上記の名前で新規登録する"
+              color="blue"
+              disabled={selectedPerson === null || createLoading}
+              onClick={handleCreatePersonSuggestion}
+            />
           </Form.Field>
         </Form>
       </Segment>

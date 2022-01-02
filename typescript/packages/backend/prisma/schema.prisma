@@ -31,6 +31,7 @@ model User {
   email       String?    @db.VarChar(255)
   role        UserRole   @default(NONE)
   status      UserStatus @default(ACTIVE)
+  point       Int        @default(0) @db.UnsignedInt
   createdAt   DateTime   @default(now()) @db.DateTime(0)
   updatedAt   DateTime   @default(now()) @updatedAt @db.DateTime(0)
 
