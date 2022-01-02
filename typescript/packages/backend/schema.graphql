@@ -121,6 +121,7 @@ type Ticket {
 
 type Query {
   getCurrentUser: User!
+  getTicketByExternalImageUrl(externalImageUrl: String!): Ticket
 }
 
 type Mutation {

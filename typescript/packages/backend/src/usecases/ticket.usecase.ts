@@ -10,11 +10,15 @@ export class TicketUsecase {
   async createByExternalImageUrl(args: { userId: string; externalImageUrl: string }) {
     const { userId, externalImageUrl } = args;
     const statusCode = 200; // TODO: ステータスコードのチェック
-    // TODO: 同じURLのチケットが存在するかチェック
+
     const data: Prisma.TicketCreateInput = {
       user: { connect: { id: userId } },
       externalImage: { create: { url: externalImageUrl, statusCode } },
     };
     return await this.ticketRepository.create(data);
+  }
+
+  async getByExternalImageUrl(externalImageUrl: string) {
+    return await this.ticketRepository.getByExternalImageUrl(externalImageUrl);
   }
 }

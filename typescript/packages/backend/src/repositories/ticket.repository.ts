@@ -9,4 +9,10 @@ export class TicketRepository {
   async create(data: Prisma.TicketCreateInput) {
     return await this.prisma.ticket.create({ data });
   }
+
+  async getByExternalImageUrl(externalImageUrl: string) {
+    return await this.prisma.ticket.findFirst({
+      where: { externalImage: { url: externalImageUrl } },
+    });
+  }
 }

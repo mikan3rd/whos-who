@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from "@nestjs/common";
-import { Args, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import { CurrentUser, CurrentUserType } from "@/interfaces/decorators/auth.decorator";
 import { GqlAuthGuard } from "@/interfaces/guards/gqlAuthGuard.guard";
@@ -20,5 +20,11 @@ export class TicketResolver {
       userId: currentUser.id,
       externalImageUrl,
     });
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query((returns) => Ticket, { nullable: true })
+  async getTicketByExternalImageUrl(@Args("externalImageUrl") externalImageUrl: string): Promise<Ticket | null> {
+    return this.ticketUsecase.getByExternalImageUrl(externalImageUrl);
   }
 }
