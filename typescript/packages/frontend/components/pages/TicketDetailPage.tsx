@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 
 import { css } from "@emotion/react";
 import Link from "next/link";
-import { Button, Divider, Header, Label, Segment } from "semantic-ui-react";
+import { Button, Divider, Header, Label, Message, Segment } from "semantic-ui-react";
 
 import { GetTicketByIdQuery } from "@/graphql/generated";
 
@@ -13,7 +13,7 @@ export type Props = {
 
 export const TicketDetailPage: React.VFC<Props> = (props) => {
   const {
-    getTicketByIdData: { user, externalImage, _count },
+    getTicketByIdData: { user, externalImage, personSuggestions, _count },
     isAccepting,
   } = props;
 
@@ -81,6 +81,9 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
         />
         {isExternalUrl && <Label as="a" target="_blank" href={imageUrl} content={`画像参照先: ${imageUrl}`} />}
         <Divider />
+        {personSuggestions === null && (
+          <Message warning header="回答はまだありません" content="あなたが最初の回答者になりませんか？" />
+        )}
       </Segment>
     </>
   );

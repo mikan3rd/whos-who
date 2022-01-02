@@ -25,6 +25,7 @@ export class TicketRepository {
         uploadedImage: true,
         ticketUserLikes: true,
         person: true,
+        personSuggestions: true,
         _count: true,
       },
     });

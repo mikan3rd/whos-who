@@ -36,7 +36,6 @@ export type MutationCreateTicketByExternalImageUrlArgs = {
 };
 
 export type Occupation = {
-  Person?: Maybe<Array<Person>>;
   _count: OccupationCount;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -44,11 +43,12 @@ export type Occupation = {
   nameAlphabet?: Maybe<Scalars['String']>;
   nameHiragana?: Maybe<Scalars['String']>;
   nameKatakana?: Maybe<Scalars['String']>;
+  persons?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime'];
 };
 
 export type OccupationCount = {
-  Person: Scalars['Int'];
+  persons: Scalars['Int'];
 };
 
 export type Person = {
@@ -62,12 +62,45 @@ export type Person = {
   nameKatakana?: Maybe<Scalars['String']>;
   occupation?: Maybe<Occupation>;
   occupationId?: Maybe<Scalars['String']>;
+  personSuggestions?: Maybe<Array<PersonSuggestion>>;
   tickets?: Maybe<Array<Ticket>>;
   updatedAt: Scalars['DateTime'];
 };
 
 export type PersonCount = {
+  personSuggestions: Scalars['Int'];
   tickets: Scalars['Int'];
+};
+
+export type PersonSuggestion = {
+  _count: PersonSuggestionCount;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  mainTicket?: Maybe<Ticket>;
+  person: Person;
+  personId: Scalars['String'];
+  personSuggestionLikes?: Maybe<Array<PersonSuggestionLike>>;
+  ticket: Ticket;
+  ticketId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  user: User;
+  userId: Scalars['String'];
+};
+
+export type PersonSuggestionCount = {
+  personSuggestionLikes: Scalars['Int'];
+};
+
+export type PersonSuggestionLike = {
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  personSuggestion: PersonSuggestion;
+  personSuggestionId: Scalars['String'];
+  ticket: Ticket;
+  ticketId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  user: User;
+  userId: Scalars['String'];
 };
 
 export type Query = {
@@ -92,8 +125,12 @@ export type Ticket = {
   externalImage?: Maybe<ExternalImage>;
   externalImageId?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  mainPersonSuggestion?: Maybe<PersonSuggestion>;
+  mainPersonSuggestionId?: Maybe<Scalars['String']>;
   person?: Maybe<Person>;
   personId?: Maybe<Scalars['String']>;
+  personSuggestionLikes?: Maybe<Array<PersonSuggestionLike>>;
+  personSuggestions?: Maybe<Array<PersonSuggestion>>;
   ticketUserLikes?: Maybe<Array<TicketUserLike>>;
   updatedAt: Scalars['DateTime'];
   uploadedImage?: Maybe<UploadedImage>;
@@ -103,6 +140,8 @@ export type Ticket = {
 };
 
 export type TicketCount = {
+  personSuggestionLikes: Scalars['Int'];
+  personSuggestions: Scalars['Int'];
   ticketUserLikes: Scalars['Int'];
 };
 
@@ -126,11 +165,13 @@ export type UploadedImage = {
 };
 
 export type User = {
+  PersonSuggestionLikes?: Maybe<Array<PersonSuggestionLike>>;
   _count: UserCount;
   createdAt: Scalars['DateTime'];
   displayName?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  personSuggestions?: Maybe<Array<PersonSuggestion>>;
   role: UserRole;
   status: UserStatus;
   ticketUserLikes?: Maybe<Array<TicketUserLike>>;
@@ -139,6 +180,8 @@ export type User = {
 };
 
 export type UserCount = {
+  PersonSuggestionLikes: Scalars['Int'];
+  personSuggestions: Scalars['Int'];
   ticketUserLikes: Scalars['Int'];
   tickets: Scalars['Int'];
 };
@@ -178,7 +221,7 @@ export type GetTicketByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTicketByIdQuery = { getTicketById?: { id: string, createdAt: any, updatedAt: any, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, bucketName: string, filePath: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined, _count: { ticketUserLikes: number } } | null | undefined };
+export type GetTicketByIdQuery = { getTicketById?: { id: string, createdAt: any, updatedAt: any, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, bucketName: string, filePath: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined, personSuggestions?: Array<{ person: { id: string, name: string } }> | null | undefined, _count: { ticketUserLikes: number } } | null | undefined };
 
 
 export const CreateTicketByExternalImageUrlDocument = gql`
@@ -309,6 +352,12 @@ export const GetTicketByIdDocument = gql`
     person {
       id
       name
+    }
+    personSuggestions {
+      person {
+        id
+        name
+      }
     }
     _count {
       ticketUserLikes
