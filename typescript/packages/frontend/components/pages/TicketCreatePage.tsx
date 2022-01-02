@@ -24,7 +24,7 @@ export const TicketCreatePage: React.VFC = () => {
   const [externalImageUrl, setExternalImageUrl] = useState("");
   const [isImageValid, setIsImageValid] = useState(false);
 
-  const loading = useMemo(() => getTicketLoading ?? createTicketLoading, [createTicketLoading, getTicketLoading]);
+  const loading = useMemo(() => getTicketLoading || createTicketLoading, [createTicketLoading, getTicketLoading]);
 
   const alreadyExistTicketId = useMemo(
     () => getTicketData?.getTicketByExternalImageUrl?.id ?? null,
