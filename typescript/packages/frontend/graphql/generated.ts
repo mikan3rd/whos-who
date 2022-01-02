@@ -72,6 +72,12 @@ export type PersonCount = {
 
 export type Query = {
   getCurrentUser: User;
+  getTicketByExternalImageUrl?: Maybe<Ticket>;
+};
+
+
+export type QueryGetTicketByExternalImageUrlArgs = {
+  externalImageUrl: Scalars['String'];
 };
 
 export type Ticket = {
@@ -154,6 +160,13 @@ export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetCurrentUserQuery = { getCurrentUser: { id: string, displayName?: string | null | undefined, role: UserRole } };
 
+export type GetTicketByExternalImageUrlQueryVariables = Exact<{
+  externalImageUrl: Scalars['String'];
+}>;
+
+
+export type GetTicketByExternalImageUrlQuery = { getTicketByExternalImageUrl?: { id: string } | null | undefined };
+
 
 export const CreateTicketByExternalImageUrlDocument = gql`
     mutation createTicketByExternalImageUrl($externalImageUrl: String!) {
@@ -224,3 +237,38 @@ export function useGetCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQuery>;
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
 export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
+export const GetTicketByExternalImageUrlDocument = gql`
+    query getTicketByExternalImageUrl($externalImageUrl: String!) {
+  getTicketByExternalImageUrl(externalImageUrl: $externalImageUrl) {
+    id
+  }
+}
+    `;
+
+/**
+ * __useGetTicketByExternalImageUrlQuery__
+ *
+ * To run a query within a React component, call `useGetTicketByExternalImageUrlQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTicketByExternalImageUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTicketByExternalImageUrlQuery({
+ *   variables: {
+ *      externalImageUrl: // value for 'externalImageUrl'
+ *   },
+ * });
+ */
+export function useGetTicketByExternalImageUrlQuery(baseOptions: Apollo.QueryHookOptions<GetTicketByExternalImageUrlQuery, GetTicketByExternalImageUrlQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTicketByExternalImageUrlQuery, GetTicketByExternalImageUrlQueryVariables>(GetTicketByExternalImageUrlDocument, options);
+      }
+export function useGetTicketByExternalImageUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTicketByExternalImageUrlQuery, GetTicketByExternalImageUrlQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTicketByExternalImageUrlQuery, GetTicketByExternalImageUrlQueryVariables>(GetTicketByExternalImageUrlDocument, options);
+        }
+export type GetTicketByExternalImageUrlQueryHookResult = ReturnType<typeof useGetTicketByExternalImageUrlQuery>;
+export type GetTicketByExternalImageUrlLazyQueryHookResult = ReturnType<typeof useGetTicketByExternalImageUrlLazyQuery>;
+export type GetTicketByExternalImageUrlQueryResult = Apollo.QueryResult<GetTicketByExternalImageUrlQuery, GetTicketByExternalImageUrlQueryVariables>;
