@@ -107,27 +107,32 @@ export const TicketCreatePage: React.VFC = () => {
             <Divider />
             {imageType === "externalImageUrl" && (
               <>
-                <p>
+                <label
+                  css={css`
+                    padding-bottom: 8px;
+                  `}
+                >
+                  画像のURLを入力してください
                   <span
                     css={css`
                       color: gray;
-                      margin-right: 4px;
+                      margin-left: 8px;
                     `}
                   >
-                    https://example.jpg
+                    例: https://example.jpg
                   </span>
-                  のようなURLを入力してください
-                </p>
+                </label>
                 <Form.Input
                   placeholder="画像のURLを入力してください"
                   value={externalImageUrl}
                   onChange={(e) => setExternalImageUrl(e.target.value)}
+                  error={isValid ? undefined : "画像のURLが正しくありません"}
                 />
               </>
             )}
             <Divider />
             <label>画像プレビュー</label>
-            {imageType === "externalImageUrl" && isValid ? (
+            {imageType === "externalImageUrl" && isValid && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={externalImageUrl}
@@ -136,8 +141,6 @@ export const TicketCreatePage: React.VFC = () => {
                   width: 100%;
                 `}
               />
-            ) : (
-              <p>画像のURLを入力してください</p>
             )}
           </Form.Field>
           <Form.Button
