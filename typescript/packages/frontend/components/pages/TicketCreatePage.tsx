@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { css } from "@emotion/react";
 import { useRouter } from "next/router";
@@ -16,14 +16,38 @@ export const TicketCreatePage: React.VFC = () => {
 
   const [imageType, setImageType] = useState<ImageType>("externalImageUrl");
   const [externalImageUrl, setExternalImageUrl] = useState("");
+  const [isValid, setIsValid] = useState(false);
 
-  const isValid = useMemo(() => {
-    if (imageType === "externalImageUrl") {
-      return externalImageUrl.length > 5;
-    }
-    // TODO: uploadImage
-    return false;
-  }, [externalImageUrl.length, imageType]);
+  const loadImage = useCallback((imageUrl: string) => {
+    return new Promise<boolean>((resolve, reject) => {
+      const img = new Image();
+      img.onerror = (e) => {
+        // eslint-disable-next-line no-console
+        console.error(e);
+        reject(false);
+      };
+      img.onload = () => {
+        resolve(true);
+      };
+      img.src = imageUrl;
+    });
+  }, []);
+
+  useEffect(() => {
+    const checkValid = async () => {
+      setIsValid(false);
+      if (imageType === "externalImageUrl") {
+        const result = await loadImage(externalImageUrl);
+        setIsValid(result);
+      }
+      if (imageType === "uploadImage") {
+        // TODO
+        setIsValid(false);
+      }
+    };
+
+    checkValid();
+  }, [externalImageUrl, imageType, loadImage]);
 
   const handleCreateTicket = useCallback(async () => {
     if (!isValid) {
@@ -59,18 +83,28 @@ export const TicketCreatePage: React.VFC = () => {
       <Segment>
         <Form>
           <Form.Field>
+            <label
+              css={css`
+                padding-bottom: 12px;
+              `}
+            >
+              画像の登録方法を選択してください
+            </label>
             <Form.Radio
-              label="方法1: URLを入力して画像を投稿"
+              label="URLを入力して画像を投稿"
               name={RadioName}
               value="externalImageUrl"
               checked={imageType === "externalImageUrl"}
               onChange={() => setImageType("externalImageUrl")}
-              css={css`
-                &&& {
-                  font-weight: bold;
-                }
-              `}
             />
+            <Form.Radio
+              label="画像をアップロードして投稿"
+              name={RadioName}
+              value="uploadImage"
+              checked={imageType === "uploadImage"}
+              onChange={() => setImageType("uploadImage")}
+            />
+            <Divider />
             {imageType === "externalImageUrl" && (
               <>
                 <p>
@@ -91,19 +125,6 @@ export const TicketCreatePage: React.VFC = () => {
                 />
               </>
             )}
-            <Divider />
-            <Form.Radio
-              label="方法2: 画像をアップロードして投稿"
-              name={RadioName}
-              value="uploadImage"
-              checked={imageType === "uploadImage"}
-              onChange={() => setImageType("uploadImage")}
-              css={css`
-                &&& {
-                  font-weight: bold;
-                }
-              `}
-            />
             <Divider />
             <label>画像プレビュー</label>
             {imageType === "externalImageUrl" && isValid ? (
