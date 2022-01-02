@@ -21,4 +21,8 @@ export class TicketUsecase {
   async getByExternalImageUrl(externalImageUrl: string) {
     return await this.ticketRepository.getByExternalImageUrl(externalImageUrl);
   }
+
+  async getById(id: string) {
+    return await this.ticketRepository.getById(id);
+  }
 }

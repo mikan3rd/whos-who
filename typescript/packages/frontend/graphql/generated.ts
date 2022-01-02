@@ -73,11 +73,17 @@ export type PersonCount = {
 export type Query = {
   getCurrentUser: User;
   getTicketByExternalImageUrl?: Maybe<Ticket>;
+  getTicketById?: Maybe<Ticket>;
 };
 
 
 export type QueryGetTicketByExternalImageUrlArgs = {
   externalImageUrl: Scalars['String'];
+};
+
+
+export type QueryGetTicketByIdArgs = {
+  id: Scalars['String'];
 };
 
 export type Ticket = {
@@ -166,6 +172,13 @@ export type GetTicketByExternalImageUrlQueryVariables = Exact<{
 
 
 export type GetTicketByExternalImageUrlQuery = { getTicketByExternalImageUrl?: { id: string } | null | undefined };
+
+export type GetTicketByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetTicketByIdQuery = { getTicketById?: { id: string, createdAt: any, updatedAt: any, externalImage?: { id: string, url: string } | null | undefined, uploadedImage?: { id: string, bucketName: string, filePath: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined } | null | undefined };
 
 
 export const CreateTicketByExternalImageUrlDocument = gql`
@@ -272,3 +285,58 @@ export function useGetTicketByExternalImageUrlLazyQuery(baseOptions?: Apollo.Laz
 export type GetTicketByExternalImageUrlQueryHookResult = ReturnType<typeof useGetTicketByExternalImageUrlQuery>;
 export type GetTicketByExternalImageUrlLazyQueryHookResult = ReturnType<typeof useGetTicketByExternalImageUrlLazyQuery>;
 export type GetTicketByExternalImageUrlQueryResult = Apollo.QueryResult<GetTicketByExternalImageUrlQuery, GetTicketByExternalImageUrlQueryVariables>;
+export const GetTicketByIdDocument = gql`
+    query getTicketById($id: String!) {
+  getTicketById(id: $id) {
+    id
+    createdAt
+    updatedAt
+    externalImage {
+      id
+      url
+    }
+    uploadedImage {
+      id
+      bucketName
+      filePath
+    }
+    user {
+      id
+      displayName
+      role
+    }
+    person {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTicketByIdQuery__
+ *
+ * To run a query within a React component, call `useGetTicketByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTicketByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTicketByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetTicketByIdQuery(baseOptions: Apollo.QueryHookOptions<GetTicketByIdQuery, GetTicketByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTicketByIdQuery, GetTicketByIdQueryVariables>(GetTicketByIdDocument, options);
+      }
+export function useGetTicketByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTicketByIdQuery, GetTicketByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTicketByIdQuery, GetTicketByIdQueryVariables>(GetTicketByIdDocument, options);
+        }
+export type GetTicketByIdQueryHookResult = ReturnType<typeof useGetTicketByIdQuery>;
+export type GetTicketByIdLazyQueryHookResult = ReturnType<typeof useGetTicketByIdLazyQuery>;
+export type GetTicketByIdQueryResult = Apollo.QueryResult<GetTicketByIdQuery, GetTicketByIdQueryVariables>;
