@@ -1,0 +1,6 @@
+query searchPersonByWord($word: String!) {
+  searchPersonByWord(word: $word) {
+    id
+    name
+  }
+}

@@ -16,9 +16,6 @@ import { UserModule } from "@/modules/user.module";
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: "schema.graphql",
-      buildSchemaOptions: {
-        dateScalarMode: "isoDate",
-      },
     }),
     PrismaModule,
     UserModule,

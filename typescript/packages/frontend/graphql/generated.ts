@@ -241,6 +241,13 @@ export type GetTicketByIdQueryVariables = Exact<{
 
 export type GetTicketByIdQuery = { getTicketById?: { id: string, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, bucketName: string, filePath: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined, personSuggestions?: Array<{ person: { id: string, name: string } }> | null | undefined, _count: { ticketUserLikes: number } } | null | undefined };
 
+export type SearchPersonByWordQueryVariables = Exact<{
+  word: Scalars['String'];
+}>;
+
+
+export type SearchPersonByWordQuery = { searchPersonByWord: Array<{ id: string, name: string }> };
+
 
 export const CreateTicketByExternalImageUrlDocument = gql`
     mutation createTicketByExternalImageUrl($externalImageUrl: String!) {
@@ -411,3 +418,39 @@ export function useGetTicketByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetTicketByIdQueryHookResult = ReturnType<typeof useGetTicketByIdQuery>;
 export type GetTicketByIdLazyQueryHookResult = ReturnType<typeof useGetTicketByIdLazyQuery>;
 export type GetTicketByIdQueryResult = Apollo.QueryResult<GetTicketByIdQuery, GetTicketByIdQueryVariables>;
+export const SearchPersonByWordDocument = gql`
+    query searchPersonByWord($word: String!) {
+  searchPersonByWord(word: $word) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useSearchPersonByWordQuery__
+ *
+ * To run a query within a React component, call `useSearchPersonByWordQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchPersonByWordQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchPersonByWordQuery({
+ *   variables: {
+ *      word: // value for 'word'
+ *   },
+ * });
+ */
+export function useSearchPersonByWordQuery(baseOptions: Apollo.QueryHookOptions<SearchPersonByWordQuery, SearchPersonByWordQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchPersonByWordQuery, SearchPersonByWordQueryVariables>(SearchPersonByWordDocument, options);
+      }
+export function useSearchPersonByWordLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPersonByWordQuery, SearchPersonByWordQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchPersonByWordQuery, SearchPersonByWordQueryVariables>(SearchPersonByWordDocument, options);
+        }
+export type SearchPersonByWordQueryHookResult = ReturnType<typeof useSearchPersonByWordQuery>;
+export type SearchPersonByWordLazyQueryHookResult = ReturnType<typeof useSearchPersonByWordLazyQuery>;
+export type SearchPersonByWordQueryResult = Apollo.QueryResult<SearchPersonByWordQuery, SearchPersonByWordQueryVariables>;
