@@ -22,5 +22,8 @@ query getTicketById($id: String!) {
       id
       name
     }
+    _count {
+      ticketUserLikes
+    }
   }
 }

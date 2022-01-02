@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 
 import { css } from "@emotion/react";
-import { Divider, Header, Label, Segment } from "semantic-ui-react";
+import { Button, Divider, Header, Label, Segment } from "semantic-ui-react";
 
 import { GetTicketByIdQuery } from "@/graphql/generated";
 
@@ -12,7 +12,7 @@ export type Props = {
 
 export const TicketDetailPage: React.VFC<Props> = (props) => {
   const {
-    getTicketByIdData: { externalImage },
+    getTicketByIdData: { externalImage, _count },
     isAccepting,
   } = props;
 
@@ -47,12 +47,20 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
         </Header.Content>
       </Header>
       <Segment>
+        <Button
+          color="red"
+          content="Like"
+          icon="heart"
+          label={{ basic: true, color: "red", pointing: "left", content: _count.ticketUserLikes }}
+          // TODO: onClick
+        />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imageUrl}
           alt={imageUrl}
           css={css`
             width: 100%;
+            margin-top: 8px;
           `}
         />
         {isExternalUrl && <Label as="a" target="_blank" href={imageUrl} content={`画像参照先: ${imageUrl}`} />}

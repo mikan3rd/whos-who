@@ -25,6 +25,7 @@ export class TicketRepository {
         uploadedImage: true,
         ticketUserLikes: true,
         person: true,
+        _count: true,
       },
     });
   }
