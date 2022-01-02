@@ -6,24 +6,22 @@ type TicketUserLike {
   id: ID!
   ticketId: String!
   userId: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
   ticket: Ticket!
   user: User!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
+"""Date custom scalar type"""
+scalar Date
 
 type PersonSuggestionLike {
   id: ID!
   ticketId: String!
   personSuggestionId: String!
   userId: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
   ticket: Ticket!
   personSuggestion: PersonSuggestion!
   user: User!
@@ -38,8 +36,8 @@ type PersonSuggestion {
   ticketId: String!
   personId: String!
   userId: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
   ticket: Ticket!
   person: Person!
   user: User!
@@ -61,8 +59,8 @@ type User {
   email: String
   role: UserRole!
   status: UserStatus!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
   tickets: [Ticket!]
   ticketUserLikes: [TicketUserLike!]
   personSuggestions: [PersonSuggestion!]
@@ -85,8 +83,8 @@ type UploadedImage {
   id: ID!
   bucketName: String!
   filePath: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
   ticket: Ticket
 }
 
@@ -94,8 +92,8 @@ type ExternalImage {
   id: ID!
   url: String!
   statusCode: Int!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
   ticket: Ticket
 }
 
@@ -112,8 +110,8 @@ type Ticket {
   externalImageId: String
   personId: String
   mainPersonSuggestionId: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
   user: User!
   uploadedImage: UploadedImage
   externalImage: ExternalImage
@@ -135,8 +133,8 @@ type Occupation {
   nameHiragana: String
   nameKatakana: String
   nameAlphabet: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
   persons: [Person!]
   _count: OccupationCount!
 }
@@ -152,10 +150,10 @@ type Person {
   nameHiragana: String
   nameKatakana: String
   nameAlphabet: String
-  birthDate: DateTime
+  birthDate: Date
   occupationId: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
   tickets: [Ticket!]
   occupation: Occupation
   personSuggestions: [PersonSuggestion!]

@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 
 import { css } from "@emotion/react";
+import dayjs from "dayjs";
 import Link from "next/link";
 import { Button, Divider, Header, Label, Message, Segment } from "semantic-ui-react";
 
@@ -13,7 +14,7 @@ export type Props = {
 
 export const TicketDetailPage: React.VFC<Props> = (props) => {
   const {
-    getTicketByIdData: { user, externalImage, personSuggestions, _count },
+    getTicketByIdData: { user, externalImage, personSuggestions, createdAt, _count },
     isAccepting,
   } = props;
 
@@ -63,11 +64,24 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
             // TODO: onClick
             // TODO: basic when user liked
           />
-          <Link href={`/user/detail/${user.id}`} passHref>
-            <Label
-              content={`投稿者: ${user.role !== "NONE" ? user.displayName : `ゲストユーザー${user.id.slice(0, 5)}`}`}
-            />
-          </Link>
+          <div
+            css={css`
+              text-align: right;
+            `}
+          >
+            <label>作成日: {dayjs(createdAt).format("YYYY/MM/DD HH:mm")}</label>
+            <br />
+            <Link href={`/user/detail/${user.id}`} passHref>
+              <Label
+                content={`投稿者: ${user.role !== "NONE" ? user.displayName : `ゲストユーザー${user.id.slice(0, 5)}`}`}
+                css={css`
+                  &&& {
+                    margin-top: 4px;
+                  }
+                `}
+              />
+            </Link>
+          </div>
         </div>
 
         {/* eslint-disable-next-line @next/next/no-img-element */}
