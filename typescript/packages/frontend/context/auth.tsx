@@ -71,7 +71,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     localStorage.removeItem("token");
     client.clearStore();
 
-    dispatch({ type: "SetFirebaseUser", payload: null });
+    // TODO: 複数のソーシャルアカウントを使い分ける場合の考慮
     dispatch({ type: "SetCurrentUser", payload: null });
 
     toast({
