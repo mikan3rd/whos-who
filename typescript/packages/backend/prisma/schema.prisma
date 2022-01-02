@@ -34,24 +34,30 @@ model User {
   createdAt   DateTime   @default(now()) @db.DateTime(0)
   updatedAt   DateTime   @default(now()) @updatedAt @db.DateTime(0)
 
-  tickets         Ticket[]
-  ticketUserLikes TicketUserLike[]
+  tickets               Ticket[]
+  ticketUserLikes       TicketUserLike[]
+  personSuggestions     PersonSuggestion[]
+  PersonSuggestionLikes PersonSuggestionLike[]
 }
 
 model Ticket {
-  id              String   @id @default(uuid())
-  userId          String   @db.VarChar(255)
-  uploadedImageId String?  @unique @db.VarChar(255)
-  externalImageId String?  @unique @db.VarChar(255)
-  personId        String?  @db.VarChar(255)
-  createdAt       DateTime @default(now()) @db.DateTime(0)
-  updatedAt       DateTime @default(now()) @updatedAt @db.DateTime(0)
+  id                     String   @id @default(uuid())
+  userId                 String   @db.VarChar(255)
+  uploadedImageId        String?  @unique @db.VarChar(255)
+  externalImageId        String?  @unique @db.VarChar(255)
+  personId               String?  @db.VarChar(255)
+  mainPersonSuggestionId String?  @unique @db.VarChar(255)
+  createdAt              DateTime @default(now()) @db.DateTime(0)
+  updatedAt              DateTime @default(now()) @updatedAt @db.DateTime(0)
 
-  user            User             @relation(fields: [userId], references: [id])
-  uploadedImage   UploadedImage?   @relation(fields: [uploadedImageId], references: [id])
-  externalImage   ExternalImage?   @relation(fields: [externalImageId], references: [id])
-  person          Person?          @relation(fields: [personId], references: [id])
-  ticketUserLikes TicketUserLike[]
+  user                  User                   @relation(fields: [userId], references: [id])
+  uploadedImage         UploadedImage?         @relation(fields: [uploadedImageId], references: [id])
+  externalImage         ExternalImage?         @relation(fields: [externalImageId], references: [id])
+  person                Person?                @relation(fields: [personId], references: [id])
+  mainPersonSuggestion  PersonSuggestion?      @relation(name: "mainPersonSuggestion", fields: [mainPersonSuggestionId], references: [id])
+  ticketUserLikes       TicketUserLike[]
+  personSuggestions     PersonSuggestion[]
+  personSuggestionLikes PersonSuggestionLike[]
 }
 
 model UploadedImage {
@@ -87,8 +93,9 @@ model Person {
   createdAt    DateTime  @default(now()) @db.DateTime(0)
   updatedAt    DateTime  @default(now()) @updatedAt @db.DateTime(0)
 
-  tickets    Ticket[]
-  occupation Occupation? @relation(fields: [occupationId], references: [id])
+  tickets           Ticket[]
+  occupation        Occupation?        @relation(fields: [occupationId], references: [id])
+  personSuggestions PersonSuggestion[]
 }
 
 model Occupation {
@@ -100,7 +107,7 @@ model Occupation {
   createdAt    DateTime @default(now()) @db.DateTime(0)
   updatedAt    DateTime @default(now()) @updatedAt @db.DateTime(0)
 
-  Person Person[]
+  persons Person[]
 }
 
 model TicketUserLike {
@@ -112,6 +119,39 @@ model TicketUserLike {
 
   ticket Ticket @relation(fields: [ticketId], references: [id])
   user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([ticketId, userId])
+}
+
+model PersonSuggestion {
+  id        String   @id @default(uuid())
+  ticketId  String   @db.VarChar(255)
+  personId  String   @db.VarChar(255)
+  userId    String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  ticket                Ticket                 @relation(fields: [ticketId], references: [id])
+  person                Person                 @relation(fields: [personId], references: [id])
+  user                  User                   @relation(fields: [userId], references: [id])
+  personSuggestionLikes PersonSuggestionLike[]
+  mainTicket            Ticket?                @relation("mainPersonSuggestion")
+
+  @@unique([ticketId, personId])
+  @@unique([ticketId, userId])
+}
+
+model PersonSuggestionLike {
+  id                 String   @id @default(uuid())
+  ticketId           String   @db.VarChar(255)
+  personSuggestionId String   @db.VarChar(255)
+  userId             String   @db.VarChar(255)
+  createdAt          DateTime @default(now()) @db.DateTime(0)
+  updatedAt          DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  ticket           Ticket           @relation(fields: [ticketId], references: [id])
+  personSuggestion PersonSuggestion @relation(fields: [personSuggestionId], references: [id])
+  user             User             @relation(fields: [userId], references: [id])
 
   @@unique([ticketId, userId])
 }

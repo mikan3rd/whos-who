@@ -5,6 +5,8 @@ import { UserRole } from '../prisma/user-role.enum';
 import { UserStatus } from '../prisma/user-status.enum';
 import { Ticket } from '../ticket/ticket.model';
 import { TicketUserLike } from '../ticket-user-like/ticket-user-like.model';
+import { PersonSuggestion } from '../person-suggestion/person-suggestion.model';
+import { PersonSuggestionLike } from '../person-suggestion-like/person-suggestion-like.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -36,6 +38,12 @@ export class User {
 
     @Field(() => [TicketUserLike], {nullable:true})
     ticketUserLikes?: Array<TicketUserLike>;
+
+    @Field(() => [PersonSuggestion], {nullable:true})
+    personSuggestions?: Array<PersonSuggestion>;
+
+    @Field(() => [PersonSuggestionLike], {nullable:true})
+    PersonSuggestionLikes?: Array<PersonSuggestionLike>;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

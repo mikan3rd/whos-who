@@ -6,6 +6,7 @@ export enum TicketScalarFieldEnum {
     uploadedImageId = "uploadedImageId",
     externalImageId = "externalImageId",
     personId = "personId",
+    mainPersonSuggestionId = "mainPersonSuggestionId",
     createdAt = "createdAt",
     updatedAt = "updatedAt"
 }

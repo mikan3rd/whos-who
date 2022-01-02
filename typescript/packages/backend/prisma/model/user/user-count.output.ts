@@ -10,4 +10,10 @@ export class UserCount {
 
     @Field(() => Int, {nullable:false})
     ticketUserLikes!: number;
+
+    @Field(() => Int, {nullable:false})
+    personSuggestions!: number;
+
+    @Field(() => Int, {nullable:false})
+    PersonSuggestionLikes!: number;
 }

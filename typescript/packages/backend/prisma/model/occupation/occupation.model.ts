@@ -29,7 +29,7 @@ export class Occupation {
     updatedAt!: Date;
 
     @Field(() => [Person], {nullable:true})
-    Person?: Array<Person>;
+    persons?: Array<Person>;
 
     @Field(() => OccupationCount, {nullable:false})
     _count?: OccupationCount;

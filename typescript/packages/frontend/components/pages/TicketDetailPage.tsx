@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 
 import { css } from "@emotion/react";
+import Link from "next/link";
 import { Button, Divider, Header, Label, Segment } from "semantic-ui-react";
 
 import { GetTicketByIdQuery } from "@/graphql/generated";
@@ -12,7 +13,7 @@ export type Props = {
 
 export const TicketDetailPage: React.VFC<Props> = (props) => {
   const {
-    getTicketByIdData: { externalImage, _count },
+    getTicketByIdData: { user, externalImage, _count },
     isAccepting,
   } = props;
 
@@ -47,13 +48,28 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
         </Header.Content>
       </Header>
       <Segment>
-        <Button
-          color="red"
-          content="Like"
-          icon="heart"
-          label={{ basic: true, color: "red", pointing: "left", content: _count.ticketUserLikes }}
-          // TODO: onClick
-        />
+        <div
+          css={css`
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+          `}
+        >
+          <Button
+            color="red"
+            content="Like"
+            icon="heart"
+            label={{ basic: true, color: "red", pointing: "left", content: _count.ticketUserLikes }}
+            // TODO: onClick
+            // TODO: basic when user liked
+          />
+          <Link href={`/user/detail/${user.id}`} passHref>
+            <Label
+              content={`投稿者: ${user.role !== "NONE" ? user.displayName : `ゲストユーザー${user.id.slice(0, 5)}`}`}
+            />
+          </Link>
+        </div>
+
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imageUrl}

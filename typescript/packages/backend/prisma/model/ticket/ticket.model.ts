@@ -5,7 +5,9 @@ import { User } from '../user/user.model';
 import { UploadedImage } from '../uploaded-image/uploaded-image.model';
 import { ExternalImage } from '../external-image/external-image.model';
 import { Person } from '../person/person.model';
+import { PersonSuggestion } from '../person-suggestion/person-suggestion.model';
 import { TicketUserLike } from '../ticket-user-like/ticket-user-like.model';
+import { PersonSuggestionLike } from '../person-suggestion-like/person-suggestion-like.model';
 import { TicketCount } from './ticket-count.output';
 
 @ObjectType()
@@ -26,6 +28,9 @@ export class Ticket {
     @Field(() => String, {nullable:true})
     personId!: string | null;
 
+    @Field(() => String, {nullable:true})
+    mainPersonSuggestionId!: string | null;
+
     @Field(() => Date, {nullable:false})
     createdAt!: Date;
 
@@ -44,8 +49,17 @@ export class Ticket {
     @Field(() => Person, {nullable:true})
     person?: Person | null;
 
+    @Field(() => PersonSuggestion, {nullable:true})
+    mainPersonSuggestion?: PersonSuggestion | null;
+
     @Field(() => [TicketUserLike], {nullable:true})
     ticketUserLikes?: Array<TicketUserLike>;
+
+    @Field(() => [PersonSuggestion], {nullable:true})
+    personSuggestions?: Array<PersonSuggestion>;
+
+    @Field(() => [PersonSuggestionLike], {nullable:true})
+    personSuggestionLikes?: Array<PersonSuggestionLike>;
 
     @Field(() => TicketCount, {nullable:false})
     _count?: TicketCount;
