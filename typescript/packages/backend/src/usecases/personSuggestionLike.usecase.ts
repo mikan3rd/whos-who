@@ -21,6 +21,9 @@ export class PersonSuggestionLikeUsecase {
       userId,
     });
     if (personSuggestionLike !== null) {
+      if (personSuggestionLike.personSuggestionId === personSuggestionId) {
+        return personSuggestionLike;
+      }
       await this.personSuggestionLikeRepository.delete(personSuggestionLike.id);
     }
     return await this.personSuggestionLikeRepository.create({

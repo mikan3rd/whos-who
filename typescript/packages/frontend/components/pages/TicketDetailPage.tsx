@@ -21,6 +21,7 @@ import {
 
 import {
   GetTicketByIdQuery,
+  useCreatePersonSuggestionLikeMutation,
   useCreatePersonSuggestionMutation,
   useSearchPersonByWordLazyQuery,
 } from "@/graphql/generated";
@@ -42,6 +43,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
 
   const [searchPersonByWord, { data: searchPersonResult, loading: searchLoading }] = useSearchPersonByWordLazyQuery();
   const [createPersonSuggestion, { loading: createLoading }] = useCreatePersonSuggestionMutation();
+  const [createPersonSuggestionLike, { loading: createLikeLoading }] = useCreatePersonSuggestionLikeMutation();
 
   const [searchText, setSearchText] = useState("");
   const [debounce, setDebounce] = useState(false);
@@ -131,6 +133,20 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
       });
     }
   }, [createPersonSuggestion, isValid, refetchTicket, selectedPerson, ticketId]);
+
+  const handleCreatePersonSuggestionLike = useCallback(
+    async (personSuggestionId: string) => {
+      const { data } = await createPersonSuggestionLike({ variables: { personSuggestionId } });
+      if (data !== undefined && data !== null) {
+        await refetchTicket();
+        toast({
+          type: "success",
+          title: "投票しました！",
+        });
+      }
+    },
+    [createPersonSuggestionLike, refetchTicket],
+  );
 
   return (
     <>
@@ -225,12 +241,47 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
             _count: { personSuggestionLikes },
           } = personSuggestion;
           return (
-            <Card key={personSuggestionId} fluid>
-              <Card.Content>
-                <Card.Header>{person.name}</Card.Header>
-                <Card.Meta>{personSuggestionLikes}票</Card.Meta>
-              </Card.Content>
-            </Card>
+            <div
+              key={personSuggestionId}
+              css={css`
+                &&& {
+                  position: relative;
+                }
+              `}
+            >
+              <Link href={`/person/detail/${person.id}`} passHref>
+                <Card
+                  fluid
+                  css={css`
+                    &&& {
+                      transform: none !important;
+                    }
+                  `}
+                >
+                  <Card.Content>
+                    <Card.Header>{person.name}</Card.Header>
+                    <Card.Meta>{personSuggestionLikes}票</Card.Meta>
+                  </Card.Content>
+                </Card>
+              </Link>
+              <Button
+                content="投票する"
+                color="blue"
+                size="small"
+                loading={createLikeLoading}
+                onClick={() => handleCreatePersonSuggestionLike(personSuggestionId)}
+                css={css`
+                  &&& {
+                    position: absolute !important;
+                    top: 1em;
+                    right: 1em;
+                    margin: 0;
+                    width: fit-content;
+                    z-index: 5;
+                  }
+                `}
+              />
+            </div>
           );
         })}
 

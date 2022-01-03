@@ -28,12 +28,18 @@ export type ExternalImage = {
 
 export type Mutation = {
   createPersonSuggestion: PersonSuggestion;
+  createPersonSuggestionLike: PersonSuggestionLike;
   createTicketByExternalImageUrl: Ticket;
 };
 
 
 export type MutationCreatePersonSuggestionArgs = {
   personSuggestionCreate: PersonSuggestionCreateInput;
+};
+
+
+export type MutationCreatePersonSuggestionLikeArgs = {
+  personSuggestionId: Scalars['String'];
 };
 
 
@@ -190,6 +196,7 @@ export type User = {
   email?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   personSuggestions?: Maybe<Array<PersonSuggestion>>;
+  point: Scalars['Int'];
   role: UserRole;
   status: UserStatus;
   ticketUserLikes?: Maybe<Array<TicketUserLike>>;
@@ -221,6 +228,13 @@ export type CreatePersonSuggestionMutationVariables = Exact<{
 
 
 export type CreatePersonSuggestionMutation = { createPersonSuggestion: { id: string } };
+
+export type CreatePersonSuggestionLikeMutationVariables = Exact<{
+  personSuggestionId: Scalars['String'];
+}>;
+
+
+export type CreatePersonSuggestionLikeMutation = { createPersonSuggestionLike: { id: string } };
 
 export type CreateTicketByExternalImageUrlMutationVariables = Exact<{
   externalImageUrl: Scalars['String'];
@@ -289,6 +303,39 @@ export function useCreatePersonSuggestionMutation(baseOptions?: Apollo.MutationH
 export type CreatePersonSuggestionMutationHookResult = ReturnType<typeof useCreatePersonSuggestionMutation>;
 export type CreatePersonSuggestionMutationResult = Apollo.MutationResult<CreatePersonSuggestionMutation>;
 export type CreatePersonSuggestionMutationOptions = Apollo.BaseMutationOptions<CreatePersonSuggestionMutation, CreatePersonSuggestionMutationVariables>;
+export const CreatePersonSuggestionLikeDocument = gql`
+    mutation createPersonSuggestionLike($personSuggestionId: String!) {
+  createPersonSuggestionLike(personSuggestionId: $personSuggestionId) {
+    id
+  }
+}
+    `;
+export type CreatePersonSuggestionLikeMutationFn = Apollo.MutationFunction<CreatePersonSuggestionLikeMutation, CreatePersonSuggestionLikeMutationVariables>;
+
+/**
+ * __useCreatePersonSuggestionLikeMutation__
+ *
+ * To run a mutation, you first call `useCreatePersonSuggestionLikeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePersonSuggestionLikeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPersonSuggestionLikeMutation, { data, loading, error }] = useCreatePersonSuggestionLikeMutation({
+ *   variables: {
+ *      personSuggestionId: // value for 'personSuggestionId'
+ *   },
+ * });
+ */
+export function useCreatePersonSuggestionLikeMutation(baseOptions?: Apollo.MutationHookOptions<CreatePersonSuggestionLikeMutation, CreatePersonSuggestionLikeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreatePersonSuggestionLikeMutation, CreatePersonSuggestionLikeMutationVariables>(CreatePersonSuggestionLikeDocument, options);
+      }
+export type CreatePersonSuggestionLikeMutationHookResult = ReturnType<typeof useCreatePersonSuggestionLikeMutation>;
+export type CreatePersonSuggestionLikeMutationResult = Apollo.MutationResult<CreatePersonSuggestionLikeMutation>;
+export type CreatePersonSuggestionLikeMutationOptions = Apollo.BaseMutationOptions<CreatePersonSuggestionLikeMutation, CreatePersonSuggestionLikeMutationVariables>;
 export const CreateTicketByExternalImageUrlDocument = gql`
     mutation createTicketByExternalImageUrl($externalImageUrl: String!) {
   createTicketByExternalImageUrl(externalImageUrl: $externalImageUrl) {

@@ -1,0 +1,5 @@
+mutation createPersonSuggestionLike($personSuggestionId: String!) {
+  createPersonSuggestionLike(personSuggestionId: $personSuggestionId) {
+    id
+  }
+}
