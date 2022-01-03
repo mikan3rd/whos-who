@@ -170,9 +170,13 @@ type Query {
 
 type Mutation {
   createTicketByExternalImageUrl(externalImageUrl: String!): Ticket!
+  createTicketByUploadImageFile(file: Upload!): Ticket!
   createPersonSuggestion(personSuggestionCreate: PersonSuggestionCreateInput!): PersonSuggestion!
   createPersonSuggestionLike(personSuggestionId: String!): PersonSuggestionLike!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input PersonSuggestionCreateInput {
   ticketId: String!

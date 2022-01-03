@@ -15,6 +15,8 @@ export type Scalars = {
   Float: number;
   /** Date custom scalar type */
   Date: string;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: File;
 };
 
 export type ExternalImage = {
@@ -30,6 +32,7 @@ export type Mutation = {
   createPersonSuggestion: PersonSuggestion;
   createPersonSuggestionLike: PersonSuggestionLike;
   createTicketByExternalImageUrl: Ticket;
+  createTicketByUploadImageFile: Ticket;
 };
 
 
@@ -45,6 +48,11 @@ export type MutationCreatePersonSuggestionLikeArgs = {
 
 export type MutationCreateTicketByExternalImageUrlArgs = {
   externalImageUrl: Scalars['String'];
+};
+
+
+export type MutationCreateTicketByUploadImageFileArgs = {
+  file: Scalars['Upload'];
 };
 
 export type Occupation = {
@@ -243,6 +251,13 @@ export type CreateTicketByExternalImageUrlMutationVariables = Exact<{
 
 export type CreateTicketByExternalImageUrlMutation = { createTicketByExternalImageUrl: { id: string } };
 
+export type CreateTicketByUploadImageFileMutationVariables = Exact<{
+  file: Scalars['Upload'];
+}>;
+
+
+export type CreateTicketByUploadImageFileMutation = { createTicketByUploadImageFile: { id: string } };
+
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -369,6 +384,39 @@ export function useCreateTicketByExternalImageUrlMutation(baseOptions?: Apollo.M
 export type CreateTicketByExternalImageUrlMutationHookResult = ReturnType<typeof useCreateTicketByExternalImageUrlMutation>;
 export type CreateTicketByExternalImageUrlMutationResult = Apollo.MutationResult<CreateTicketByExternalImageUrlMutation>;
 export type CreateTicketByExternalImageUrlMutationOptions = Apollo.BaseMutationOptions<CreateTicketByExternalImageUrlMutation, CreateTicketByExternalImageUrlMutationVariables>;
+export const CreateTicketByUploadImageFileDocument = gql`
+    mutation createTicketByUploadImageFile($file: Upload!) {
+  createTicketByUploadImageFile(file: $file) {
+    id
+  }
+}
+    `;
+export type CreateTicketByUploadImageFileMutationFn = Apollo.MutationFunction<CreateTicketByUploadImageFileMutation, CreateTicketByUploadImageFileMutationVariables>;
+
+/**
+ * __useCreateTicketByUploadImageFileMutation__
+ *
+ * To run a mutation, you first call `useCreateTicketByUploadImageFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTicketByUploadImageFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTicketByUploadImageFileMutation, { data, loading, error }] = useCreateTicketByUploadImageFileMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useCreateTicketByUploadImageFileMutation(baseOptions?: Apollo.MutationHookOptions<CreateTicketByUploadImageFileMutation, CreateTicketByUploadImageFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTicketByUploadImageFileMutation, CreateTicketByUploadImageFileMutationVariables>(CreateTicketByUploadImageFileDocument, options);
+      }
+export type CreateTicketByUploadImageFileMutationHookResult = ReturnType<typeof useCreateTicketByUploadImageFileMutation>;
+export type CreateTicketByUploadImageFileMutationResult = Apollo.MutationResult<CreateTicketByUploadImageFileMutation>;
+export type CreateTicketByUploadImageFileMutationOptions = Apollo.BaseMutationOptions<CreateTicketByUploadImageFileMutation, CreateTicketByUploadImageFileMutationVariables>;
 export const GetCurrentUserDocument = gql`
     query getCurrentUser {
   getCurrentUser {

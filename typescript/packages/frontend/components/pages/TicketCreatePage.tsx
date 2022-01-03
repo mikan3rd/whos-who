@@ -4,10 +4,11 @@ import { css } from "@emotion/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { toast } from "react-semantic-toasts";
-import { Button, Divider, Form, Header, Label, Message, Segment } from "semantic-ui-react";
+import { Button, Divider, Form, Header, Message, Segment } from "semantic-ui-react";
 
 import {
   useCreateTicketByExternalImageUrlMutation,
+  useCreateTicketByUploadImageFileMutation,
   useGetTicketByExternalImageUrlLazyQuery,
 } from "@/graphql/generated";
 
@@ -19,6 +20,7 @@ export const TicketCreatePage: React.VFC = () => {
   const [getTicket, { data: getTicketData }] = useGetTicketByExternalImageUrlLazyQuery();
   const [createTicketByExternalImageUrl, { loading: createTicketLoading }] =
     useCreateTicketByExternalImageUrlMutation();
+  const [createTicketByUploadImageFile, { loading: uploadImageLoading }] = useCreateTicketByUploadImageFileMutation();
 
   const [imageType, setImageType] = useState<ImageType>("externalImageUrl");
   const [externalImageUrl, setExternalImageUrl] = useState("");
@@ -79,12 +81,42 @@ export const TicketCreatePage: React.VFC = () => {
         });
       }
     }
-  }, [createTicketByExternalImageUrl, externalImageUrl, imageType, isValid, router]);
+
+    if (imageType === "uploadImage" && uploadFile !== null) {
+      console.log(uploadFile);
+      const { data } = await createTicketByUploadImageFile({
+        variables: {
+          file: uploadFile,
+        },
+      });
+      if (data !== undefined && data !== null) {
+        await router.push({
+          pathname: "/ticket/detail/[id]",
+          query: { id: data.createTicketByUploadImageFile.id },
+        });
+        toast({
+          type: "success",
+          title: "画像を投稿しました！",
+        });
+      }
+    }
+  }, [
+    createTicketByExternalImageUrl,
+    createTicketByUploadImageFile,
+    externalImageUrl,
+    imageType,
+    isValid,
+    router,
+    uploadFile,
+  ]);
 
   useEffect(() => {
     const checkValid = async () => {
       setIsImageValid(false);
       if (imageType === "externalImageUrl") {
+        if (externalImageUrl === "") {
+          return false;
+        }
         const result = await loadImage(externalImageUrl);
         setIsImageValid(result);
         if (result) {
@@ -135,17 +167,9 @@ export const TicketCreatePage: React.VFC = () => {
                   `}
                 >
                   画像のURLを入力してください
-                  <span
-                    css={css`
-                      color: gray;
-                      margin-left: 8px;
-                    `}
-                  >
-                    例: https://example.jpg
-                  </span>
                 </label>
                 <Form.Input
-                  placeholder="画像のURLを入力してください"
+                  placeholder="例: https://example.jpg"
                   value={externalImageUrl}
                   onChange={(e) => setExternalImageUrl(e.target.value)}
                   error={isImageValid ? undefined : "画像のURLが正しくありません"}
@@ -169,7 +193,13 @@ export const TicketCreatePage: React.VFC = () => {
                   label={{ pointing: "left", content: "画像をアップロード", color: "blue" }}
                   onClick={() => imageUploadRef.current?.click()}
                 />
-                <input ref={imageUploadRef} type="file" accept="image/*" hidden onChange={handleOnClickImageUpload} />
+                <input
+                  ref={imageUploadRef}
+                  type="file"
+                  accept="image/png,image/jpeg"
+                  hidden
+                  onChange={handleOnClickImageUpload}
+                />
               </>
             )}
             <Divider />
@@ -217,7 +247,7 @@ export const TicketCreatePage: React.VFC = () => {
           <Form.Button
             content="この画像の人物を募集する"
             color="blue"
-            disabled={!isValid || createTicketLoading}
+            disabled={!isValid || createTicketLoading || uploadImageLoading}
             onClick={handleCreateTicket}
           />
         </Form>
