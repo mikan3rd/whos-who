@@ -171,6 +171,7 @@ type Query {
 type Mutation {
   createTicketByExternalImageUrl(externalImageUrl: String!): Ticket!
   createPersonSuggestion(personSuggestionCreate: PersonSuggestionCreateInput!): PersonSuggestion!
+  createPersonSuggestionLike(personSuggestionId: String!): PersonSuggestionLike!
 }
 
 input PersonSuggestionCreateInput {

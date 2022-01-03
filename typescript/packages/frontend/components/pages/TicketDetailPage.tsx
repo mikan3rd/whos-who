@@ -7,6 +7,7 @@ import { toast } from "react-semantic-toasts";
 import { useDebounce } from "react-use";
 import {
   Button,
+  Card,
   Divider,
   DropdownItemProps,
   DropdownOnSearchChangeData,
@@ -60,6 +61,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
   // TODO: uploadedImageに対応
   const imageUrl = useMemo(() => externalImage?.url ?? "", [externalImage?.url]);
   const isExternalUrl = useMemo(() => externalImage?.url !== undefined, [externalImage?.url]);
+
   const isSuggested = useMemo(() => {
     if (selectedPerson === null || selectedPerson.value === NewPersonValue) {
       return false;
@@ -67,6 +69,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
     const target = personSuggestions?.find((personSuggestion) => personSuggestion.person.id === selectedPerson.value);
     return target !== undefined;
   }, [personSuggestions, selectedPerson]);
+
   const isValid = useMemo(() => {
     if (selectedPerson === null || isSuggested) {
       return false;
@@ -222,16 +225,12 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
             _count: { personSuggestionLikes },
           } = personSuggestion;
           return (
-            <div
-              key={personSuggestionId}
-              css={css`
-                display: flex;
-                justify-content: space-between;
-              `}
-            >
-              <div>{person.name}</div>
-              <div>{personSuggestionLikes}票</div>
-            </div>
+            <Card key={personSuggestionId} fluid>
+              <Card.Content>
+                <Card.Header>{person.name}</Card.Header>
+                <Card.Meta>{personSuggestionLikes}票</Card.Meta>
+              </Card.Content>
+            </Card>
           );
         })}
 

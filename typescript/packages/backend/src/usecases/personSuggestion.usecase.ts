@@ -11,6 +11,10 @@ export class PersonSuggestionUsecase {
     private ticketUsecase: TicketUsecase,
   ) {}
 
+  async getById(id: string) {
+    return await this.personSuggestionRepository.getById(id);
+  }
+
   async create(args: { ticketId: string; personId: string; userId: string }) {
     const { ticketId, personId, userId } = args;
     return this.commonCreate({

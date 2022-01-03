@@ -5,6 +5,7 @@ import { GraphQLModule } from "@nestjs/graphql";
 import { DateScalar } from "@/interfaces/scalars/index.scalar";
 import { PersonModule } from "@/modules/person.module";
 import { PersonSuggestionModule } from "@/modules/personSuggestion.module";
+import { PersonSuggestionLikeModule } from "@/modules/personSuggestionLike.module";
 import { PrismaModule } from "@/modules/prisma.module";
 import { TicketModule } from "@/modules/ticket.module";
 import { UserModule } from "@/modules/user.module";
@@ -22,6 +23,7 @@ import { UserModule } from "@/modules/user.module";
     TicketModule,
     PersonModule,
     PersonSuggestionModule,
+    PersonSuggestionLikeModule,
   ],
   controllers: [],
   providers: [DateScalar],
