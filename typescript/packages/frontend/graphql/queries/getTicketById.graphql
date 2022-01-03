@@ -1,6 +1,7 @@
 query getTicketById($id: String!) {
   getTicketById(id: $id) {
     id
+    personId
     createdAt
     updatedAt
     externalImage {
@@ -27,6 +28,9 @@ query getTicketById($id: String!) {
       person {
         id
         name
+      }
+      user {
+        id
       }
       _count {
         personSuggestionLikes

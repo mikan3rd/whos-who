@@ -7,19 +7,23 @@ import { toast } from "react-semantic-toasts";
 import { useDebounce } from "react-use";
 import {
   Button,
+  Card,
   Divider,
   DropdownItemProps,
   DropdownOnSearchChangeData,
   DropdownProps,
   Form,
   Header,
+  Icon,
   Label,
   Message,
   Segment,
 } from "semantic-ui-react";
 
+import { useAuthContext } from "@/context/auth";
 import {
   GetTicketByIdQuery,
+  useCreatePersonSuggestionLikeMutation,
   useCreatePersonSuggestionMutation,
   useSearchPersonByWordLazyQuery,
 } from "@/graphql/generated";
@@ -34,21 +38,24 @@ export type Props = {
 
 export const TicketDetailPage: React.VFC<Props> = (props) => {
   const {
-    getTicketByIdData: { id: ticketId, user, externalImage, personSuggestions, createdAt, _count },
+    getTicketByIdData: { id: ticketId, personId, user, externalImage, personSuggestions, createdAt, _count },
     isAccepting,
     refetchTicket,
   } = props;
 
+  const {
+    state: { currentUser },
+  } = useAuthContext();
+
   const [searchPersonByWord, { data: searchPersonResult, loading: searchLoading }] = useSearchPersonByWordLazyQuery();
   const [createPersonSuggestion, { loading: createLoading }] = useCreatePersonSuggestionMutation();
+  const [createPersonSuggestionLike, { loading: createLikeLoading }] = useCreatePersonSuggestionLikeMutation();
 
   const [searchText, setSearchText] = useState("");
-  const [debounce, setDebounce] = useState(false);
 
   useDebounce(
     async () => {
       await searchPersonByWord({ variables: { word: searchText } });
-      setDebounce(false);
     },
     1000,
     [searchText],
@@ -60,6 +67,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
   // TODO: uploadedImageに対応
   const imageUrl = useMemo(() => externalImage?.url ?? "", [externalImage?.url]);
   const isExternalUrl = useMemo(() => externalImage?.url !== undefined, [externalImage?.url]);
+
   const isSuggested = useMemo(() => {
     if (selectedPerson === null || selectedPerson.value === NewPersonValue) {
       return false;
@@ -67,12 +75,18 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
     const target = personSuggestions?.find((personSuggestion) => personSuggestion.person.id === selectedPerson.value);
     return target !== undefined;
   }, [personSuggestions, selectedPerson]);
+
+  const isSuggestedSelf = useMemo(() => {
+    const target = personSuggestions?.find((personSuggestion) => personSuggestion.user.id === currentUser?.id);
+    return target !== undefined;
+  }, [currentUser?.id, personSuggestions]);
+
   const isValid = useMemo(() => {
-    if (selectedPerson === null || isSuggested) {
+    if (selectedPerson === null || isSuggested || isSuggestedSelf) {
       return false;
     }
     return true;
-  }, [isSuggested, selectedPerson]);
+  }, [isSuggested, isSuggestedSelf, selectedPerson]);
 
   const personOptions = useMemo(() => {
     const options: DropdownItemProps[] =
@@ -85,7 +99,6 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
 
   const handleSearchPersonByWord = useCallback(
     (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownOnSearchChangeData) => {
-      setDebounce(true);
       setSearchText(data.searchQuery);
     },
     [],
@@ -128,6 +141,20 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
       });
     }
   }, [createPersonSuggestion, isValid, refetchTicket, selectedPerson, ticketId]);
+
+  const handleCreatePersonSuggestionLike = useCallback(
+    async (personSuggestionId: string) => {
+      const { data } = await createPersonSuggestionLike({ variables: { personSuggestionId } });
+      if (data !== undefined && data !== null) {
+        await refetchTicket();
+        toast({
+          type: "success",
+          title: "投票しました！",
+        });
+      }
+    },
+    [createPersonSuggestionLike, refetchTicket],
+  );
 
   return (
     <>
@@ -221,16 +248,52 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
             person,
             _count: { personSuggestionLikes },
           } = personSuggestion;
+          const isTop = personId === person.id;
           return (
             <div
               key={personSuggestionId}
               css={css`
-                display: flex;
-                justify-content: space-between;
+                &&& {
+                  position: relative;
+                }
               `}
             >
-              <div>{person.name}</div>
-              <div>{personSuggestionLikes}票</div>
+              <Link href={`/person/detail/${person.id}`} passHref>
+                <Card
+                  fluid
+                  color={isTop ? "green" : undefined}
+                  css={css`
+                    &&& {
+                      transform: none !important;
+                    }
+                  `}
+                >
+                  <Card.Content>
+                    <Card.Header>
+                      {isTop && <Icon name="check" color="green" />}
+                      {person.name}
+                    </Card.Header>
+                    <Card.Meta>{personSuggestionLikes}票</Card.Meta>
+                  </Card.Content>
+                </Card>
+              </Link>
+              <Button
+                content="投票する"
+                color="blue"
+                size="small"
+                disabled={createLikeLoading}
+                onClick={() => handleCreatePersonSuggestionLike(personSuggestionId)}
+                css={css`
+                  &&& {
+                    position: absolute !important;
+                    top: 1em;
+                    right: 1em;
+                    margin: 0;
+                    width: fit-content;
+                    z-index: 5;
+                  }
+                `}
+              />
             </div>
           );
         })}
@@ -256,18 +319,20 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
               clearable
               additionPosition="bottom"
               value={selectedPerson?.value}
-              loading={searchLoading || debounce}
+              loading={searchLoading}
               onSearchChange={handleSearchPersonByWord}
               onAddItem={handleAddPerson}
               onChange={handleChangePerson}
               error={isSuggested ? { content: "既に登録されている名前です" } : undefined}
             />
+          </Form.Field>
+          <Form.Field>
             <Form.Button
               content="上記の名前で登録する"
               color="blue"
-              disabled={!isValid}
-              loading={createLoading}
+              disabled={!isValid || createLoading}
               onClick={handleCreatePersonSuggestion}
+              error={isSuggestedSelf ? { content: "既に回答済みです", pointing: "left" } : undefined}
             />
           </Form.Field>
         </Form>

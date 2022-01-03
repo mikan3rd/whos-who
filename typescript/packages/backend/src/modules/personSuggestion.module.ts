@@ -8,6 +8,6 @@ import { PersonSuggestionUsecase } from "@/usecases/personSuggestion.usecase";
 @Module({
   imports: [TicketModule],
   providers: [PersonSuggestionRepository, PersonSuggestionResolver, PersonSuggestionUsecase],
-  exports: [PersonSuggestionUsecase],
+  exports: [PersonSuggestionUsecase, PersonSuggestionRepository],
 })
 export class PersonSuggestionModule {}
