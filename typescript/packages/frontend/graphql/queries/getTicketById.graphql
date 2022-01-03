@@ -28,6 +28,9 @@ query getTicketById($id: String!) {
         id
         name
       }
+      user {
+        id
+      }
       _count {
         personSuggestionLikes
       }

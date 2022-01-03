@@ -260,7 +260,7 @@ export type GetTicketByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTicketByIdQuery = { getTicketById?: { id: string, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, bucketName: string, filePath: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined, personSuggestions?: Array<{ id: string, person: { id: string, name: string }, _count: { personSuggestionLikes: number } }> | null | undefined, _count: { ticketUserLikes: number } } | null | undefined };
+export type GetTicketByIdQuery = { getTicketById?: { id: string, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, bucketName: string, filePath: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined, personSuggestions?: Array<{ id: string, person: { id: string, name: string }, user: { id: string }, _count: { personSuggestionLikes: number } }> | null | undefined, _count: { ticketUserLikes: number } } | null | undefined };
 
 export type SearchPersonByWordQueryVariables = Exact<{
   word: Scalars['String'];
@@ -470,6 +470,9 @@ export const GetTicketByIdDocument = gql`
       person {
         id
         name
+      }
+      user {
+        id
       }
       _count {
         personSuggestionLikes

@@ -19,6 +19,7 @@ import {
   Segment,
 } from "semantic-ui-react";
 
+import { useAuthContext } from "@/context/auth";
 import {
   GetTicketByIdQuery,
   useCreatePersonSuggestionLikeMutation,
@@ -41,17 +42,19 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
     refetchTicket,
   } = props;
 
+  const {
+    state: { currentUser },
+  } = useAuthContext();
+
   const [searchPersonByWord, { data: searchPersonResult, loading: searchLoading }] = useSearchPersonByWordLazyQuery();
   const [createPersonSuggestion, { loading: createLoading }] = useCreatePersonSuggestionMutation();
-  const [createPersonSuggestionLike, { loading: createLikeLoading }] = useCreatePersonSuggestionLikeMutation();
+  const [createPersonSuggestionLike] = useCreatePersonSuggestionLikeMutation();
 
   const [searchText, setSearchText] = useState("");
-  const [debounce, setDebounce] = useState(false);
 
   useDebounce(
     async () => {
       await searchPersonByWord({ variables: { word: searchText } });
-      setDebounce(false);
     },
     1000,
     [searchText],
@@ -72,12 +75,17 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
     return target !== undefined;
   }, [personSuggestions, selectedPerson]);
 
+  const isSuggestedSelf = useMemo(() => {
+    const target = personSuggestions?.find((personSuggestion) => personSuggestion.user.id === currentUser?.id);
+    return target !== undefined;
+  }, [currentUser?.id, personSuggestions]);
+
   const isValid = useMemo(() => {
-    if (selectedPerson === null || isSuggested) {
+    if (selectedPerson === null || isSuggested || isSuggestedSelf) {
       return false;
     }
     return true;
-  }, [isSuggested, selectedPerson]);
+  }, [isSuggested, isSuggestedSelf, selectedPerson]);
 
   const personOptions = useMemo(() => {
     const options: DropdownItemProps[] =
@@ -90,7 +98,6 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
 
   const handleSearchPersonByWord = useCallback(
     (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownOnSearchChangeData) => {
-      setDebounce(true);
       setSearchText(data.searchQuery);
     },
     [],
@@ -268,7 +275,6 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
                 content="投票する"
                 color="blue"
                 size="small"
-                loading={createLikeLoading}
                 onClick={() => handleCreatePersonSuggestionLike(personSuggestionId)}
                 css={css`
                   &&& {
@@ -306,18 +312,21 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
               clearable
               additionPosition="bottom"
               value={selectedPerson?.value}
-              loading={searchLoading || debounce}
+              loading={searchLoading}
               onSearchChange={handleSearchPersonByWord}
               onAddItem={handleAddPerson}
               onChange={handleChangePerson}
               error={isSuggested ? { content: "既に登録されている名前です" } : undefined}
             />
+          </Form.Field>
+          <Form.Field>
             <Form.Button
               content="上記の名前で登録する"
               color="blue"
               disabled={!isValid}
               loading={createLoading}
               onClick={handleCreatePersonSuggestion}
+              error={isSuggestedSelf ? { content: "既に回答済みです", pointing: "left" } : undefined}
             />
           </Form.Field>
         </Form>

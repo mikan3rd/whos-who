@@ -26,7 +26,7 @@ export class TicketRepository {
         ticketUserLikes: true,
         person: true,
         personSuggestions: {
-          include: { person: true, _count: true },
+          include: { person: true, user: true, _count: true },
           orderBy: { personSuggestionLikes: { _count: "desc" } },
         },
         _count: true,
