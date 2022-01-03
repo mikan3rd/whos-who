@@ -1,15 +1,16 @@
 import { inspect } from "util";
 
-import { ApolloClient, InMemoryCache, createHttpLink, from } from "@apollo/client";
+import { ApolloClient, InMemoryCache, from } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
+import { createUploadLink } from "apollo-upload-client";
 import getConfig from "next/config";
 import { toast } from "react-semantic-toasts";
 
 const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
 const APOLLO_URI = serverRuntimeConfig.APOLLO_URI ?? publicRuntimeConfig.APOLLO_URI;
 
-const httpLink = createHttpLink({
+const uploadLink = createUploadLink({
   uri: `${APOLLO_URI}/graphql`,
 });
 
@@ -53,7 +54,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 export const client = new ApolloClient({
-  link: from([authLink, errorLink, httpLink]),
+  link: from([authLink, errorLink, uploadLink]),
   cache: new InMemoryCache({
     addTypename: false,
   }),

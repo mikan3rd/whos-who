@@ -1,0 +1,5 @@
+mutation createTicketByUploadImageFile($file: Upload!) {
+  createTicketByUploadImageFile(file: $file) {
+    id
+  }
+}
