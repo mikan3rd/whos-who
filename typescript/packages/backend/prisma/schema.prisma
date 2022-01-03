@@ -85,7 +85,7 @@ model ExternalImage {
 
 model Person {
   id           String    @id @default(uuid())
-  name         String    @db.VarChar(255)
+  name         String    @unique @db.VarChar(255)
   nameHiragana String?   @db.VarChar(255)
   nameKatakana String?   @db.VarChar(255)
   nameAlphabet String?   @db.VarChar(255)
@@ -101,7 +101,7 @@ model Person {
 
 model Occupation {
   id           String   @id @default(uuid())
-  name         String   @db.VarChar(255)
+  name         String   @unique @db.VarChar(255)
   nameHiragana String?  @db.VarChar(255)
   nameKatakana String?  @db.VarChar(255)
   nameAlphabet String?  @db.VarChar(255)

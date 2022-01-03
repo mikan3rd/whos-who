@@ -11,12 +11,10 @@ export class PersonRepository {
       take: 10,
       where: {
         OR: [
-          {
-            name: { contains: word },
-            nameAlphabet: { contains: word },
-            nameHiragana: { contains: word },
-            nameKatakana: { contains: word },
-          },
+          { name: { contains: word } },
+          { nameAlphabet: { contains: word } },
+          { nameHiragana: { contains: word } },
+          { nameKatakana: { contains: word } },
         ],
       },
     });

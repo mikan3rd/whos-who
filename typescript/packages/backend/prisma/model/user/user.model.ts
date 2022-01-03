@@ -3,6 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { UserRole } from '../prisma/user-role.enum';
 import { UserStatus } from '../prisma/user-status.enum';
+import { Int } from '@nestjs/graphql';
 import { Ticket } from '../ticket/ticket.model';
 import { TicketUserLike } from '../ticket-user-like/ticket-user-like.model';
 import { PersonSuggestion } from '../person-suggestion/person-suggestion.model';
@@ -26,6 +27,9 @@ export class User {
 
     @Field(() => UserStatus, {nullable:false,defaultValue:'ACTIVE'})
     status!: keyof typeof UserStatus;
+
+    @Field(() => Int, {nullable:false,defaultValue:0})
+    point!: number;
 
     @Field(() => Date, {nullable:false})
     createdAt!: Date;

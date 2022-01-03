@@ -59,6 +59,7 @@ type User {
   email: String
   role: UserRole!
   status: UserStatus!
+  point: Int!
   createdAt: Date!
   updatedAt: Date!
   tickets: [Ticket!]

@@ -13,6 +13,12 @@ export class PersonSuggestionUsecase {
       ticket: { connect: { id: ticketId } },
       person: { connect: { id: personId } },
       user: { connect: { id: userId } },
+      personSuggestionLikes: {
+        create: {
+          user: { connect: { id: userId } },
+          ticket: { connect: { id: ticketId } },
+        },
+      },
     };
     return await this.personSuggestionRepository.create(data);
   }
@@ -23,6 +29,12 @@ export class PersonSuggestionUsecase {
       ticket: { connect: { id: ticketId } },
       person: { create: { name: personName } },
       user: { connect: { id: userId } },
+      personSuggestionLikes: {
+        create: {
+          user: { connect: { id: userId } },
+          ticket: { connect: { id: ticketId } },
+        },
+      },
     };
     return await this.personSuggestionRepository.create(data);
   }

@@ -25,7 +25,10 @@ export class TicketRepository {
         uploadedImage: true,
         ticketUserLikes: true,
         person: true,
-        personSuggestions: { include: { person: true } },
+        personSuggestions: {
+          include: { person: true, _count: true },
+          orderBy: { personSuggestionLikes: { _count: "desc" } },
+        },
         _count: true,
       },
     });

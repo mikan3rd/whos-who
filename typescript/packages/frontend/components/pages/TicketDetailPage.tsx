@@ -4,6 +4,7 @@ import { css } from "@emotion/react";
 import dayjs from "dayjs";
 import Link from "next/link";
 import { toast } from "react-semantic-toasts";
+import { useDebounce } from "react-use";
 import {
   Button,
   Divider,
@@ -36,9 +37,20 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
     isAccepting,
   } = props;
 
-  // TODO: debounce
   const [searchPersonByWord, { data: searchPersonResult, loading: searchLoading }] = useSearchPersonByWordLazyQuery();
   const [createPersonSuggestion, { loading: createLoading }] = useCreatePersonSuggestionMutation();
+
+  const [searchText, setSearchText] = useState("");
+  const [debounce, setDebounce] = useState(false);
+
+  useDebounce(
+    async () => {
+      await searchPersonByWord({ variables: { word: searchText } });
+      setDebounce(false);
+    },
+    1000,
+    [searchText],
+  );
 
   const [newPerson, setNewPerson] = useState<DropdownItemProps | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<DropdownItemProps | null>(null);
@@ -59,9 +71,10 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
 
   const handleSearchPersonByWord = useCallback(
     (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownOnSearchChangeData) => {
-      searchPersonByWord({ variables: { word: data.searchQuery } });
+      setDebounce(true);
+      setSearchText(data.searchQuery);
     },
-    [searchPersonByWord],
+    [],
   );
 
   const handleAddPerson = useCallback((event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
@@ -187,13 +200,36 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
           <Message warning header="回答はまだありません" content="あなたが最初の回答者になりませんか？" />
         )}
 
+        {personSuggestions?.map((personSuggestion) => {
+          const {
+            id: personSuggestionId,
+            person,
+            _count: { personSuggestionLikes },
+          } = personSuggestion;
+          return (
+            <div
+              key={personSuggestionId}
+              css={css`
+                display: flex;
+                justify-content: space-between;
+              `}
+            >
+              <div>{person.name}</div>
+              <div>{personSuggestionLikes}票</div>
+            </div>
+          );
+        })}
+
+        <Divider />
+
         <Form>
           <Form.Field>
-            <label>
+            <label>人物名の登録</label>
+            <p>
               この画像の人物名を入力して名前が見つかった場合は選択してください
               <br />
               見つからない場合は新規登録してください
-            </label>
+            </p>
             <Form.Dropdown
               options={personOptions}
               placeholder="人物名を入力してください"
@@ -203,14 +239,15 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
               fluid
               allowAdditions
               clearable
+              additionPosition="bottom"
               value={selectedPerson?.value}
-              loading={searchLoading}
+              loading={searchLoading || debounce}
               onSearchChange={handleSearchPersonByWord}
               onAddItem={handleAddPerson}
               onChange={handleChangePerson}
             />
             <Form.Button
-              content="上記の名前で新規登録する"
+              content="上記の名前で登録する"
               color="blue"
               disabled={selectedPerson === null || createLoading}
               onClick={handleCreatePersonSuggestion}
