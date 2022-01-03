@@ -21,4 +21,12 @@ export class TicketUsecase {
   async getByExternalImageUrl(externalImageUrl: string) {
     return await this.ticketRepository.getByExternalImageUrl(externalImageUrl);
   }
+
+  async getById(id: string) {
+    return await this.ticketRepository.getById(id);
+  }
+
+  async update(id: string, data: Prisma.TicketUpdateInput) {
+    return await this.ticketRepository.update(id, data);
+  }
 }

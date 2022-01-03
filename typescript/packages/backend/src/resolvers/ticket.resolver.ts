@@ -27,4 +27,9 @@ export class TicketResolver {
   async getTicketByExternalImageUrl(@Args("externalImageUrl") externalImageUrl: string): Promise<Ticket | null> {
     return this.ticketUsecase.getByExternalImageUrl(externalImageUrl);
   }
+
+  @Query((returns) => Ticket, { nullable: true })
+  async getTicketById(@Args("id") id: string): Promise<Ticket | null> {
+    return this.ticketUsecase.getById(id);
+  }
 }

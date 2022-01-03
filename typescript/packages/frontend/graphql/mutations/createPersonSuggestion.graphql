@@ -1,0 +1,5 @@
+mutation createPersonSuggestion($personSuggestionCreate: PersonSuggestionCreateInput!) {
+  createPersonSuggestion(personSuggestionCreate: $personSuggestionCreate) {
+    id
+  }
+}

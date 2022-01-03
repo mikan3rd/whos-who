@@ -12,6 +12,6 @@ generates:
     config:
       skipTypename: true
       scalars:
-        Date: number
+        Date: string
         BigInt: string
 

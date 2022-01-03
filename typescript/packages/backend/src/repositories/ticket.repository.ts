@@ -15,4 +15,29 @@ export class TicketRepository {
       where: { externalImage: { url: externalImageUrl } },
     });
   }
+
+  async getById(id: string) {
+    return await this.prisma.ticket.findUnique({
+      where: { id },
+      include: {
+        user: true,
+        externalImage: true,
+        uploadedImage: true,
+        ticketUserLikes: true,
+        person: true,
+        personSuggestions: {
+          include: { person: true, _count: true },
+          orderBy: { personSuggestionLikes: { _count: "desc" } },
+        },
+        _count: true,
+      },
+    });
+  }
+
+  async update(id: string, data: Prisma.TicketUpdateInput) {
+    return await this.prisma.ticket.update({
+      data,
+      where: { id },
+    });
+  }
 }

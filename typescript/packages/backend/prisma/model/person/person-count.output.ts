@@ -7,4 +7,7 @@ export class PersonCount {
 
     @Field(() => Int, {nullable:false})
     tickets!: number;
+
+    @Field(() => Int, {nullable:false})
+    personSuggestions!: number;
 }

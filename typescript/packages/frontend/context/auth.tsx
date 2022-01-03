@@ -66,19 +66,20 @@ export const AuthProvider: React.FC = ({ children }) => {
   const { firebaseUser } = state;
 
   const logout = useCallback(async () => {
-    await firebase.auth().signOut();
+    // TODO: 複数のソーシャルアカウントを使い分ける場合の考慮
+    // await firebase.auth().signOut();
 
     localStorage.removeItem("token");
     client.clearStore();
 
-    // TODO: 複数のソーシャルアカウントを使い分ける場合の考慮
     dispatch({ type: "SetCurrentUser", payload: null });
+    // dispatch({ type: "SetFirebaseUser", payload: null });
 
     toast({
       type: "success",
       title: "ログアウトしました！",
     });
-  }, [firebase]);
+  }, []);
 
   const handleCompleteCurrentUser = useCallback((data: GetCurrentUserQuery) => {
     dispatch({ type: "SetCurrentUser", payload: data.getCurrentUser });

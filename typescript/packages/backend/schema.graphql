@@ -6,20 +6,51 @@ type TicketUserLike {
   id: ID!
   ticketId: String!
   userId: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
   ticket: Ticket!
   user: User!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
+"""Date custom scalar type"""
+scalar Date
+
+type PersonSuggestionLike {
+  id: ID!
+  ticketId: String!
+  personSuggestionId: String!
+  userId: String!
+  createdAt: Date!
+  updatedAt: Date!
+  ticket: Ticket!
+  personSuggestion: PersonSuggestion!
+  user: User!
+}
+
+type PersonSuggestionCount {
+  personSuggestionLikes: Int!
+}
+
+type PersonSuggestion {
+  id: ID!
+  ticketId: String!
+  personId: String!
+  userId: String!
+  createdAt: Date!
+  updatedAt: Date!
+  ticket: Ticket!
+  person: Person!
+  user: User!
+  personSuggestionLikes: [PersonSuggestionLike!]
+  mainTicket: Ticket
+  _count: PersonSuggestionCount!
+}
 
 type UserCount {
   tickets: Int!
   ticketUserLikes: Int!
+  personSuggestions: Int!
+  PersonSuggestionLikes: Int!
 }
 
 type User {
@@ -28,10 +59,13 @@ type User {
   email: String
   role: UserRole!
   status: UserStatus!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  point: Int!
+  createdAt: Date!
+  updatedAt: Date!
   tickets: [Ticket!]
   ticketUserLikes: [TicketUserLike!]
+  personSuggestions: [PersonSuggestion!]
+  PersonSuggestionLikes: [PersonSuggestionLike!]
   _count: UserCount!
 }
 
@@ -50,8 +84,8 @@ type UploadedImage {
   id: ID!
   bucketName: String!
   filePath: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
   ticket: Ticket
 }
 
@@ -59,48 +93,15 @@ type ExternalImage {
   id: ID!
   url: String!
   statusCode: Int!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: Date!
+  updatedAt: Date!
   ticket: Ticket
-}
-
-type OccupationCount {
-  Person: Int!
-}
-
-type Occupation {
-  id: ID!
-  name: String!
-  nameHiragana: String
-  nameKatakana: String
-  nameAlphabet: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  Person: [Person!]
-  _count: OccupationCount!
-}
-
-type PersonCount {
-  tickets: Int!
-}
-
-type Person {
-  id: ID!
-  name: String!
-  nameHiragana: String
-  nameKatakana: String
-  nameAlphabet: String
-  birthDate: DateTime
-  occupationId: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  tickets: [Ticket!]
-  occupation: Occupation
-  _count: PersonCount!
 }
 
 type TicketCount {
   ticketUserLikes: Int!
+  personSuggestions: Int!
+  personSuggestionLikes: Int!
 }
 
 type Ticket {
@@ -109,21 +110,71 @@ type Ticket {
   uploadedImageId: String
   externalImageId: String
   personId: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  mainPersonSuggestionId: String
+  createdAt: Date!
+  updatedAt: Date!
   user: User!
   uploadedImage: UploadedImage
   externalImage: ExternalImage
   person: Person
+  mainPersonSuggestion: PersonSuggestion
   ticketUserLikes: [TicketUserLike!]
+  personSuggestions: [PersonSuggestion!]
+  personSuggestionLikes: [PersonSuggestionLike!]
   _count: TicketCount!
+}
+
+type OccupationCount {
+  persons: Int!
+}
+
+type Occupation {
+  id: ID!
+  name: String!
+  nameHiragana: String
+  nameKatakana: String
+  nameAlphabet: String
+  createdAt: Date!
+  updatedAt: Date!
+  persons: [Person!]
+  _count: OccupationCount!
+}
+
+type PersonCount {
+  tickets: Int!
+  personSuggestions: Int!
+}
+
+type Person {
+  id: ID!
+  name: String!
+  nameHiragana: String
+  nameKatakana: String
+  nameAlphabet: String
+  birthDate: Date
+  occupationId: String
+  createdAt: Date!
+  updatedAt: Date!
+  tickets: [Ticket!]
+  occupation: Occupation
+  personSuggestions: [PersonSuggestion!]
+  _count: PersonCount!
 }
 
 type Query {
   getCurrentUser: User!
   getTicketByExternalImageUrl(externalImageUrl: String!): Ticket
+  getTicketById(id: String!): Ticket
+  searchPersonByWord(word: String!): [Person!]!
 }
 
 type Mutation {
   createTicketByExternalImageUrl(externalImageUrl: String!): Ticket!
+  createPersonSuggestion(personSuggestionCreate: PersonSuggestionCreateInput!): PersonSuggestion!
+}
+
+input PersonSuggestionCreateInput {
+  ticketId: String!
+  personId: String
+  personName: String
 }

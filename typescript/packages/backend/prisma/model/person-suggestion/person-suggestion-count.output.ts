@@ -3,13 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
 
 @ObjectType()
-export class TicketCount {
-
-    @Field(() => Int, {nullable:false})
-    ticketUserLikes!: number;
-
-    @Field(() => Int, {nullable:false})
-    personSuggestions!: number;
+export class PersonSuggestionCount {
 
     @Field(() => Int, {nullable:false})
     personSuggestionLikes!: number;

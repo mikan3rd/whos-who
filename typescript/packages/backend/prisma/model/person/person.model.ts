@@ -3,6 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { Ticket } from '../ticket/ticket.model';
 import { Occupation } from '../occupation/occupation.model';
+import { PersonSuggestion } from '../person-suggestion/person-suggestion.model';
 import { PersonCount } from './person-count.output';
 
 @ObjectType()
@@ -40,6 +41,9 @@ export class Person {
 
     @Field(() => Occupation, {nullable:true})
     occupation?: Occupation | null;
+
+    @Field(() => [PersonSuggestion], {nullable:true})
+    personSuggestions?: Array<PersonSuggestion>;
 
     @Field(() => PersonCount, {nullable:false})
     _count?: PersonCount;

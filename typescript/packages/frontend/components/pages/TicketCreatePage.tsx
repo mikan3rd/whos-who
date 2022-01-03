@@ -76,16 +76,11 @@ export const TicketCreatePage: React.VFC = () => {
       return;
     }
     if (imageType === "externalImageUrl") {
-      const { data, errors } = await createTicketByExternalImageUrl({
+      const { data } = await createTicketByExternalImageUrl({
         variables: {
           externalImageUrl,
         },
       });
-      if (errors !== undefined) {
-        // eslint-disable-next-line no-console
-        console.error(errors);
-        return;
-      }
       if (data !== undefined && data !== null) {
         await router.push({
           pathname: "/ticket/detail/[id]",

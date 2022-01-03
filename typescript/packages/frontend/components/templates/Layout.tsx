@@ -42,8 +42,7 @@ export const Layout = React.memo(({ children }) => {
         <Container
           text
           css={css`
-            margin-top: 0;
-            padding: 10px 0 100px 0;
+            padding: 16px 0 100px 0;
             @media (max-width: 600px) {
               margin-top: 60px;
             }

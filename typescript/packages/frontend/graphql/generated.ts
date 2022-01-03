@@ -13,21 +13,27 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
-  DateTime: any;
+  /** Date custom scalar type */
+  Date: string;
 };
 
 export type ExternalImage = {
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['Date'];
   id: Scalars['ID'];
   statusCode: Scalars['Int'];
   ticket?: Maybe<Ticket>;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['Date'];
   url: Scalars['String'];
 };
 
 export type Mutation = {
+  createPersonSuggestion: PersonSuggestion;
   createTicketByExternalImageUrl: Ticket;
+};
+
+
+export type MutationCreatePersonSuggestionArgs = {
+  personSuggestionCreate: PersonSuggestionCreateInput;
 };
 
 
@@ -36,25 +42,25 @@ export type MutationCreateTicketByExternalImageUrlArgs = {
 };
 
 export type Occupation = {
-  Person?: Maybe<Array<Person>>;
   _count: OccupationCount;
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['Date'];
   id: Scalars['ID'];
   name: Scalars['String'];
   nameAlphabet?: Maybe<Scalars['String']>;
   nameHiragana?: Maybe<Scalars['String']>;
   nameKatakana?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['DateTime'];
+  persons?: Maybe<Array<Person>>;
+  updatedAt: Scalars['Date'];
 };
 
 export type OccupationCount = {
-  Person: Scalars['Int'];
+  persons: Scalars['Int'];
 };
 
 export type Person = {
   _count: PersonCount;
-  birthDate?: Maybe<Scalars['DateTime']>;
-  createdAt: Scalars['DateTime'];
+  birthDate?: Maybe<Scalars['Date']>;
+  createdAt: Scalars['Date'];
   id: Scalars['ID'];
   name: Scalars['String'];
   nameAlphabet?: Maybe<Scalars['String']>;
@@ -62,17 +68,58 @@ export type Person = {
   nameKatakana?: Maybe<Scalars['String']>;
   occupation?: Maybe<Occupation>;
   occupationId?: Maybe<Scalars['String']>;
+  personSuggestions?: Maybe<Array<PersonSuggestion>>;
   tickets?: Maybe<Array<Ticket>>;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['Date'];
 };
 
 export type PersonCount = {
+  personSuggestions: Scalars['Int'];
   tickets: Scalars['Int'];
+};
+
+export type PersonSuggestion = {
+  _count: PersonSuggestionCount;
+  createdAt: Scalars['Date'];
+  id: Scalars['ID'];
+  mainTicket?: Maybe<Ticket>;
+  person: Person;
+  personId: Scalars['String'];
+  personSuggestionLikes?: Maybe<Array<PersonSuggestionLike>>;
+  ticket: Ticket;
+  ticketId: Scalars['String'];
+  updatedAt: Scalars['Date'];
+  user: User;
+  userId: Scalars['String'];
+};
+
+export type PersonSuggestionCount = {
+  personSuggestionLikes: Scalars['Int'];
+};
+
+export type PersonSuggestionCreateInput = {
+  personId?: InputMaybe<Scalars['String']>;
+  personName?: InputMaybe<Scalars['String']>;
+  ticketId: Scalars['String'];
+};
+
+export type PersonSuggestionLike = {
+  createdAt: Scalars['Date'];
+  id: Scalars['ID'];
+  personSuggestion: PersonSuggestion;
+  personSuggestionId: Scalars['String'];
+  ticket: Ticket;
+  ticketId: Scalars['String'];
+  updatedAt: Scalars['Date'];
+  user: User;
+  userId: Scalars['String'];
 };
 
 export type Query = {
   getCurrentUser: User;
   getTicketByExternalImageUrl?: Maybe<Ticket>;
+  getTicketById?: Maybe<Ticket>;
+  searchPersonByWord: Array<Person>;
 };
 
 
@@ -80,16 +127,30 @@ export type QueryGetTicketByExternalImageUrlArgs = {
   externalImageUrl: Scalars['String'];
 };
 
+
+export type QueryGetTicketByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QuerySearchPersonByWordArgs = {
+  word: Scalars['String'];
+};
+
 export type Ticket = {
   _count: TicketCount;
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['Date'];
   externalImage?: Maybe<ExternalImage>;
   externalImageId?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  mainPersonSuggestion?: Maybe<PersonSuggestion>;
+  mainPersonSuggestionId?: Maybe<Scalars['String']>;
   person?: Maybe<Person>;
   personId?: Maybe<Scalars['String']>;
+  personSuggestionLikes?: Maybe<Array<PersonSuggestionLike>>;
+  personSuggestions?: Maybe<Array<PersonSuggestion>>;
   ticketUserLikes?: Maybe<Array<TicketUserLike>>;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['Date'];
   uploadedImage?: Maybe<UploadedImage>;
   uploadedImageId?: Maybe<Scalars['String']>;
   user: User;
@@ -97,42 +158,48 @@ export type Ticket = {
 };
 
 export type TicketCount = {
+  personSuggestionLikes: Scalars['Int'];
+  personSuggestions: Scalars['Int'];
   ticketUserLikes: Scalars['Int'];
 };
 
 export type TicketUserLike = {
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['Date'];
   id: Scalars['ID'];
   ticket: Ticket;
   ticketId: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['Date'];
   user: User;
   userId: Scalars['String'];
 };
 
 export type UploadedImage = {
   bucketName: Scalars['String'];
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['Date'];
   filePath: Scalars['String'];
   id: Scalars['ID'];
   ticket?: Maybe<Ticket>;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['Date'];
 };
 
 export type User = {
+  PersonSuggestionLikes?: Maybe<Array<PersonSuggestionLike>>;
   _count: UserCount;
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['Date'];
   displayName?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  personSuggestions?: Maybe<Array<PersonSuggestion>>;
   role: UserRole;
   status: UserStatus;
   ticketUserLikes?: Maybe<Array<TicketUserLike>>;
   tickets?: Maybe<Array<Ticket>>;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['Date'];
 };
 
 export type UserCount = {
+  PersonSuggestionLikes: Scalars['Int'];
+  personSuggestions: Scalars['Int'];
   ticketUserLikes: Scalars['Int'];
   tickets: Scalars['Int'];
 };
@@ -147,6 +214,13 @@ export enum UserStatus {
   Active = 'ACTIVE',
   Disabled = 'DISABLED'
 }
+
+export type CreatePersonSuggestionMutationVariables = Exact<{
+  personSuggestionCreate: PersonSuggestionCreateInput;
+}>;
+
+
+export type CreatePersonSuggestionMutation = { createPersonSuggestion: { id: string } };
 
 export type CreateTicketByExternalImageUrlMutationVariables = Exact<{
   externalImageUrl: Scalars['String'];
@@ -167,7 +241,54 @@ export type GetTicketByExternalImageUrlQueryVariables = Exact<{
 
 export type GetTicketByExternalImageUrlQuery = { getTicketByExternalImageUrl?: { id: string } | null | undefined };
 
+export type GetTicketByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
 
+
+export type GetTicketByIdQuery = { getTicketById?: { id: string, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, bucketName: string, filePath: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined, personSuggestions?: Array<{ id: string, person: { id: string, name: string }, _count: { personSuggestionLikes: number } }> | null | undefined, _count: { ticketUserLikes: number } } | null | undefined };
+
+export type SearchPersonByWordQueryVariables = Exact<{
+  word: Scalars['String'];
+}>;
+
+
+export type SearchPersonByWordQuery = { searchPersonByWord: Array<{ id: string, name: string }> };
+
+
+export const CreatePersonSuggestionDocument = gql`
+    mutation createPersonSuggestion($personSuggestionCreate: PersonSuggestionCreateInput!) {
+  createPersonSuggestion(personSuggestionCreate: $personSuggestionCreate) {
+    id
+  }
+}
+    `;
+export type CreatePersonSuggestionMutationFn = Apollo.MutationFunction<CreatePersonSuggestionMutation, CreatePersonSuggestionMutationVariables>;
+
+/**
+ * __useCreatePersonSuggestionMutation__
+ *
+ * To run a mutation, you first call `useCreatePersonSuggestionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePersonSuggestionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPersonSuggestionMutation, { data, loading, error }] = useCreatePersonSuggestionMutation({
+ *   variables: {
+ *      personSuggestionCreate: // value for 'personSuggestionCreate'
+ *   },
+ * });
+ */
+export function useCreatePersonSuggestionMutation(baseOptions?: Apollo.MutationHookOptions<CreatePersonSuggestionMutation, CreatePersonSuggestionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreatePersonSuggestionMutation, CreatePersonSuggestionMutationVariables>(CreatePersonSuggestionDocument, options);
+      }
+export type CreatePersonSuggestionMutationHookResult = ReturnType<typeof useCreatePersonSuggestionMutation>;
+export type CreatePersonSuggestionMutationResult = Apollo.MutationResult<CreatePersonSuggestionMutation>;
+export type CreatePersonSuggestionMutationOptions = Apollo.BaseMutationOptions<CreatePersonSuggestionMutation, CreatePersonSuggestionMutationVariables>;
 export const CreateTicketByExternalImageUrlDocument = gql`
     mutation createTicketByExternalImageUrl($externalImageUrl: String!) {
   createTicketByExternalImageUrl(externalImageUrl: $externalImageUrl) {
@@ -272,3 +393,108 @@ export function useGetTicketByExternalImageUrlLazyQuery(baseOptions?: Apollo.Laz
 export type GetTicketByExternalImageUrlQueryHookResult = ReturnType<typeof useGetTicketByExternalImageUrlQuery>;
 export type GetTicketByExternalImageUrlLazyQueryHookResult = ReturnType<typeof useGetTicketByExternalImageUrlLazyQuery>;
 export type GetTicketByExternalImageUrlQueryResult = Apollo.QueryResult<GetTicketByExternalImageUrlQuery, GetTicketByExternalImageUrlQueryVariables>;
+export const GetTicketByIdDocument = gql`
+    query getTicketById($id: String!) {
+  getTicketById(id: $id) {
+    id
+    createdAt
+    updatedAt
+    externalImage {
+      id
+      url
+      statusCode
+    }
+    uploadedImage {
+      id
+      bucketName
+      filePath
+    }
+    user {
+      id
+      displayName
+      role
+    }
+    person {
+      id
+      name
+    }
+    personSuggestions {
+      id
+      person {
+        id
+        name
+      }
+      _count {
+        personSuggestionLikes
+      }
+    }
+    _count {
+      ticketUserLikes
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTicketByIdQuery__
+ *
+ * To run a query within a React component, call `useGetTicketByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTicketByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTicketByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetTicketByIdQuery(baseOptions: Apollo.QueryHookOptions<GetTicketByIdQuery, GetTicketByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTicketByIdQuery, GetTicketByIdQueryVariables>(GetTicketByIdDocument, options);
+      }
+export function useGetTicketByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTicketByIdQuery, GetTicketByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTicketByIdQuery, GetTicketByIdQueryVariables>(GetTicketByIdDocument, options);
+        }
+export type GetTicketByIdQueryHookResult = ReturnType<typeof useGetTicketByIdQuery>;
+export type GetTicketByIdLazyQueryHookResult = ReturnType<typeof useGetTicketByIdLazyQuery>;
+export type GetTicketByIdQueryResult = Apollo.QueryResult<GetTicketByIdQuery, GetTicketByIdQueryVariables>;
+export const SearchPersonByWordDocument = gql`
+    query searchPersonByWord($word: String!) {
+  searchPersonByWord(word: $word) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useSearchPersonByWordQuery__
+ *
+ * To run a query within a React component, call `useSearchPersonByWordQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchPersonByWordQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchPersonByWordQuery({
+ *   variables: {
+ *      word: // value for 'word'
+ *   },
+ * });
+ */
+export function useSearchPersonByWordQuery(baseOptions: Apollo.QueryHookOptions<SearchPersonByWordQuery, SearchPersonByWordQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchPersonByWordQuery, SearchPersonByWordQueryVariables>(SearchPersonByWordDocument, options);
+      }
+export function useSearchPersonByWordLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPersonByWordQuery, SearchPersonByWordQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchPersonByWordQuery, SearchPersonByWordQueryVariables>(SearchPersonByWordDocument, options);
+        }
+export type SearchPersonByWordQueryHookResult = ReturnType<typeof useSearchPersonByWordQuery>;
+export type SearchPersonByWordLazyQueryHookResult = ReturnType<typeof useSearchPersonByWordLazyQuery>;
+export type SearchPersonByWordQueryResult = Apollo.QueryResult<SearchPersonByWordQuery, SearchPersonByWordQueryVariables>;

@@ -1,0 +1,39 @@
+query getTicketById($id: String!) {
+  getTicketById(id: $id) {
+    id
+    createdAt
+    updatedAt
+    externalImage {
+      id
+      url
+      statusCode
+    }
+    uploadedImage {
+      id
+      bucketName
+      filePath
+    }
+    user {
+      id
+      displayName
+      role
+    }
+    person {
+      id
+      name
+    }
+    personSuggestions {
+      id
+      person {
+        id
+        name
+      }
+      _count {
+        personSuggestionLikes
+      }
+    }
+    _count {
+      ticketUserLikes
+    }
+  }
+}
