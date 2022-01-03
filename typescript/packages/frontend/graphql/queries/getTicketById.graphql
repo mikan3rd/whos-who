@@ -1,6 +1,7 @@
 query getTicketById($id: String!) {
   getTicketById(id: $id) {
     id
+    personId
     createdAt
     updatedAt
     externalImage {

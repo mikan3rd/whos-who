@@ -14,6 +14,7 @@ import {
   DropdownProps,
   Form,
   Header,
+  Icon,
   Label,
   Message,
   Segment,
@@ -37,7 +38,7 @@ export type Props = {
 
 export const TicketDetailPage: React.VFC<Props> = (props) => {
   const {
-    getTicketByIdData: { id: ticketId, user, externalImage, personSuggestions, createdAt, _count },
+    getTicketByIdData: { id: ticketId, personId, user, externalImage, personSuggestions, createdAt, _count },
     isAccepting,
     refetchTicket,
   } = props;
@@ -48,7 +49,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
 
   const [searchPersonByWord, { data: searchPersonResult, loading: searchLoading }] = useSearchPersonByWordLazyQuery();
   const [createPersonSuggestion, { loading: createLoading }] = useCreatePersonSuggestionMutation();
-  const [createPersonSuggestionLike] = useCreatePersonSuggestionLikeMutation();
+  const [createPersonSuggestionLike, { loading: createLikeLoading }] = useCreatePersonSuggestionLikeMutation();
 
   const [searchText, setSearchText] = useState("");
 
@@ -247,6 +248,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
             person,
             _count: { personSuggestionLikes },
           } = personSuggestion;
+          const isTop = personId === person.id;
           return (
             <div
               key={personSuggestionId}
@@ -259,6 +261,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
               <Link href={`/person/detail/${person.id}`} passHref>
                 <Card
                   fluid
+                  color={isTop ? "green" : undefined}
                   css={css`
                     &&& {
                       transform: none !important;
@@ -266,7 +269,10 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
                   `}
                 >
                   <Card.Content>
-                    <Card.Header>{person.name}</Card.Header>
+                    <Card.Header>
+                      {isTop && <Icon name="check" color="green" />}
+                      {person.name}
+                    </Card.Header>
                     <Card.Meta>{personSuggestionLikes}票</Card.Meta>
                   </Card.Content>
                 </Card>
@@ -275,6 +281,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
                 content="投票する"
                 color="blue"
                 size="small"
+                disabled={createLikeLoading}
                 onClick={() => handleCreatePersonSuggestionLike(personSuggestionId)}
                 css={css`
                   &&& {
@@ -323,8 +330,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
             <Form.Button
               content="上記の名前で登録する"
               color="blue"
-              disabled={!isValid}
-              loading={createLoading}
+              disabled={!isValid || createLoading}
               onClick={handleCreatePersonSuggestion}
               error={isSuggestedSelf ? { content: "既に回答済みです", pointing: "left" } : undefined}
             />
