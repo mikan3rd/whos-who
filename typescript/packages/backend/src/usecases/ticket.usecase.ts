@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Prisma } from "@/interfaces/services/prisma.service";
 import { TicketRepository } from "@/repositories/ticket.repository";
 
-// TODO
+// TODO: 別のファイルに分けるべき
 type EnvironmentVariables = {
   GCP_PROJECT_ID: string;
   GCP_CLIENT_EMAIL: string;
@@ -41,6 +41,7 @@ export class TicketUsecase {
       throw BadRequestException;
     }
 
+    // TODO: 別のusecaseに分けるべき
     const storage = new Storage({
       projectId: this.configService.get("GCP_PROJECT_ID"),
       credentials: {
@@ -68,6 +69,7 @@ export class TicketUsecase {
       throw BadRequestException;
     }
 
+    // TODO: backend用のfilePathとfrontend用のurlを分けるべき
     const filePath = uploadFile.publicUrl();
     const data: Prisma.TicketCreateInput = {
       user: { connect: { id: userId } },
