@@ -59,8 +59,20 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
 
   // TODO: uploadedImageに対応
   const imageUrl = useMemo(() => externalImage?.url ?? "", [externalImage?.url]);
-
   const isExternalUrl = useMemo(() => externalImage?.url !== undefined, [externalImage?.url]);
+  const isSuggested = useMemo(() => {
+    if (selectedPerson === null || selectedPerson.value === NewPersonValue) {
+      return false;
+    }
+    const target = personSuggestions?.find((personSuggestion) => personSuggestion.person.id === selectedPerson.value);
+    return target !== undefined;
+  }, [personSuggestions, selectedPerson]);
+  const isValid = useMemo(() => {
+    if (selectedPerson === null || isSuggested) {
+      return false;
+    }
+    return true;
+  }, [isSuggested, selectedPerson]);
 
   const personOptions = useMemo(() => {
     const options: DropdownItemProps[] =
@@ -91,7 +103,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
   }, []);
 
   const handleCreatePersonSuggestion = useCallback(async () => {
-    if (selectedPerson === null) {
+    if (!isValid || selectedPerson === null) {
       return;
     }
 
@@ -115,7 +127,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
         title: "名前を登録しました！",
       });
     }
-  }, [createPersonSuggestion, refetchTicket, selectedPerson, ticketId]);
+  }, [createPersonSuggestion, isValid, refetchTicket, selectedPerson, ticketId]);
 
   return (
     <>
@@ -248,11 +260,13 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
               onSearchChange={handleSearchPersonByWord}
               onAddItem={handleAddPerson}
               onChange={handleChangePerson}
+              error={isSuggested ? { content: "既に登録されている名前です" } : undefined}
             />
             <Form.Button
               content="上記の名前で登録する"
               color="blue"
-              disabled={selectedPerson === null || createLoading}
+              disabled={!isValid}
+              loading={createLoading}
               onClick={handleCreatePersonSuggestion}
             />
           </Form.Field>
