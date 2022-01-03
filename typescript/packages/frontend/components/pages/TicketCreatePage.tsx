@@ -83,7 +83,6 @@ export const TicketCreatePage: React.VFC = () => {
     }
 
     if (imageType === "uploadImage" && uploadFile !== null) {
-      console.log(uploadFile);
       const { data } = await createTicketByUploadImageFile({
         variables: {
           file: uploadFile,

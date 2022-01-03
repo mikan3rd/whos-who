@@ -55,7 +55,6 @@ export class TicketUsecase {
     const fileName = `${uuidv4()}.${fileSubType}`;
 
     const uploadFile = bucket.file(fileName);
-    await uploadFile.setMetadata({ contentType: file.mimetype });
 
     const result = await new Promise<boolean>((resolve, reject) =>
       file
