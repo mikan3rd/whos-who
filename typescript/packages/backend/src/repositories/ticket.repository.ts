@@ -33,4 +33,11 @@ export class TicketRepository {
       },
     });
   }
+
+  async update(id: string, data: Prisma.TicketUpdateInput) {
+    return await this.prisma.ticket.update({
+      data,
+      where: { id },
+    });
+  }
 }

@@ -29,12 +29,14 @@ const NewPersonValue = "new" as const;
 export type Props = {
   getTicketByIdData: NonNullable<GetTicketByIdQuery["getTicketById"]>;
   isAccepting: boolean;
+  refetchTicket: () => Promise<void>;
 };
 
 export const TicketDetailPage: React.VFC<Props> = (props) => {
   const {
     getTicketByIdData: { id: ticketId, user, externalImage, personSuggestions, createdAt, _count },
     isAccepting,
+    refetchTicket,
   } = props;
 
   const [searchPersonByWord, { data: searchPersonResult, loading: searchLoading }] = useSearchPersonByWordLazyQuery();
@@ -107,12 +109,13 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
     });
 
     if (data !== undefined && data !== null) {
+      await refetchTicket();
       toast({
         type: "success",
         title: "名前を登録しました！",
       });
     }
-  }, [createPersonSuggestion, selectedPerson, ticketId]);
+  }, [createPersonSuggestion, refetchTicket, selectedPerson, ticketId]);
 
   return (
     <>

@@ -25,4 +25,8 @@ export class TicketUsecase {
   async getById(id: string) {
     return await this.ticketRepository.getById(id);
   }
+
+  async update(id: string, data: Prisma.TicketUpdateInput) {
+    return await this.ticketRepository.update(id, data);
+  }
 }

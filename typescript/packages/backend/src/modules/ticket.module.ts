@@ -7,6 +7,6 @@ import { TicketUsecase } from "@/usecases/ticket.usecase";
 @Module({
   imports: [],
   providers: [TicketRepository, TicketResolver, TicketUsecase],
-  exports: [],
+  exports: [TicketUsecase],
 })
 export class TicketModule {}

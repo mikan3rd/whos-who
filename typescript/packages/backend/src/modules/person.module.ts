@@ -7,6 +7,6 @@ import { PersonUsecase } from "@/usecases/person.usecase";
 @Module({
   imports: [],
   providers: [PersonRepository, PersonResolver, PersonUsecase],
-  exports: [],
+  exports: [PersonUsecase],
 })
 export class PersonModule {}

@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 import { Props, TicketDetailPage } from "@/components/pages/TicketDetailPage";
 import { Meta } from "@/components/templates/Meta";
 import { client } from "@/graphql/client";
-import { GetTicketByIdDocument, GetTicketByIdQuery, GetTicketByIdQueryVariables } from "@/graphql/generated";
+import {
+  GetTicketByIdDocument,
+  GetTicketByIdQuery,
+  GetTicketByIdQueryVariables,
+  useGetTicketByIdLazyQuery,
+} from "@/graphql/generated";
 
 type ServerSideProps = Pick<Props, "getTicketByIdData">;
 
@@ -17,6 +22,7 @@ export const getServerSideProps: GetServerSideProps<ServerSideProps, { id: strin
   const { data } = await client.query<GetTicketByIdQuery, GetTicketByIdQueryVariables>({
     query: GetTicketByIdDocument,
     variables: { id: params.id },
+    fetchPolicy: "network-only",
   });
 
   const { getTicketById } = data;
@@ -32,11 +38,19 @@ export const getServerSideProps: GetServerSideProps<ServerSideProps, { id: strin
 };
 
 const TicketDetail = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const {
-    getTicketByIdData: { person, externalImage },
-  } = props;
+  const [fetch, { data }] = useGetTicketByIdLazyQuery();
 
+  const getTicketByIdData = useMemo(
+    () => data?.getTicketById ?? props.getTicketByIdData,
+    [data?.getTicketById, props.getTicketByIdData],
+  );
+
+  const { person, externalImage } = getTicketByIdData;
   const isAccepting = person === undefined || person === null;
+
+  const refetchTicket = useCallback(async () => {
+    await fetch({ variables: { id: getTicketByIdData.id } });
+  }, [fetch, getTicketByIdData.id]);
 
   return (
     <>
@@ -47,7 +61,7 @@ const TicketDetail = (props: InferGetServerSidePropsType<typeof getServerSidePro
         }
         imageUrl={externalImage?.url} // TODO: uploadedImageに対応
       />
-      <TicketDetailPage {...props} isAccepting={isAccepting} />
+      <TicketDetailPage getTicketByIdData={getTicketByIdData} isAccepting={isAccepting} refetchTicket={refetchTicket} />
     </>
   );
 };
