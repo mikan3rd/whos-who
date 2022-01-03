@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { css } from "@emotion/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { toast } from "react-semantic-toasts";
-import { Divider, Form, Header, Message, Segment } from "semantic-ui-react";
+import { Button, Divider, Form, Header, Label, Message, Segment } from "semantic-ui-react";
 
 import {
   useCreateTicketByExternalImageUrlMutation,
@@ -16,27 +16,29 @@ type ImageType = "externalImageUrl" | "uploadImage";
 
 export const TicketCreatePage: React.VFC = () => {
   const router = useRouter();
-  const [getTicket, { data: getTicketData, loading: getTicketLoading }] = useGetTicketByExternalImageUrlLazyQuery();
+  const [getTicket, { data: getTicketData }] = useGetTicketByExternalImageUrlLazyQuery();
   const [createTicketByExternalImageUrl, { loading: createTicketLoading }] =
     useCreateTicketByExternalImageUrlMutation();
 
   const [imageType, setImageType] = useState<ImageType>("externalImageUrl");
   const [externalImageUrl, setExternalImageUrl] = useState("");
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [isImageValid, setIsImageValid] = useState(false);
 
-  const loading = useMemo(() => getTicketLoading || createTicketLoading, [createTicketLoading, getTicketLoading]);
+  const imageUploadRef = useRef<HTMLInputElement>(null);
 
   const alreadyExistTicketId = useMemo(
     () => getTicketData?.getTicketByExternalImageUrl?.id ?? null,
     [getTicketData?.getTicketByExternalImageUrl?.id],
   );
 
+  const uploadImageUrl = useMemo(() => (uploadFile !== null ? URL.createObjectURL(uploadFile) : null), [uploadFile]);
+
   const isValid = useMemo(() => {
     if (imageType === "externalImageUrl") {
       return isImageValid && alreadyExistTicketId === null;
     }
-    // TODO
-    return false;
+    return isImageValid;
   }, [alreadyExistTicketId, imageType, isImageValid]);
 
   const loadImage = useCallback((imageUrl: string) => {
@@ -52,24 +54,9 @@ export const TicketCreatePage: React.VFC = () => {
     });
   }, []);
 
-  useEffect(() => {
-    const checkValid = async () => {
-      setIsImageValid(false);
-      if (imageType === "externalImageUrl") {
-        const result = await loadImage(externalImageUrl);
-        setIsImageValid(result);
-        if (result) {
-          getTicket({ variables: { externalImageUrl } });
-        }
-      }
-      if (imageType === "uploadImage") {
-        // TODO
-        setIsImageValid(false);
-      }
-    };
-
-    checkValid();
-  }, [externalImageUrl, getTicket, imageType, loadImage]);
+  const handleOnClickImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setUploadFile(e.target.files?.[0] ?? null);
+  }, []);
 
   const handleCreateTicket = useCallback(async () => {
     if (!isValid) {
@@ -93,6 +80,24 @@ export const TicketCreatePage: React.VFC = () => {
       }
     }
   }, [createTicketByExternalImageUrl, externalImageUrl, imageType, isValid, router]);
+
+  useEffect(() => {
+    const checkValid = async () => {
+      setIsImageValid(false);
+      if (imageType === "externalImageUrl") {
+        const result = await loadImage(externalImageUrl);
+        setIsImageValid(result);
+        if (result) {
+          getTicket({ variables: { externalImageUrl } });
+        }
+      }
+      if (imageType === "uploadImage") {
+        setIsImageValid(uploadFile !== null);
+      }
+    };
+
+    checkValid();
+  }, [externalImageUrl, getTicket, imageType, loadImage, uploadFile]);
 
   return (
     <>
@@ -147,6 +152,26 @@ export const TicketCreatePage: React.VFC = () => {
                 />
               </>
             )}
+
+            {imageType === "uploadImage" && (
+              <>
+                <label
+                  css={css`
+                    padding-bottom: 8px;
+                  `}
+                >
+                  下のボタンをクリックして画像をアップロードしてください
+                </label>
+                <Button
+                  basic
+                  icon="file image"
+                  color="blue"
+                  label={{ pointing: "left", content: "画像をアップロード", color: "blue" }}
+                  onClick={() => imageUploadRef.current?.click()}
+                />
+                <input ref={imageUploadRef} type="file" accept="image/*" hidden onChange={handleOnClickImageUpload} />
+              </>
+            )}
             <Divider />
             <label>画像プレビュー</label>
             {imageType === "externalImageUrl" && isImageValid && (
@@ -176,13 +201,23 @@ export const TicketCreatePage: React.VFC = () => {
                 />
               </>
             )}
+
+            {imageType === "uploadImage" && uploadImageUrl !== null && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={uploadImageUrl}
+                alt={uploadFile?.name ?? ""}
+                css={css`
+                  width: 100%;
+                `}
+              />
+            )}
           </Form.Field>
 
           <Form.Button
             content="この画像の人物を募集する"
             color="blue"
-            disabled={!isValid}
-            loading={loading}
+            disabled={!isValid || createTicketLoading}
             onClick={handleCreateTicket}
           />
         </Form>
