@@ -13,7 +13,10 @@ export class UploadedImage {
     bucketName!: string;
 
     @Field(() => String, {nullable:false})
-    filePath!: string;
+    fileName!: string;
+
+    @Field(() => String, {nullable:false})
+    url!: string;
 
     @Field(() => Date, {nullable:false})
     createdAt!: Date;

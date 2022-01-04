@@ -64,13 +64,14 @@ model Ticket {
 model UploadedImage {
   id         String   @id @default(uuid())
   bucketName String   @db.VarChar(255)
-  filePath   String   @db.VarChar(512)
+  fileName   String   @db.VarChar(512)
+  url        String   @unique @db.VarChar(512)
   createdAt  DateTime @default(now()) @db.DateTime(0)
   updatedAt  DateTime @default(now()) @updatedAt @db.DateTime(0)
 
   ticket Ticket?
 
-  @@unique([bucketName, filePath])
+  @@unique([bucketName, fileName])
 }
 
 model ExternalImage {

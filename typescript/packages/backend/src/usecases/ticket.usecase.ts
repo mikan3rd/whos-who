@@ -28,12 +28,13 @@ export class TicketUsecase {
 
     const uploadFile = await this.storageRepository.uploadToPublicBucket(file);
 
-    // TODO: backend用のfilePathとfrontend用のurlを分けるべき
-    const filePath = uploadFile.publicUrl();
     const bucketName = uploadFile.bucket.name;
+    const fileName = uploadFile.name;
+    const url = uploadFile.publicUrl();
+
     const data: Prisma.TicketCreateInput = {
       user: { connect: { id: userId } },
-      uploadedImage: { create: { bucketName, filePath } },
+      uploadedImage: { create: { bucketName, fileName, url } },
     };
     return await this.ticketRepository.create(data);
   }

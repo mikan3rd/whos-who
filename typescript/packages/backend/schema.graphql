@@ -83,7 +83,8 @@ enum UserStatus {
 type UploadedImage {
   id: ID!
   bucketName: String!
-  filePath: String!
+  fileName: String!
+  url: String!
   createdAt: Date!
   updatedAt: Date!
   ticket: Ticket

@@ -38,6 +38,11 @@ export class StorageRepository {
     return uploadFile;
   }
 
+  async getFileFromPublicBucket(fileName: string) {
+    const bucket = await this.getPublicBucket();
+    return bucket.file(fileName);
+  }
+
   private async getPublicBucket() {
     const storage = this.getStorage();
     const bucketName = this.configService.get("CLOUD_STORAGE_PUBLIC_BUCKET");
