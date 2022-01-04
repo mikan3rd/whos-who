@@ -11,8 +11,7 @@ query getTicketById($id: String!) {
     }
     uploadedImage {
       id
-      bucketName
-      filePath
+      url
     }
     user {
       id

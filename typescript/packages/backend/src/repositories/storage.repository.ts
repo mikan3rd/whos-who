@@ -10,7 +10,9 @@ import { PrismaService } from "@/interfaces/services/prisma.service";
 export class StorageRepository {
   constructor(private prisma: PrismaService, private configService: ConfigService<EnvironmentVariables, true>) {}
 
-  async uploadToPublicBucket(file: FileUpload) {
+  async uploadToPublicBucket(args: { file: FileUpload; folderName: string }) {
+    const { file, folderName } = args;
+
     const [fileType, fileSubType] = file.mimetype.split("/");
     if (fileType !== "image") {
       throw BadRequestException;
@@ -18,10 +20,13 @@ export class StorageRepository {
 
     const bucket = await this.getPublicBucket();
 
-    // TODO: ファイル名の重複チェック
-    const fileName = `${uuidv4()}.${fileSubType}`;
+    const fileName = `${folderName}/${uuidv4()}.${fileSubType}`;
 
     const uploadFile = bucket.file(fileName);
+    const [isExist] = await uploadFile.exists();
+    if (isExist) {
+      throw BadRequestException;
+    }
 
     const result = await new Promise<boolean>((resolve, reject) =>
       file

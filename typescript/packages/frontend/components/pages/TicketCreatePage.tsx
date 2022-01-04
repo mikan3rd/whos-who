@@ -132,7 +132,7 @@ export const TicketCreatePage: React.VFC = () => {
 
   return (
     <>
-      <Header content="画像を投稿しよう！" />
+      <Header content="名前を知りたい人の画像を投稿しよう！" />
       <Segment>
         <Form>
           <Form.Field>
@@ -244,7 +244,7 @@ export const TicketCreatePage: React.VFC = () => {
           </Form.Field>
 
           <Form.Button
-            content="この画像の人物を募集する"
+            content="この画像の人物名を募集する"
             color="blue"
             disabled={!isValid || createTicketLoading || uploadImageLoading}
             onClick={handleCreateTicket}

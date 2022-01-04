@@ -26,7 +26,7 @@ export class TicketUsecase {
   async createByUploadImageFile(args: { userId: string; file: FileUpload }) {
     const { userId, file } = args;
 
-    const uploadFile = await this.storageRepository.uploadToPublicBucket(file);
+    const uploadFile = await this.storageRepository.uploadToPublicBucket({ file, folderName: "ticket" });
 
     const bucketName = uploadFile.bucket.name;
     const fileName = uploadFile.name;

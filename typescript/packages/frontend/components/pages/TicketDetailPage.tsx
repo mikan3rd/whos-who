@@ -38,7 +38,16 @@ export type Props = {
 
 export const TicketDetailPage: React.VFC<Props> = (props) => {
   const {
-    getTicketByIdData: { id: ticketId, personId, user, externalImage, personSuggestions, createdAt, _count },
+    getTicketByIdData: {
+      id: ticketId,
+      personId,
+      user,
+      externalImage,
+      uploadedImage,
+      personSuggestions,
+      createdAt,
+      _count,
+    },
     isAccepting,
     refetchTicket,
   } = props;
@@ -64,8 +73,10 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
   const [newPerson, setNewPerson] = useState<DropdownItemProps | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<DropdownItemProps | null>(null);
 
-  // TODO: uploadedImageに対応
-  const imageUrl = useMemo(() => externalImage?.url ?? "", [externalImage?.url]);
+  const imageUrl = useMemo(
+    () => externalImage?.url ?? uploadedImage?.url ?? "",
+    [externalImage?.url, uploadedImage?.url],
+  );
   const isExternalUrl = useMemo(() => externalImage?.url !== undefined, [externalImage?.url]);
 
   const isSuggested = useMemo(() => {
