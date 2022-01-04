@@ -8,6 +8,7 @@ import { PersonModule } from "@/modules/person.module";
 import { PersonSuggestionModule } from "@/modules/personSuggestion.module";
 import { PersonSuggestionLikeModule } from "@/modules/personSuggestionLike.module";
 import { PrismaModule } from "@/modules/prisma.module";
+import { StorageModule } from "@/modules/storage.module";
 import { TicketModule } from "@/modules/ticket.module";
 import { UserModule } from "@/modules/user.module";
 
@@ -20,6 +21,7 @@ import { UserModule } from "@/modules/user.module";
       autoSchemaFile: "schema.graphql",
     }),
     PrismaModule,
+    StorageModule,
     UserModule,
     TicketModule,
     PersonModule,
