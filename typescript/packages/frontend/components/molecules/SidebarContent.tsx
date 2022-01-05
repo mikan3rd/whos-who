@@ -10,6 +10,7 @@ import { useAuthContext } from "@/context/auth";
 export const SidebarContent = React.memo(() => {
   const {
     state: { currentUser },
+    dispatch,
     logout,
   } = useAuthContext();
 
@@ -35,10 +36,14 @@ export const SidebarContent = React.memo(() => {
         <Menu.Item content="画像から人物を探す" />
       </Link>
 
-      {currentUser !== null && currentUser.role === "ADMIN" && (
+      {currentUser?.role === "ADMIN" && (
         <Link href="/admin" passHref>
           <Menu.Item content="管理用" />
         </Link>
+      )}
+
+      {currentUser?.role === "NONE" && (
+        <Menu.Item content="ログイン" onClick={() => dispatch({ type: "SetIsLoginModalOpen", payload: true })} />
       )}
 
       {currentUser !== null && currentUser.role !== "NONE" && <Menu.Item content="ログアウト" onClick={logout} />}

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 
 import { ApolloError } from "@apollo/client";
+import { css } from "@emotion/react";
 import {
   User as FirebaseUser,
   GoogleAuthProvider,
@@ -13,6 +14,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { toast } from "react-semantic-toasts";
+import { Button, Icon, Modal } from "semantic-ui-react";
 
 import { client } from "@/graphql/client";
 import { GetCurrentUserQuery, useGetCurrentUserLazyQuery } from "@/graphql/generated";
@@ -22,6 +24,7 @@ type State = {
   authStatus: "initial" | "loading" | "completed";
   firebaseUser: FirebaseUser | null;
   currentUser: GetCurrentUserQuery["getCurrentUser"] | null;
+  isLoginModalOpen: boolean;
 };
 
 type Action =
@@ -36,6 +39,10 @@ type Action =
   | {
       type: "SetCurrentUser";
       payload: State["currentUser"];
+    }
+  | {
+      type: "SetIsLoginModalOpen";
+      payload: State["isLoginModalOpen"];
     };
 
 const reducer: React.Reducer<State, Action> = (state, action): State => {
@@ -49,6 +56,9 @@ const reducer: React.Reducer<State, Action> = (state, action): State => {
     case "SetCurrentUser":
       return { ...state, currentUser: action.payload };
 
+    case "SetIsLoginModalOpen":
+      return { ...state, isLoginModalOpen: action.payload };
+
     default:
       return state;
   }
@@ -58,8 +68,6 @@ export const AuthContext = React.createContext<
   | {
       state: State;
       dispatch: React.Dispatch<Action>;
-      loginWithGoogle: () => void;
-      loginWithTwitter: () => void;
       logout: () => void;
     }
   | undefined
@@ -72,8 +80,9 @@ export const AuthProvider: React.FC = ({ children }) => {
     authStatus: "initial",
     firebaseUser: null,
     currentUser: null,
+    isLoginModalOpen: false,
   });
-  const { firebaseUser } = state;
+  const { firebaseUser, isLoginModalOpen, authStatus } = state;
 
   const logout = useCallback(async () => {
     // TODO: 複数のソーシャルアカウントを使い分ける場合の考慮
@@ -104,6 +113,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         title: "ログインしました！",
       });
     }
+    dispatch({ type: "SetIsLoginModalOpen", payload: false });
   }, []);
 
   const handleErrorCurrentUser = useCallback(
@@ -153,7 +163,10 @@ export const AuthProvider: React.FC = ({ children }) => {
     const provider = new GoogleAuthProvider();
     const firebaseAuth = getAuth(firebaseApp);
     await signInWithPopup(firebaseAuth, provider);
-    await linkWithPopup(firebaseUser, provider);
+    const credential = await linkWithPopup(firebaseUser, provider);
+    // TODO: 初回のみ displayName, email, role を更新
+    // eslint-disable-next-line no-console
+    console.log(credential);
     await setCurrentUser();
   }, [firebaseApp, firebaseUser, setCurrentUser]);
 
@@ -165,7 +178,10 @@ export const AuthProvider: React.FC = ({ children }) => {
     provider.setCustomParameters({ force_login: "true" });
     const firebaseAuth = getAuth(firebaseApp);
     await signInWithPopup(firebaseAuth, provider);
-    await linkWithPopup(firebaseUser, provider);
+    const credential = await linkWithPopup(firebaseUser, provider);
+    // TODO: 初回のみ displayName, email, role を更新
+    // eslint-disable-next-line no-console
+    console.log(credential);
     await setCurrentUser();
   }, [firebaseApp, firebaseUser, setCurrentUser]);
 
@@ -176,8 +192,45 @@ export const AuthProvider: React.FC = ({ children }) => {
   }, [setCurrentUser, firebaseUser]);
 
   return (
-    <AuthContext.Provider value={{ state, dispatch, loginWithGoogle, loginWithTwitter, logout }}>
+    <AuthContext.Provider value={{ state, dispatch, logout }}>
       {children}
+      <Modal
+        open={isLoginModalOpen}
+        size="tiny"
+        closeIcon
+        onClose={() => dispatch({ type: "SetIsLoginModalOpen", payload: false })}
+      >
+        <Modal.Header>ログイン</Modal.Header>
+        <Modal.Content
+          scrolling
+          css={css`
+            &&& {
+              text-align: center;
+            }
+          `}
+        >
+          <p>ログインするとあなたの投稿やLikeした投稿が確認できるようになります</p>
+          <Button
+            color="twitter"
+            size="huge"
+            disabled
+            // disabled={authStatus === "loading"} // TODO: Twitter APIの Elevated アクセス権が必要
+            onClick={loginWithTwitter}
+          >
+            <Icon name="twitter" />
+            Twitterログイン
+          </Button>
+          <div
+            css={css`
+              margin: 8px 0;
+            `}
+          />
+          <Button color="black" size="huge" disabled={authStatus === "loading"} onClick={loginWithGoogle}>
+            <Icon name="google" />
+            Googleログイン
+          </Button>
+        </Modal.Content>
+      </Modal>
     </AuthContext.Provider>
   );
 };
