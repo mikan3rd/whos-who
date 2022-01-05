@@ -1,15 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-import firebase from "firebase/compat/app";
-
-import "firebase/compat/auth";
-import "firebase/compat/analytics";
-import "firebase/compat/performance";
+import { getAnalytics } from "firebase/analytics";
+import { FirebaseApp, initializeApp } from "firebase/app";
+import { getPerformance } from "firebase/performance";
 
 export const useFirebase = () => {
+  const [firebaseApp, setFirebaseApp] = useState<FirebaseApp | null>(null);
+  // const [firebaseAuth, setFirebaseAuth] = useState<Auth | null>(null);
+
   useEffect(() => {
     // Check that `window` is in scope for the analytics module!
-    if (typeof window !== "undefined" && firebase.apps.length === 0) {
+    if (typeof window !== "undefined" && firebaseApp === null) {
       const clientCredentials = {
         apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
         authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -19,11 +20,13 @@ export const useFirebase = () => {
         appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
         measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
       };
-      firebase.initializeApp(clientCredentials);
-      firebase.analytics();
-      firebase.performance();
-    }
-  }, []);
+      const firebaseApp = initializeApp(clientCredentials);
+      getAnalytics(firebaseApp);
+      getPerformance(firebaseApp);
 
-  return { firebase };
+      setFirebaseApp(firebaseApp);
+    }
+  }, [firebaseApp]);
+
+  return { firebaseApp };
 };

@@ -1,7 +1,16 @@
 import React, { useCallback } from "react";
 
 import { ApolloError } from "@apollo/client";
-import firebase from "firebase/compat/app";
+import {
+  User as FirebaseUser,
+  GoogleAuthProvider,
+  TwitterAuthProvider,
+  getAuth,
+  linkWithPopup,
+  onAuthStateChanged,
+  signInAnonymously,
+  signInWithPopup,
+} from "firebase/auth";
 import { toast } from "react-semantic-toasts";
 
 import { client } from "@/graphql/client";
@@ -10,7 +19,7 @@ import { useFirebase } from "@/hooks/useFirebase";
 
 type State = {
   authStatus: "initial" | "loading" | "completed";
-  firebaseUser: firebase.User | null;
+  firebaseUser: FirebaseUser | null;
   currentUser: GetCurrentUserQuery["getCurrentUser"] | null;
 };
 
@@ -56,7 +65,7 @@ export const AuthContext = React.createContext<
 >(undefined);
 
 export const AuthProvider: React.FC = ({ children }) => {
-  const { firebase } = useFirebase();
+  const { firebaseApp } = useFirebase();
 
   const [state, dispatch] = React.useReducer(reducer, {
     authStatus: "initial",
@@ -113,9 +122,14 @@ export const AuthProvider: React.FC = ({ children }) => {
   });
 
   const setCurrentUser = useCallback(async () => {
+    if (firebaseApp === null) {
+      return;
+    }
+
     dispatch({ type: "SetAuthStatus", payload: "loading" });
 
-    firebase.auth().onAuthStateChanged(async (currentUser) => {
+    const firebaseAuth = getAuth(firebaseApp);
+    onAuthStateChanged(firebaseAuth, async (currentUser) => {
       dispatch({ type: "SetFirebaseUser", payload: currentUser });
 
       if (currentUser !== null) {
@@ -123,25 +137,33 @@ export const AuthProvider: React.FC = ({ children }) => {
         localStorage.setItem("token", idToken);
         fetchCurrentUser();
       } else {
-        await firebase.auth().signInAnonymously();
+        await signInAnonymously(firebaseAuth);
       }
     });
-  }, [fetchCurrentUser, firebase]);
+  }, [fetchCurrentUser, firebaseApp]);
 
   const loginWithGoogle = useCallback(async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    await firebase.auth().signInWithPopup(provider);
-    await firebaseUser?.linkWithPopup(provider);
+    if (firebaseApp === null || firebaseUser === null) {
+      return;
+    }
+    const provider = new GoogleAuthProvider();
+    const firebaseAuth = getAuth(firebaseApp);
+    await signInWithPopup(firebaseAuth, provider);
+    await linkWithPopup(firebaseUser, provider);
     await setCurrentUser();
-  }, [firebase, firebaseUser, setCurrentUser]);
+  }, [firebaseApp, firebaseUser, setCurrentUser]);
 
   const loginWithTwitter = useCallback(async () => {
-    const provider = new firebase.auth.TwitterAuthProvider();
-    provider.setCustomParameters({ force_login: true });
-    await firebase.auth().signInWithPopup(provider);
-    await firebaseUser?.linkWithPopup(provider);
+    if (firebaseApp === null || firebaseUser === null) {
+      return;
+    }
+    const provider = new TwitterAuthProvider();
+    provider.setCustomParameters({ force_login: "true" });
+    const firebaseAuth = getAuth(firebaseApp);
+    await signInWithPopup(firebaseAuth, provider);
+    await linkWithPopup(firebaseUser, provider);
     await setCurrentUser();
-  }, [firebase, firebaseUser, setCurrentUser]);
+  }, [firebaseApp, firebaseUser, setCurrentUser]);
 
   React.useEffect(() => {
     setCurrentUser();
