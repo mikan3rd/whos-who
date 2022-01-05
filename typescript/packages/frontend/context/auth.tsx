@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 
 import { ApolloError } from "@apollo/client";
 import {
@@ -10,6 +10,7 @@ import {
   onAuthStateChanged,
   signInAnonymously,
   signInWithPopup,
+  signOut,
 } from "firebase/auth";
 import { toast } from "react-semantic-toasts";
 
@@ -76,19 +77,22 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const logout = useCallback(async () => {
     // TODO: 複数のソーシャルアカウントを使い分ける場合の考慮
-    // await firebase.auth().signOut();
+    if (firebaseApp !== null) {
+      const firebaseAuth = getAuth(firebaseApp);
+      await signOut(firebaseAuth);
+    }
 
     localStorage.removeItem("token");
     client.clearStore();
 
     dispatch({ type: "SetCurrentUser", payload: null });
-    // dispatch({ type: "SetFirebaseUser", payload: null });
+    dispatch({ type: "SetFirebaseUser", payload: null });
 
     toast({
       type: "success",
       title: "ログアウトしました！",
     });
-  }, []);
+  }, [firebaseApp]);
 
   const handleCompleteCurrentUser = useCallback((data: GetCurrentUserQuery) => {
     dispatch({ type: "SetCurrentUser", payload: data.getCurrentUser });
@@ -165,9 +169,11 @@ export const AuthProvider: React.FC = ({ children }) => {
     await setCurrentUser();
   }, [firebaseApp, firebaseUser, setCurrentUser]);
 
-  React.useEffect(() => {
-    setCurrentUser();
-  }, [setCurrentUser]);
+  useEffect(() => {
+    if (firebaseUser === null) {
+      setCurrentUser();
+    }
+  }, [setCurrentUser, firebaseUser]);
 
   return (
     <AuthContext.Provider value={{ state, dispatch, loginWithGoogle, loginWithTwitter, logout }}>
