@@ -12,6 +12,7 @@ export class GoogleAuthCredentialRepository {
       where: { userId },
       create: { accessToken, refreshToken, user: { connect: { id: userId } } },
       update: { accessToken, refreshToken, user: { connect: { id: userId } } },
+      include: { user: true },
     });
   }
 }

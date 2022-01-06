@@ -28,11 +28,29 @@ export type ExternalImage = {
   url: Scalars['String'];
 };
 
+export type GoogleAuthCredential = {
+  accessToken: Scalars['String'];
+  createdAt: Scalars['Date'];
+  id: Scalars['ID'];
+  refreshToken: Scalars['String'];
+  updatedAt: Scalars['Date'];
+  user: User;
+  userId: Scalars['String'];
+};
+
+export type GoogleAuthCredentialInput = {
+  accessToken: Scalars['String'];
+  displayName?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  refreshToken: Scalars['String'];
+};
+
 export type Mutation = {
   createPersonSuggestion: PersonSuggestion;
   createPersonSuggestionLike: PersonSuggestionLike;
   createTicketByExternalImageUrl: Ticket;
   createTicketByUploadImageFile: Ticket;
+  upsertGoogleAuthCredential: GoogleAuthCredential;
 };
 
 
@@ -53,6 +71,11 @@ export type MutationCreateTicketByExternalImageUrlArgs = {
 
 export type MutationCreateTicketByUploadImageFileArgs = {
   file: Scalars['Upload'];
+};
+
+
+export type MutationUpsertGoogleAuthCredentialArgs = {
+  googleAuthCredentialInput: GoogleAuthCredentialInput;
 };
 
 export type Occupation = {
@@ -198,12 +221,13 @@ export type UploadedImage = {
 };
 
 export type User = {
-  PersonSuggestionLikes?: Maybe<Array<PersonSuggestionLike>>;
   _count: UserCount;
   createdAt: Scalars['Date'];
   displayName?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
+  googleAuthCredential?: Maybe<GoogleAuthCredential>;
   id: Scalars['ID'];
+  personSuggestionLikes?: Maybe<Array<PersonSuggestionLike>>;
   personSuggestions?: Maybe<Array<PersonSuggestion>>;
   point: Scalars['Int'];
   role: UserRole;
@@ -214,7 +238,7 @@ export type User = {
 };
 
 export type UserCount = {
-  PersonSuggestionLikes: Scalars['Int'];
+  personSuggestionLikes: Scalars['Int'];
   personSuggestions: Scalars['Int'];
   ticketUserLikes: Scalars['Int'];
   tickets: Scalars['Int'];
@@ -258,6 +282,13 @@ export type CreateTicketByUploadImageFileMutationVariables = Exact<{
 
 
 export type CreateTicketByUploadImageFileMutation = { createTicketByUploadImageFile: { id: string } };
+
+export type UpsertGoogleAuthCredentialMutationVariables = Exact<{
+  googleAuthCredentialInput: GoogleAuthCredentialInput;
+}>;
+
+
+export type UpsertGoogleAuthCredentialMutation = { upsertGoogleAuthCredential: { id: string } };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -418,6 +449,41 @@ export function useCreateTicketByUploadImageFileMutation(baseOptions?: Apollo.Mu
 export type CreateTicketByUploadImageFileMutationHookResult = ReturnType<typeof useCreateTicketByUploadImageFileMutation>;
 export type CreateTicketByUploadImageFileMutationResult = Apollo.MutationResult<CreateTicketByUploadImageFileMutation>;
 export type CreateTicketByUploadImageFileMutationOptions = Apollo.BaseMutationOptions<CreateTicketByUploadImageFileMutation, CreateTicketByUploadImageFileMutationVariables>;
+export const UpsertGoogleAuthCredentialDocument = gql`
+    mutation upsertGoogleAuthCredential($googleAuthCredentialInput: GoogleAuthCredentialInput!) {
+  upsertGoogleAuthCredential(
+    googleAuthCredentialInput: $googleAuthCredentialInput
+  ) {
+    id
+  }
+}
+    `;
+export type UpsertGoogleAuthCredentialMutationFn = Apollo.MutationFunction<UpsertGoogleAuthCredentialMutation, UpsertGoogleAuthCredentialMutationVariables>;
+
+/**
+ * __useUpsertGoogleAuthCredentialMutation__
+ *
+ * To run a mutation, you first call `useUpsertGoogleAuthCredentialMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertGoogleAuthCredentialMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertGoogleAuthCredentialMutation, { data, loading, error }] = useUpsertGoogleAuthCredentialMutation({
+ *   variables: {
+ *      googleAuthCredentialInput: // value for 'googleAuthCredentialInput'
+ *   },
+ * });
+ */
+export function useUpsertGoogleAuthCredentialMutation(baseOptions?: Apollo.MutationHookOptions<UpsertGoogleAuthCredentialMutation, UpsertGoogleAuthCredentialMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpsertGoogleAuthCredentialMutation, UpsertGoogleAuthCredentialMutationVariables>(UpsertGoogleAuthCredentialDocument, options);
+      }
+export type UpsertGoogleAuthCredentialMutationHookResult = ReturnType<typeof useUpsertGoogleAuthCredentialMutation>;
+export type UpsertGoogleAuthCredentialMutationResult = Apollo.MutationResult<UpsertGoogleAuthCredentialMutation>;
+export type UpsertGoogleAuthCredentialMutationOptions = Apollo.BaseMutationOptions<UpsertGoogleAuthCredentialMutation, UpsertGoogleAuthCredentialMutationVariables>;
 export const GetCurrentUserDocument = gql`
     query getCurrentUser {
   getCurrentUser {

@@ -6,6 +6,7 @@ import {
   User as FirebaseUser,
   GoogleAuthProvider,
   TwitterAuthProvider,
+  UserCredential,
   getAuth,
   linkWithPopup,
   onAuthStateChanged,
@@ -16,8 +17,14 @@ import { toast } from "react-semantic-toasts";
 import { Button, Icon, Modal } from "semantic-ui-react";
 
 import { client } from "@/graphql/client";
-import { GetCurrentUserQuery, useGetCurrentUserLazyQuery } from "@/graphql/generated";
+import {
+  GetCurrentUserQuery,
+  useGetCurrentUserLazyQuery,
+  useUpsertGoogleAuthCredentialMutation,
+} from "@/graphql/generated";
 import { useFirebase } from "@/hooks/useFirebase";
+
+type Credential = UserCredential & { user: { accessToken: string } };
 
 type State = {
   authStatus: "initial" | "loading" | "completed";
@@ -74,6 +81,8 @@ export const AuthContext = React.createContext<
 
 export const AuthProvider: React.FC = ({ children }) => {
   const { firebaseApp } = useFirebase();
+
+  const [upsertGoogleAuthCredential] = useUpsertGoogleAuthCredentialMutation();
 
   const [state, dispatch] = React.useReducer(reducer, {
     authStatus: "initial",
@@ -160,7 +169,6 @@ export const AuthProvider: React.FC = ({ children }) => {
       return;
     }
     const provider = new GoogleAuthProvider();
-    // await signInWithPopup(firebaseAuth, provider);
     // TODO: ログアウト後の再ログインで別の匿名アカウントに紐づかないように修正する
     const credential = await linkWithPopup(firebaseUser, provider);
     // TODO: 初回のみ displayName, email, role を更新
@@ -175,15 +183,20 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
     const provider = new TwitterAuthProvider();
     provider.setCustomParameters({ force_login: "true" });
-    // await signInWithPopup(firebaseAuth, provider);
     // TODO: ログアウト後の再ログインで別の匿名アカウントに紐づかないように修正する
     const credential = await linkWithPopup(firebaseUser, provider);
-    // TODO: 初回のみ displayName, email, role を更新
     // eslint-disable-next-line no-console
     console.log(credential);
 
+    const {
+      user: { accessToken, refreshToken, displayName, email },
+    } = credential as Credential;
+    await upsertGoogleAuthCredential({
+      variables: { googleAuthCredentialInput: { accessToken, refreshToken, displayName, email: email as string } },
+    });
+
     await setCurrentUser();
-  }, [firebaseUser, setCurrentUser]);
+  }, [firebaseUser, setCurrentUser, upsertGoogleAuthCredential]);
 
   useEffect(() => {
     if (firebaseUser === null) {

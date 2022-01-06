@@ -13,11 +13,17 @@ export class GoogleAuthCredentialResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation((returns) => GoogleAuthCredential)
-  async createPersonSuggestion(
+  async upsertGoogleAuthCredential(
     @CurrentUser() { currentUser }: CurrentUserType,
     @Args("googleAuthCredentialInput") googleAuthCredentialInput: GoogleAuthCredentialInput,
   ): Promise<GoogleAuthCredential> {
-    const { accessToken, refreshToken } = googleAuthCredentialInput;
-    return await this.googleUsecase.upsertAuth({ userId: currentUser.id, accessToken, refreshToken });
+    const { accessToken, refreshToken, displayName, email } = googleAuthCredentialInput;
+    return await this.googleUsecase.upsertAuth({
+      userId: currentUser.id,
+      accessToken,
+      refreshToken,
+      displayName,
+      email,
+    });
   }
 }

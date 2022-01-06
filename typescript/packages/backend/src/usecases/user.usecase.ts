@@ -14,4 +14,9 @@ export class UserUsecase {
   async create(data: Prisma.UserCreateInput) {
     return await this.userRepository.create(data);
   }
+
+  async update(args: { id: string; data: Prisma.UserUpdateInput }) {
+    const { id, data } = args;
+    return await this.userRepository.update({ id, data });
+  }
 }
