@@ -8,6 +8,7 @@ import { Ticket } from '../ticket/ticket.model';
 import { TicketUserLike } from '../ticket-user-like/ticket-user-like.model';
 import { PersonSuggestion } from '../person-suggestion/person-suggestion.model';
 import { PersonSuggestionLike } from '../person-suggestion-like/person-suggestion-like.model';
+import { GoogleAuthCredential } from '../google-auth-credential/google-auth-credential.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -47,7 +48,10 @@ export class User {
     personSuggestions?: Array<PersonSuggestion>;
 
     @Field(() => [PersonSuggestionLike], {nullable:true})
-    PersonSuggestionLikes?: Array<PersonSuggestionLike>;
+    personSuggestionLikes?: Array<PersonSuggestionLike>;
+
+    @Field(() => GoogleAuthCredential, {nullable:true})
+    googleAuthCredential?: GoogleAuthCredential | null;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

@@ -10,7 +10,6 @@ import {
   linkWithPopup,
   onAuthStateChanged,
   signInAnonymously,
-  signInWithPopup,
   signOut,
 } from "firebase/auth";
 import { toast } from "react-semantic-toasts";
@@ -157,33 +156,34 @@ export const AuthProvider: React.FC = ({ children }) => {
   }, [fetchCurrentUser, firebaseApp]);
 
   const loginWithGoogle = useCallback(async () => {
-    if (firebaseApp === null || firebaseUser === null) {
+    if (firebaseUser === null) {
       return;
     }
     const provider = new GoogleAuthProvider();
-    const firebaseAuth = getAuth(firebaseApp);
-    await signInWithPopup(firebaseAuth, provider);
+    // await signInWithPopup(firebaseAuth, provider);
+    // TODO: ログアウト後の再ログインで別の匿名アカウントに紐づかないように修正する
     const credential = await linkWithPopup(firebaseUser, provider);
     // TODO: 初回のみ displayName, email, role を更新
     // eslint-disable-next-line no-console
     console.log(credential);
     await setCurrentUser();
-  }, [firebaseApp, firebaseUser, setCurrentUser]);
+  }, [firebaseUser, setCurrentUser]);
 
   const loginWithTwitter = useCallback(async () => {
-    if (firebaseApp === null || firebaseUser === null) {
+    if (firebaseUser === null) {
       return;
     }
     const provider = new TwitterAuthProvider();
     provider.setCustomParameters({ force_login: "true" });
-    const firebaseAuth = getAuth(firebaseApp);
-    await signInWithPopup(firebaseAuth, provider);
+    // await signInWithPopup(firebaseAuth, provider);
+    // TODO: ログアウト後の再ログインで別の匿名アカウントに紐づかないように修正する
     const credential = await linkWithPopup(firebaseUser, provider);
     // TODO: 初回のみ displayName, email, role を更新
     // eslint-disable-next-line no-console
     console.log(credential);
+
     await setCurrentUser();
-  }, [firebaseApp, firebaseUser, setCurrentUser]);
+  }, [firebaseUser, setCurrentUser]);
 
   useEffect(() => {
     if (firebaseUser === null) {
