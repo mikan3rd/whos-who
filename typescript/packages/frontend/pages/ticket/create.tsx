@@ -8,7 +8,7 @@ import { Meta } from "@/components/templates/Meta";
 const CreateTicket: NextPage = () => {
   return (
     <>
-      <Meta title="画像を登録しよう！" />
+      <Meta title="画像を投稿しよう！" />
       <TicketCreatePage />
     </>
   );

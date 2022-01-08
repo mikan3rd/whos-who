@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 
 import { ApolloError } from "@apollo/client";
-import { css } from "@emotion/react";
 import {
   User as FirebaseUser,
   GoogleAuthProvider,
@@ -14,8 +13,9 @@ import {
   signOut,
 } from "firebase/auth";
 import { toast } from "react-semantic-toasts";
-import { Button, Icon, Modal } from "semantic-ui-react";
 
+import { LoginModal } from "@/components/molecules/LoginModal";
+import { LogoutModal } from "@/components/molecules/LogoutModal";
 import { client } from "@/graphql/client";
 import {
   GetCurrentUserQuery,
@@ -31,6 +31,7 @@ type State = {
   firebaseUser: FirebaseUser | null;
   currentUser: GetCurrentUserQuery["getCurrentUser"] | null;
   isLoginModalOpen: boolean;
+  isLogoutModalOpen: boolean;
 };
 
 type Action =
@@ -49,6 +50,10 @@ type Action =
   | {
       type: "SetIsLoginModalOpen";
       payload: State["isLoginModalOpen"];
+    }
+  | {
+      type: "SetIsLogoutModalOpen";
+      payload: State["isLogoutModalOpen"];
     };
 
 const reducer: React.Reducer<State, Action> = (state, action): State => {
@@ -64,6 +69,9 @@ const reducer: React.Reducer<State, Action> = (state, action): State => {
 
     case "SetIsLoginModalOpen":
       return { ...state, isLoginModalOpen: action.payload };
+
+    case "SetIsLogoutModalOpen":
+      return { ...state, isLogoutModalOpen: action.payload };
 
     default:
       return state;
@@ -89,8 +97,9 @@ export const AuthProvider: React.FC = ({ children }) => {
     firebaseUser: null,
     currentUser: null,
     isLoginModalOpen: false,
+    isLogoutModalOpen: false,
   });
-  const { firebaseUser, isLoginModalOpen, authStatus, currentUser } = state;
+  const { firebaseUser, isLoginModalOpen, isLogoutModalOpen, currentUser } = state;
   // console.log({ firebaseUser, currentUser });
 
   const isLinkedGoogle = useMemo(
@@ -171,6 +180,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       } else {
         // 常に匿名ユーザーとしてログインする
         await signInAnonymously(firebaseAuth);
+        // console.log("!!!");
       }
     });
   }, [fetchCurrentUser, firebaseApp]);
@@ -179,6 +189,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     if (firebaseUser === null) {
       return;
     }
+
     const provider = new GoogleAuthProvider();
     // TODO: ログアウト後の再ログインで別の匿名アカウントに紐づかないように修正する
     const credential = await linkWithPopup(firebaseUser, provider);
@@ -221,48 +232,18 @@ export const AuthProvider: React.FC = ({ children }) => {
   return (
     <AuthContext.Provider value={{ state, dispatch, logout }}>
       {children}
-      <Modal
-        open={isLoginModalOpen}
-        size="tiny"
-        closeIcon
-        onClose={() => dispatch({ type: "SetIsLoginModalOpen", payload: false })}
-      >
-        <Modal.Header>ログイン</Modal.Header>
-        <Modal.Content
-          scrolling
-          css={css`
-            &&& {
-              text-align: center;
-            }
-          `}
-        >
-          <p>ログインするとあなたの投稿やLikeした投稿が確認できるようになります</p>
-          <Button
-            color="twitter"
-            size="huge"
-            disabled
-            // disabled={authStatus === "loading"} // TODO: Twitter APIの Elevated アクセス権が必要
-            onClick={loginWithTwitter}
-          >
-            <Icon name="twitter" />
-            Twitterログイン
-          </Button>
-          <div
-            css={css`
-              margin: 8px 0;
-            `}
-          />
-          <Button
-            color="black"
-            size="huge"
-            disabled={authStatus === "loading" || isLinkedGoogle}
-            onClick={loginWithGoogle}
-          >
-            <Icon name="google" />
-            {isLinkedGoogle ? "Googleログイン済" : "Googleログイン"}
-          </Button>
-        </Modal.Content>
-      </Modal>
+      <LoginModal
+        isLoginModalOpen={isLoginModalOpen}
+        isLinkedGoogle={isLinkedGoogle}
+        loginWithTwitter={loginWithTwitter}
+        loginWithGoogle={loginWithGoogle}
+        onCloseLoginModal={() => dispatch({ type: "SetIsLoginModalOpen", payload: false })}
+      />
+      <LogoutModal
+        isLogoutModalOpen={isLogoutModalOpen}
+        logout={logout}
+        onCloseLogoutModal={() => dispatch({ type: "SetIsLogoutModalOpen", payload: false })}
+      />
     </AuthContext.Provider>
   );
 };
