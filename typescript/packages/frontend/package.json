@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "PORT=3400 next dev",
+    "start": "next dev -p 3400",
     "build": "next build",
-    "start:prod": "PORT=3401 next start",
+    "start:prod": "next start -p ${PORT}",
     "type-check": "tsc --noEmit",
     "codegen": "graphql-codegen --config codegen.yml"
   },

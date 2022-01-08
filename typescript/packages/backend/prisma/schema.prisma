@@ -38,7 +38,8 @@ model User {
   tickets               Ticket[]
   ticketUserLikes       TicketUserLike[]
   personSuggestions     PersonSuggestion[]
-  PersonSuggestionLikes PersonSuggestionLike[]
+  personSuggestionLikes PersonSuggestionLike[]
+  googleAuthCredential  GoogleAuthCredential?
 }
 
 model Ticket {
@@ -156,4 +157,15 @@ model PersonSuggestionLike {
   user             User             @relation(fields: [userId], references: [id])
 
   @@unique([ticketId, userId])
+}
+
+model GoogleAuthCredential {
+  id           String   @id @default(uuid())
+  userId       String   @unique @db.VarChar(255)
+  accessToken  String   @db.Text
+  refreshToken String   @db.Text
+  createdAt    DateTime @default(now()) @db.DateTime(0)
+  updatedAt    DateTime @default(now()) @updatedAt @db.DateTime(0)
+
+  user User @relation(fields: [userId], references: [id])
 }

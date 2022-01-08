@@ -3,5 +3,8 @@ query getCurrentUser {
     id
     displayName
     role
+    googleAuthCredential {
+      id
+    }
   }
 }

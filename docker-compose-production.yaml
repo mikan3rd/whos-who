@@ -49,6 +49,8 @@ services:
       context: ./typescript
       dockerfile: ./packages/frontend/Dockerfile.prod
     tty: true
+    environment:
+      - PORT: 3401
     depends_on:
       - backend-prod
     ports:

@@ -1,17 +1,41 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 
 import { ApolloError } from "@apollo/client";
-import firebase from "firebase/compat/app";
+import {
+  User as FirebaseUser,
+  GoogleAuthProvider,
+  TwitterAuthProvider,
+  UserCredential,
+  getAuth,
+  linkWithPopup,
+  onAuthStateChanged,
+  signInAnonymously,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
+import { useRouter } from "next/router";
 import { toast } from "react-semantic-toasts";
 
+import { LoginModal } from "@/components/molecules/LoginModal";
+import { LogoutModal } from "@/components/molecules/LogoutModal";
+import { SignupModal } from "@/components/molecules/SignupModal";
 import { client } from "@/graphql/client";
-import { GetCurrentUserQuery, useGetCurrentUserLazyQuery } from "@/graphql/generated";
+import {
+  GetCurrentUserQuery,
+  useGetCurrentUserLazyQuery,
+  useUpsertGoogleAuthCredentialMutation,
+} from "@/graphql/generated";
 import { useFirebase } from "@/hooks/useFirebase";
+
+type Credential = UserCredential & { user: { accessToken: string } };
+
+const AlreadyUseAccount = "auth/credential-already-in-use" as const;
 
 type State = {
   authStatus: "initial" | "loading" | "completed";
-  firebaseUser: firebase.User | null;
+  firebaseUser: FirebaseUser | null;
   currentUser: GetCurrentUserQuery["getCurrentUser"] | null;
+  modalStatus: "none" | "signup" | "login" | "logout";
 };
 
 type Action =
@@ -26,6 +50,10 @@ type Action =
   | {
       type: "SetCurrentUser";
       payload: State["currentUser"];
+    }
+  | {
+      type: "SetModalStatus";
+      payload: State["modalStatus"];
     };
 
 const reducer: React.Reducer<State, Action> = (state, action): State => {
@@ -39,6 +67,9 @@ const reducer: React.Reducer<State, Action> = (state, action): State => {
     case "SetCurrentUser":
       return { ...state, currentUser: action.payload };
 
+    case "SetModalStatus":
+      return { ...state, modalStatus: action.payload };
+
     default:
       return state;
   }
@@ -48,108 +79,244 @@ export const AuthContext = React.createContext<
   | {
       state: State;
       dispatch: React.Dispatch<Action>;
-      loginWithGoogle: () => void;
-      loginWithTwitter: () => void;
       logout: () => void;
     }
   | undefined
 >(undefined);
 
 export const AuthProvider: React.FC = ({ children }) => {
-  const { firebase } = useFirebase();
+  const { firebaseApp } = useFirebase();
+  const router = useRouter();
+
+  const [upsertGoogleAuthCredential] = useUpsertGoogleAuthCredentialMutation();
 
   const [state, dispatch] = React.useReducer(reducer, {
     authStatus: "initial",
     firebaseUser: null,
     currentUser: null,
+    modalStatus: "none",
   });
-  const { firebaseUser } = state;
+  const { firebaseUser, modalStatus } = state;
+
+  // TODO: アカウントに複数の連携をする場合に使用
+  // const isLinkedGoogle = useMemo(
+  //   () => currentUser?.googleAuthCredential !== null && currentUser?.googleAuthCredential !== undefined,
+  //   [currentUser?.googleAuthCredential],
+  // );
+
+  const handleCloseModal = useCallback(() => {
+    dispatch({ type: "SetModalStatus", payload: "none" });
+  }, []);
 
   const logout = useCallback(async () => {
-    // TODO: 複数のソーシャルアカウントを使い分ける場合の考慮
-    // await firebase.auth().signOut();
+    if (firebaseApp !== null) {
+      const firebaseAuth = getAuth(firebaseApp);
+      await signOut(firebaseAuth);
+      dispatch({ type: "SetFirebaseUser", payload: null });
+    }
 
     localStorage.removeItem("token");
     client.clearStore();
-
     dispatch({ type: "SetCurrentUser", payload: null });
-    // dispatch({ type: "SetFirebaseUser", payload: null });
+
+    await router.push({ pathname: "/" });
 
     toast({
       type: "success",
       title: "ログアウトしました！",
     });
-  }, []);
 
-  const handleCompleteCurrentUser = useCallback((data: GetCurrentUserQuery) => {
-    dispatch({ type: "SetCurrentUser", payload: data.getCurrentUser });
-    dispatch({ type: "SetAuthStatus", payload: "completed" });
+    handleCloseModal();
+  }, [firebaseApp, handleCloseModal, router]);
 
-    if (data.getCurrentUser.role !== "NONE") {
-      toast({
-        type: "success",
-        title: "ログインしました！",
-      });
-    }
-  }, []);
+  const handleCompleteCurrentUser = useCallback(
+    (args: { data: GetCurrentUserQuery; isToast: boolean }) => {
+      const { data, isToast } = args;
+
+      dispatch({ type: "SetCurrentUser", payload: data.getCurrentUser });
+      dispatch({ type: "SetAuthStatus", payload: "completed" });
+
+      if (isToast) {
+        toast({
+          type: "success",
+          title: "ログインしました！",
+        });
+      }
+
+      handleCloseModal();
+    },
+    [handleCloseModal],
+  );
 
   const handleErrorCurrentUser = useCallback(
     (error: ApolloError) => {
       logout();
       dispatch({ type: "SetAuthStatus", payload: "completed" });
-      toast({
-        type: "error",
-        title: error.name,
-        description: error.message,
-      });
     },
     [logout],
   );
 
   const [fetchCurrentUser] = useGetCurrentUserLazyQuery({
-    onCompleted: handleCompleteCurrentUser,
-    onError: handleErrorCurrentUser,
-    fetchPolicy: "no-cache",
+    fetchPolicy: "network-only",
   });
 
-  const setCurrentUser = useCallback(async () => {
-    dispatch({ type: "SetAuthStatus", payload: "loading" });
-
-    firebase.auth().onAuthStateChanged(async (currentUser) => {
-      dispatch({ type: "SetFirebaseUser", payload: currentUser });
-
-      if (currentUser !== null) {
-        const idToken = await currentUser.getIdToken();
-        localStorage.setItem("token", idToken);
-        fetchCurrentUser();
-      } else {
-        await firebase.auth().signInAnonymously();
+  const setCurrentUser = useCallback(
+    async (isToast = true) => {
+      if (firebaseApp === null) {
+        return;
       }
+
+      dispatch({ type: "SetAuthStatus", payload: "loading" });
+
+      const firebaseAuth = getAuth(firebaseApp);
+      onAuthStateChanged(firebaseAuth, async (currentUser) => {
+        dispatch({ type: "SetFirebaseUser", payload: currentUser });
+
+        if (currentUser !== null) {
+          const idToken = await currentUser.getIdToken();
+          localStorage.setItem("token", idToken);
+          const { data, error } = await fetchCurrentUser();
+          if (data !== undefined) {
+            handleCompleteCurrentUser({ data, isToast });
+          }
+          if (error !== undefined) {
+            handleErrorCurrentUser(error);
+          }
+        } else {
+          // 常に匿名ユーザーとしてログインした状態にする
+          await signInAnonymously(firebaseAuth).catch((error) => {
+            toast({
+              type: "error",
+              title: error.name,
+              description: error.message,
+              time: 5000,
+            });
+          });
+        }
+      });
+    },
+    [fetchCurrentUser, firebaseApp, handleCompleteCurrentUser, handleErrorCurrentUser],
+  );
+
+  const handleSignupError = useCallback((error: Error) => {
+    if (error.message.includes(AlreadyUseAccount)) {
+      toast({
+        type: "error",
+        title: "このアカウントは既に使用されています",
+        description: "ログインをお試しください",
+        time: 5000,
+      });
+      return null;
+    }
+
+    toast({
+      type: "error",
+      title: error.name,
+      description: error.message,
+      time: 5000,
     });
-  }, [fetchCurrentUser, firebase]);
+    return null;
+  }, []);
+
+  const signupWithGoogle = useCallback(async () => {
+    if (firebaseUser === null) {
+      return;
+    }
+    const provider = new GoogleAuthProvider();
+    const credential = await linkWithPopup(firebaseUser, provider).catch((error: Error) => handleSignupError(error));
+
+    if (credential === null) {
+      return;
+    }
+
+    const {
+      user: { accessToken, refreshToken, displayName, email },
+    } = credential as Credential;
+
+    await upsertGoogleAuthCredential({
+      variables: { googleAuthCredentialInput: { accessToken, refreshToken, displayName, email: email as string } },
+    });
+
+    await setCurrentUser();
+  }, [firebaseUser, handleSignupError, setCurrentUser, upsertGoogleAuthCredential]);
+
+  const signupWithTwitter = useCallback(async () => {
+    if (firebaseUser === null) {
+      return;
+    }
+    const provider = new TwitterAuthProvider();
+    provider.setCustomParameters({ force_login: "true" });
+    const credential = await linkWithPopup(firebaseUser, provider).catch((error: Error) => handleSignupError(error));
+
+    if (credential === null) {
+      return;
+    }
+
+    // TODO: Twitterの認証情報を保存する
+    // eslint-disable-next-line no-console
+    console.log(credential);
+
+    await setCurrentUser();
+  }, [firebaseUser, handleSignupError, setCurrentUser]);
 
   const loginWithGoogle = useCallback(async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    await firebase.auth().signInWithPopup(provider);
-    await firebaseUser?.linkWithPopup(provider);
+    if (firebaseApp === null) {
+      return;
+    }
+    const firebaseAuth = getAuth(firebaseApp);
+    const provider = new GoogleAuthProvider();
+    const credential = await signInWithPopup(firebaseAuth, provider);
+
     await setCurrentUser();
-  }, [firebase, firebaseUser, setCurrentUser]);
+
+    const {
+      user: { accessToken, refreshToken },
+    } = credential as Credential;
+
+    // AuthTokenが更新された後に認証情報を更新
+    await upsertGoogleAuthCredential({
+      variables: { googleAuthCredentialInput: { accessToken, refreshToken } },
+    });
+  }, [firebaseApp, setCurrentUser, upsertGoogleAuthCredential]);
 
   const loginWithTwitter = useCallback(async () => {
-    const provider = new firebase.auth.TwitterAuthProvider();
-    provider.setCustomParameters({ force_login: true });
-    await firebase.auth().signInWithPopup(provider);
-    await firebaseUser?.linkWithPopup(provider);
-    await setCurrentUser();
-  }, [firebase, firebaseUser, setCurrentUser]);
+    if (firebaseApp === null) {
+      return;
+    }
+    const firebaseAuth = getAuth(firebaseApp);
+    const provider = new TwitterAuthProvider();
+    provider.setCustomParameters({ force_login: "true" });
+    const credential = await signInWithPopup(firebaseAuth, provider).catch((error: Error) => handleSignupError(error));
 
-  React.useEffect(() => {
-    setCurrentUser();
+    if (credential === null) {
+      return;
+    }
+
+    await setCurrentUser();
+  }, [firebaseApp, handleSignupError, setCurrentUser]);
+
+  useEffect(() => {
+    setCurrentUser(false);
   }, [setCurrentUser]);
 
   return (
-    <AuthContext.Provider value={{ state, dispatch, loginWithGoogle, loginWithTwitter, logout }}>
+    <AuthContext.Provider value={{ state, dispatch, logout }}>
       {children}
+      <SignupModal
+        isLoginModalOpen={modalStatus === "signup"}
+        signupWithTwitter={signupWithTwitter}
+        signupWithGoogle={signupWithGoogle}
+        onCloseLoginModal={handleCloseModal}
+        openLoginModal={() => dispatch({ type: "SetModalStatus", payload: "login" })}
+      />
+      <LoginModal
+        isLoginModalOpen={modalStatus === "login"}
+        loginWithTwitter={loginWithTwitter}
+        loginWithGoogle={loginWithGoogle}
+        onCloseLoginModal={handleCloseModal}
+        openSignupModal={() => dispatch({ type: "SetModalStatus", payload: "signup" })}
+      />
+      <LogoutModal isLogoutModalOpen={modalStatus === "logout"} logout={logout} onCloseLogoutModal={handleCloseModal} />
     </AuthContext.Provider>
   );
 };

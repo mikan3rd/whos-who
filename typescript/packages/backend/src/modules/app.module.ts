@@ -4,6 +4,7 @@ import { GraphQLModule } from "@nestjs/graphql";
 import { graphqlUploadExpress } from "graphql-upload";
 
 import { DateScalar } from "@/interfaces/scalars/index.scalar";
+import { GoogleAuthCredentialModule } from "@/modules/googleAuthCredential.module";
 import { PersonModule } from "@/modules/person.module";
 import { PersonSuggestionModule } from "@/modules/personSuggestion.module";
 import { PersonSuggestionLikeModule } from "@/modules/personSuggestionLike.module";
@@ -27,6 +28,7 @@ import { UserModule } from "@/modules/user.module";
     PersonModule,
     PersonSuggestionModule,
     PersonSuggestionLikeModule,
+    GoogleAuthCredentialModule,
   ],
   controllers: [],
   providers: [DateScalar],

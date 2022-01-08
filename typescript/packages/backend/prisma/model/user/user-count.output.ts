@@ -15,5 +15,5 @@ export class UserCount {
     personSuggestions!: number;
 
     @Field(() => Int, {nullable:false})
-    PersonSuggestionLikes!: number;
+    personSuggestionLikes!: number;
 }
