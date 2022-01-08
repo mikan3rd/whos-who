@@ -12,6 +12,7 @@ import {
   signInAnonymously,
   signOut,
 } from "firebase/auth";
+import { useRouter } from "next/router";
 import { toast } from "react-semantic-toasts";
 
 import { LoginModal } from "@/components/molecules/LoginModal";
@@ -89,6 +90,7 @@ export const AuthContext = React.createContext<
 
 export const AuthProvider: React.FC = ({ children }) => {
   const { firebaseApp } = useFirebase();
+  const router = useRouter();
 
   const [upsertGoogleAuthCredential] = useUpsertGoogleAuthCredentialMutation();
 
@@ -119,22 +121,28 @@ export const AuthProvider: React.FC = ({ children }) => {
     client.clearStore();
     dispatch({ type: "SetCurrentUser", payload: null });
 
-    toast({
-      type: "success",
-      title: "ログアウトしました！",
-    });
+    await router.push({ pathname: "/" });
 
     // if (firebaseApp !== null) {
     //   const firebaseAuth = getAuth(firebaseApp);
     //   await signInAnonymously(firebaseAuth);
     // }
-  }, [firebaseApp]);
 
-  const handleCompleteCurrentUser = useCallback((data: GetCurrentUserQuery) => {
+    toast({
+      type: "success",
+      title: "ログアウトしました！",
+    });
+
+    dispatch({ type: "SetIsLogoutModalOpen", payload: false });
+  }, [firebaseApp, router]);
+
+  const handleCompleteCurrentUser = useCallback((args: { data: GetCurrentUserQuery; isToast: boolean }) => {
+    const { data, isToast } = args;
+
     dispatch({ type: "SetCurrentUser", payload: data.getCurrentUser });
     dispatch({ type: "SetAuthStatus", payload: "completed" });
 
-    if (data.getCurrentUser.role !== "NONE") {
+    if (isToast) {
       toast({
         type: "success",
         title: "ログインしました！",
@@ -157,33 +165,40 @@ export const AuthProvider: React.FC = ({ children }) => {
   );
 
   const [fetchCurrentUser] = useGetCurrentUserLazyQuery({
-    onCompleted: handleCompleteCurrentUser,
-    onError: handleErrorCurrentUser,
     fetchPolicy: "no-cache",
   });
 
-  const setCurrentUser = useCallback(async () => {
-    if (firebaseApp === null) {
-      return;
-    }
-
-    dispatch({ type: "SetAuthStatus", payload: "loading" });
-
-    const firebaseAuth = getAuth(firebaseApp);
-    onAuthStateChanged(firebaseAuth, async (currentUser) => {
-      dispatch({ type: "SetFirebaseUser", payload: currentUser });
-
-      if (currentUser !== null) {
-        const idToken = await currentUser.getIdToken();
-        localStorage.setItem("token", idToken);
-        fetchCurrentUser();
-      } else {
-        // 常に匿名ユーザーとしてログインする
-        await signInAnonymously(firebaseAuth);
-        // console.log("!!!");
+  const setCurrentUser = useCallback(
+    async (isToast = true) => {
+      if (firebaseApp === null) {
+        return;
       }
-    });
-  }, [fetchCurrentUser, firebaseApp]);
+
+      dispatch({ type: "SetAuthStatus", payload: "loading" });
+
+      const firebaseAuth = getAuth(firebaseApp);
+      onAuthStateChanged(firebaseAuth, async (currentUser) => {
+        dispatch({ type: "SetFirebaseUser", payload: currentUser });
+
+        if (currentUser !== null) {
+          const idToken = await currentUser.getIdToken();
+          localStorage.setItem("token", idToken);
+          const { data, error } = await fetchCurrentUser();
+          if (data !== undefined) {
+            handleCompleteCurrentUser({ data, isToast });
+          }
+          if (error !== undefined) {
+            handleErrorCurrentUser(error);
+          }
+        } else {
+          // 常に匿名ユーザーとしてログインした状態にする
+          await signInAnonymously(firebaseAuth);
+          // console.log("!!!");
+        }
+      });
+    },
+    [fetchCurrentUser, firebaseApp, handleCompleteCurrentUser, handleErrorCurrentUser],
+  );
 
   const loginWithGoogle = useCallback(async () => {
     if (firebaseUser === null) {
@@ -225,7 +240,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (firebaseUser === null) {
-      setCurrentUser();
+      setCurrentUser(false);
     }
   }, [setCurrentUser, firebaseUser]);
 
