@@ -102,7 +102,6 @@ export const AuthProvider: React.FC = ({ children }) => {
     isLogoutModalOpen: false,
   });
   const { firebaseUser, isLoginModalOpen, isLogoutModalOpen, currentUser } = state;
-  // console.log({ firebaseUser, currentUser });
 
   const isLinkedGoogle = useMemo(
     () => currentUser?.googleAuthCredential !== null && currentUser?.googleAuthCredential !== undefined,
@@ -122,11 +121,6 @@ export const AuthProvider: React.FC = ({ children }) => {
     dispatch({ type: "SetCurrentUser", payload: null });
 
     await router.push({ pathname: "/" });
-
-    // if (firebaseApp !== null) {
-    //   const firebaseAuth = getAuth(firebaseApp);
-    //   await signInAnonymously(firebaseAuth);
-    // }
 
     toast({
       type: "success",
@@ -165,7 +159,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   );
 
   const [fetchCurrentUser] = useGetCurrentUserLazyQuery({
-    fetchPolicy: "no-cache",
+    fetchPolicy: "network-only",
   });
 
   const setCurrentUser = useCallback(
@@ -193,7 +187,6 @@ export const AuthProvider: React.FC = ({ children }) => {
         } else {
           // 常に匿名ユーザーとしてログインした状態にする
           await signInAnonymously(firebaseAuth);
-          // console.log("!!!");
         }
       });
     },
@@ -206,9 +199,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
 
     const provider = new GoogleAuthProvider();
-    // TODO: ログアウト後の再ログインで別の匿名アカウントに紐づかないように修正する
     const credential = await linkWithPopup(firebaseUser, provider);
-
     const {
       user: { accessToken, refreshToken, displayName, email },
     } = credential as Credential;
