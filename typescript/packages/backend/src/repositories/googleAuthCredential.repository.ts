@@ -6,12 +6,19 @@ import { PrismaService } from "@/interfaces/services/prisma.service";
 export class GoogleAuthCredentialRepository {
   constructor(private prisma: PrismaService) {}
 
-  async upsert(args: { userId: string; accessToken: string; refreshToken: string; email: string }) {
-    const { userId, accessToken, refreshToken, email } = args;
+  async upsert(args: {
+    userId: string;
+    accessToken: string;
+    refreshToken: string;
+    uid: string;
+    email: string;
+    photoUrl?: string | null;
+  }) {
+    const { userId, accessToken, refreshToken, uid, email, photoUrl } = args;
     return await this.prisma.googleAuthCredential.upsert({
       where: { userId },
-      create: { accessToken, refreshToken, email, user: { connect: { id: userId } } },
-      update: { accessToken, refreshToken, email },
+      create: { accessToken, refreshToken, uid, email, photoUrl, user: { connect: { id: userId } } },
+      update: { accessToken, refreshToken, uid, email, photoUrl },
       include: { user: true },
     });
   }

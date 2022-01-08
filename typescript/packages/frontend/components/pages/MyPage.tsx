@@ -9,6 +9,7 @@ export const MyPage: React.VFC = () => {
     state: { currentUser },
     dispatch,
     signupWithGoogle,
+    signupWithTwitter,
   } = useAuthContext();
 
   const isLinkedGoogle = useMemo(
@@ -46,6 +47,17 @@ export const MyPage: React.VFC = () => {
       {currentUser !== null && currentUser.role !== "NONE" && (
         <Segment>
           <Header content="アカウント連携" />
+
+          <Button
+            color="twitter"
+            disabled
+            // disabled={authStatus === "loading"} // TODO: Twitter APIの Elevated アクセス権が必要
+            onClick={signupWithTwitter}
+          >
+            <Icon name="twitter" />
+            Twitterで連携
+          </Button>
+
           <Button color="black" disabled={isLinkedGoogle} onClick={signupWithGoogle}>
             <Icon name="google" />
             {isLinkedGoogle ? "Googleで登録済み" : "Googleで連携"}

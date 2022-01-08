@@ -9,8 +9,14 @@ export class GoogleAuthCredentialInput {
   refreshToken!: string;
 
   @Field()
+  uid!: string;
+
+  @Field()
   email!: string;
 
   @Field({ nullable: true })
   displayName?: string;
+
+  @Field({ nullable: true })
+  photoUrl?: string;
 }

@@ -15,17 +15,27 @@ export class GoogleAuthCredentialUsecase {
     userId: string;
     accessToken: string;
     refreshToken: string;
-    displayName?: string;
+    uid: string;
     email: string;
+    photoUrl?: string | null;
+    displayName?: string;
   }) {
-    const { userId, accessToken, refreshToken, displayName, email } = args;
-    const credential = await this.credentialRepository.upsert({ userId, accessToken, refreshToken, email });
+    const { userId, accessToken, refreshToken, uid, email, photoUrl, displayName } = args;
+    const credential = await this.credentialRepository.upsert({
+      userId,
+      accessToken,
+      refreshToken,
+      uid,
+      email,
+      photoUrl,
+    });
     const { user } = credential;
 
     const data: Prisma.UserUpdateInput = {
       displayName: user.displayName === null ? displayName : undefined,
       email: user.email === null ? email : undefined,
       role: user.role === "NONE" ? "MEMBER" : undefined,
+      photoUrl: user.photoUrl === null ? photoUrl : undefined,
     };
     await this.userUsecase.update({ id: userId, data });
 

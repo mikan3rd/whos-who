@@ -128,6 +128,22 @@ type Ticket {
   _count: TicketCount!
 }
 
+type TwitterAuthCredential {
+  id: ID!
+  userId: String!
+  uid: String!
+  displayName: String
+  screenName: String
+  photoUrl: String
+  accessToken: String!
+  refreshToken: String!
+  oauthAccessToken: String!
+  oauthTokenSecret: String!
+  createdAt: Date!
+  updatedAt: Date!
+  user: User!
+}
+
 type UserCount {
   tickets: Int!
   ticketUserLikes: Int!
@@ -139,6 +155,7 @@ type User {
   id: ID!
   authUid: String!
   displayName: String
+  photoUrl: String
   email: String
   role: UserRole!
   status: UserStatus!
@@ -150,6 +167,7 @@ type User {
   personSuggestions: [PersonSuggestion!]
   personSuggestionLikes: [PersonSuggestionLike!]
   googleAuthCredential: GoogleAuthCredential
+  twitterAuthCredential: TwitterAuthCredential
   _count: UserCount!
 }
 
@@ -167,6 +185,9 @@ enum UserStatus {
 type GoogleAuthCredential {
   id: ID!
   userId: String!
+  uid: String!
+  displayName: String
+  photoUrl: String
   accessToken: String!
   refreshToken: String!
   email: String!
@@ -202,6 +223,8 @@ input PersonSuggestionCreateInput {
 input GoogleAuthCredentialInput {
   accessToken: String!
   refreshToken: String!
+  uid: String!
   email: String!
   displayName: String
+  photoUrl: String
 }

@@ -31,9 +31,12 @@ export type ExternalImage = {
 export type GoogleAuthCredential = {
   accessToken: Scalars['String'];
   createdAt: Scalars['Date'];
+  displayName?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   id: Scalars['ID'];
+  photoUrl?: Maybe<Scalars['String']>;
   refreshToken: Scalars['String'];
+  uid: Scalars['String'];
   updatedAt: Scalars['Date'];
   user: User;
   userId: Scalars['String'];
@@ -43,7 +46,9 @@ export type GoogleAuthCredentialInput = {
   accessToken: Scalars['String'];
   displayName?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  photoUrl?: InputMaybe<Scalars['String']>;
   refreshToken: Scalars['String'];
+  uid: Scalars['String'];
 };
 
 export type Mutation = {
@@ -211,6 +216,22 @@ export type TicketUserLike = {
   userId: Scalars['String'];
 };
 
+export type TwitterAuthCredential = {
+  accessToken: Scalars['String'];
+  createdAt: Scalars['Date'];
+  displayName?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  oauthAccessToken: Scalars['String'];
+  oauthTokenSecret: Scalars['String'];
+  photoUrl?: Maybe<Scalars['String']>;
+  refreshToken: Scalars['String'];
+  screenName?: Maybe<Scalars['String']>;
+  uid: Scalars['String'];
+  updatedAt: Scalars['Date'];
+  user: User;
+  userId: Scalars['String'];
+};
+
 export type UploadedImage = {
   bucketName: Scalars['String'];
   createdAt: Scalars['Date'];
@@ -231,11 +252,13 @@ export type User = {
   id: Scalars['ID'];
   personSuggestionLikes?: Maybe<Array<PersonSuggestionLike>>;
   personSuggestions?: Maybe<Array<PersonSuggestion>>;
+  photoUrl?: Maybe<Scalars['String']>;
   point: Scalars['Int'];
   role: UserRole;
   status: UserStatus;
   ticketUserLikes?: Maybe<Array<TicketUserLike>>;
   tickets?: Maybe<Array<Ticket>>;
+  twitterAuthCredential?: Maybe<TwitterAuthCredential>;
   updatedAt: Scalars['Date'];
 };
 

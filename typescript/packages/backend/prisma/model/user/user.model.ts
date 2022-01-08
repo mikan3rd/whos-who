@@ -9,6 +9,7 @@ import { TicketUserLike } from '../ticket-user-like/ticket-user-like.model';
 import { PersonSuggestion } from '../person-suggestion/person-suggestion.model';
 import { PersonSuggestionLike } from '../person-suggestion-like/person-suggestion-like.model';
 import { GoogleAuthCredential } from '../google-auth-credential/google-auth-credential.model';
+import { TwitterAuthCredential } from '../twitter-auth-credential/twitter-auth-credential.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -22,6 +23,9 @@ export class User {
 
     @Field(() => String, {nullable:true})
     displayName!: string | null;
+
+    @Field(() => String, {nullable:true})
+    photoUrl!: string | null;
 
     @Field(() => String, {nullable:true})
     email!: string | null;
@@ -55,6 +59,9 @@ export class User {
 
     @Field(() => GoogleAuthCredential, {nullable:true})
     googleAuthCredential?: GoogleAuthCredential | null;
+
+    @Field(() => TwitterAuthCredential, {nullable:true})
+    twitterAuthCredential?: TwitterAuthCredential | null;
 
     @Field(() => UserCount, {nullable:false})
     _count?: UserCount;

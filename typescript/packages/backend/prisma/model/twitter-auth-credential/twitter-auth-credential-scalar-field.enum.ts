@@ -1,17 +1,19 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-export enum GoogleAuthCredentialScalarFieldEnum {
+export enum TwitterAuthCredentialScalarFieldEnum {
     id = "id",
     userId = "userId",
     uid = "uid",
     displayName = "displayName",
+    screenName = "screenName",
     photoUrl = "photoUrl",
     accessToken = "accessToken",
     refreshToken = "refreshToken",
-    email = "email",
+    oauthAccessToken = "oauthAccessToken",
+    oauthTokenSecret = "oauthTokenSecret",
     createdAt = "createdAt",
     updatedAt = "updatedAt"
 }
 
 
-registerEnumType(GoogleAuthCredentialScalarFieldEnum, { name: 'GoogleAuthCredentialScalarFieldEnum', description: undefined })
+registerEnumType(TwitterAuthCredentialScalarFieldEnum, { name: 'TwitterAuthCredentialScalarFieldEnum', description: undefined })

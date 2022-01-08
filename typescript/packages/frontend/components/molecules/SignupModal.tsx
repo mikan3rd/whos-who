@@ -33,7 +33,7 @@ export const SignupModal: React.VFC<Props> = (props) => {
         <Button
           color="twitter"
           size="huge"
-          disabled
+          // disabled
           // disabled={authStatus === "loading"} // TODO: Twitter APIの Elevated アクセス権が必要
           onClick={signupWithTwitter}
         >
