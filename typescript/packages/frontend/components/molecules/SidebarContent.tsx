@@ -35,13 +35,22 @@ export const SidebarContent = React.memo(() => {
         <Menu.Item content="画像から人物を探す" />
       </Link>
 
-      <Link href="/mypage" passHref>
-        <Menu.Item content="マイページ" />
-      </Link>
+      <Menu.Item>
+        <Menu.Header content="個人設定" />
+        <Menu.Menu>
+          {currentUser?.role === "NONE" && (
+            <Menu.Item content="新規登録" onClick={() => dispatch({ type: "SetModalStatus", payload: "signup" })} />
+          )}
 
-      {currentUser?.role === "NONE" && (
-        <Menu.Item content="ログイン" onClick={() => dispatch({ type: "SetIsLoginModalOpen", payload: true })} />
-      )}
+          {currentUser?.role === "NONE" && (
+            <Menu.Item content="ログイン" onClick={() => dispatch({ type: "SetModalStatus", payload: "login" })} />
+          )}
+
+          <Link href="/mypage" passHref>
+            <Menu.Item content="マイページ" />
+          </Link>
+        </Menu.Menu>
+      </Menu.Item>
 
       {currentUser?.role === "ADMIN" && (
         <Link href="/admin" passHref>

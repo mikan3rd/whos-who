@@ -41,7 +41,7 @@ export type GoogleAuthCredential = {
 export type GoogleAuthCredentialInput = {
   accessToken: Scalars['String'];
   displayName?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
+  email?: InputMaybe<Scalars['String']>;
   refreshToken: Scalars['String'];
 };
 

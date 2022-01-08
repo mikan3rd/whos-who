@@ -11,6 +11,6 @@ export class GoogleAuthCredentialInput {
   @Field({ nullable: true })
   displayName?: string;
 
-  @Field()
-  email!: string;
+  @Field({ nullable: true })
+  email?: string;
 }

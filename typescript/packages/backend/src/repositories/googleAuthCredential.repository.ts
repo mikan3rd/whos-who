@@ -11,7 +11,7 @@ export class GoogleAuthCredentialRepository {
     return await this.prisma.googleAuthCredential.upsert({
       where: { userId },
       create: { accessToken, refreshToken, user: { connect: { id: userId } } },
-      update: { accessToken, refreshToken, user: { connect: { id: userId } } },
+      update: { accessToken, refreshToken },
       include: { user: true },
     });
   }

@@ -5,17 +5,17 @@ import { Button, Divider, Icon, Modal } from "semantic-ui-react";
 
 type Props = {
   isLoginModalOpen: boolean;
-  loginWithTwitter: () => void;
-  loginWithGoogle: () => void;
+  signupWithTwitter: () => void;
+  signupWithGoogle: () => void;
   onCloseLoginModal: () => void;
-  openSignupModal: () => void;
+  openLoginModal: () => void;
 };
 
-export const LoginModal: React.VFC<Props> = (props) => {
-  const { isLoginModalOpen, loginWithTwitter, loginWithGoogle, onCloseLoginModal, openSignupModal } = props;
+export const SignupModal: React.VFC<Props> = (props) => {
+  const { isLoginModalOpen, signupWithTwitter, signupWithGoogle, onCloseLoginModal, openLoginModal } = props;
   return (
     <Modal open={isLoginModalOpen} size="tiny" closeIcon onClose={onCloseLoginModal}>
-      <Modal.Header>ログイン</Modal.Header>
+      <Modal.Header>新規登録</Modal.Header>
       <Modal.Content
         scrolling
         css={css`
@@ -24,7 +24,7 @@ export const LoginModal: React.VFC<Props> = (props) => {
           }
         `}
       >
-        ログインするとあなたの投稿やLikeした投稿が確認できるようになります
+        新規登録するとあなたの投稿やLikeした投稿が確認できるようになります
         <div
           css={css`
             margin: 8px 0;
@@ -35,22 +35,22 @@ export const LoginModal: React.VFC<Props> = (props) => {
           size="huge"
           disabled
           // disabled={authStatus === "loading"} // TODO: Twitter APIの Elevated アクセス権が必要
-          onClick={loginWithTwitter}
+          onClick={signupWithTwitter}
         >
           <Icon name="twitter" />
-          Twitterログイン
+          Twitterで新規登録
         </Button>
         <div
           css={css`
             margin: 8px 0;
           `}
         />
-        <Button color="black" size="huge" onClick={loginWithGoogle}>
+        <Button color="black" size="huge" onClick={signupWithGoogle}>
           <Icon name="google" />
-          Googleログイン
+          Googleで新規登録
         </Button>
         <Divider />
-        <Button content="新規登録はこちら" size="huge" onClick={openSignupModal} />
+        <Button content="ログインはこちら" size="huge" onClick={openLoginModal} />
       </Modal.Content>
     </Modal>
   );

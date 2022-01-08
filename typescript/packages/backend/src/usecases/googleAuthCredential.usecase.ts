@@ -16,7 +16,7 @@ export class GoogleAuthCredentialUsecase {
     accessToken: string;
     refreshToken: string;
     displayName?: string;
-    email: string;
+    email?: string;
   }) {
     const { userId, accessToken, refreshToken, displayName, email } = args;
     const credential = await this.credentialRepository.upsert({ userId, accessToken, refreshToken });

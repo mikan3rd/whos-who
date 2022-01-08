@@ -201,5 +201,5 @@ input GoogleAuthCredentialInput {
   accessToken: String!
   refreshToken: String!
   displayName: String
-  email: String!
+  email: String
 }

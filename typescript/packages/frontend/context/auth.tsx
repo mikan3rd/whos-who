@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect } from "react";
 
 import { ApolloError } from "@apollo/client";
 import {
@@ -10,6 +10,7 @@ import {
   linkWithPopup,
   onAuthStateChanged,
   signInAnonymously,
+  signInWithPopup,
   signOut,
 } from "firebase/auth";
 import { useRouter } from "next/router";
@@ -17,6 +18,7 @@ import { toast } from "react-semantic-toasts";
 
 import { LoginModal } from "@/components/molecules/LoginModal";
 import { LogoutModal } from "@/components/molecules/LogoutModal";
+import { SignupModal } from "@/components/molecules/SignupModal";
 import { client } from "@/graphql/client";
 import {
   GetCurrentUserQuery,
@@ -27,12 +29,13 @@ import { useFirebase } from "@/hooks/useFirebase";
 
 type Credential = UserCredential & { user: { accessToken: string } };
 
+const AlreadyUseAccount = "auth/credential-already-in-use" as const;
+
 type State = {
   authStatus: "initial" | "loading" | "completed";
   firebaseUser: FirebaseUser | null;
   currentUser: GetCurrentUserQuery["getCurrentUser"] | null;
-  isLoginModalOpen: boolean;
-  isLogoutModalOpen: boolean;
+  modalStatus: "none" | "signup" | "login" | "logout";
 };
 
 type Action =
@@ -49,12 +52,8 @@ type Action =
       payload: State["currentUser"];
     }
   | {
-      type: "SetIsLoginModalOpen";
-      payload: State["isLoginModalOpen"];
-    }
-  | {
-      type: "SetIsLogoutModalOpen";
-      payload: State["isLogoutModalOpen"];
+      type: "SetModalStatus";
+      payload: State["modalStatus"];
     };
 
 const reducer: React.Reducer<State, Action> = (state, action): State => {
@@ -68,11 +67,8 @@ const reducer: React.Reducer<State, Action> = (state, action): State => {
     case "SetCurrentUser":
       return { ...state, currentUser: action.payload };
 
-    case "SetIsLoginModalOpen":
-      return { ...state, isLoginModalOpen: action.payload };
-
-    case "SetIsLogoutModalOpen":
-      return { ...state, isLogoutModalOpen: action.payload };
+    case "SetModalStatus":
+      return { ...state, modalStatus: action.payload };
 
     default:
       return state;
@@ -98,18 +94,21 @@ export const AuthProvider: React.FC = ({ children }) => {
     authStatus: "initial",
     firebaseUser: null,
     currentUser: null,
-    isLoginModalOpen: false,
-    isLogoutModalOpen: false,
+    modalStatus: "none",
   });
-  const { firebaseUser, isLoginModalOpen, isLogoutModalOpen, currentUser } = state;
+  const { firebaseUser, modalStatus } = state;
 
-  const isLinkedGoogle = useMemo(
-    () => currentUser?.googleAuthCredential !== null && currentUser?.googleAuthCredential !== undefined,
-    [currentUser?.googleAuthCredential],
-  );
+  // TODO: アカウントに複数の連携をする場合に使用
+  // const isLinkedGoogle = useMemo(
+  //   () => currentUser?.googleAuthCredential !== null && currentUser?.googleAuthCredential !== undefined,
+  //   [currentUser?.googleAuthCredential],
+  // );
+
+  const handleCloseModal = useCallback(() => {
+    dispatch({ type: "SetModalStatus", payload: "none" });
+  }, []);
 
   const logout = useCallback(async () => {
-    // TODO: 複数のソーシャルアカウントを使い分ける場合の考慮
     if (firebaseApp !== null) {
       const firebaseAuth = getAuth(firebaseApp);
       await signOut(firebaseAuth);
@@ -127,33 +126,32 @@ export const AuthProvider: React.FC = ({ children }) => {
       title: "ログアウトしました！",
     });
 
-    dispatch({ type: "SetIsLogoutModalOpen", payload: false });
-  }, [firebaseApp, router]);
+    handleCloseModal();
+  }, [firebaseApp, handleCloseModal, router]);
 
-  const handleCompleteCurrentUser = useCallback((args: { data: GetCurrentUserQuery; isToast: boolean }) => {
-    const { data, isToast } = args;
+  const handleCompleteCurrentUser = useCallback(
+    (args: { data: GetCurrentUserQuery; isToast: boolean }) => {
+      const { data, isToast } = args;
 
-    dispatch({ type: "SetCurrentUser", payload: data.getCurrentUser });
-    dispatch({ type: "SetAuthStatus", payload: "completed" });
+      dispatch({ type: "SetCurrentUser", payload: data.getCurrentUser });
+      dispatch({ type: "SetAuthStatus", payload: "completed" });
 
-    if (isToast) {
-      toast({
-        type: "success",
-        title: "ログインしました！",
-      });
-    }
-    dispatch({ type: "SetIsLoginModalOpen", payload: false });
-  }, []);
+      if (isToast) {
+        toast({
+          type: "success",
+          title: "ログインしました！",
+        });
+      }
+
+      handleCloseModal();
+    },
+    [handleCloseModal],
+  );
 
   const handleErrorCurrentUser = useCallback(
     (error: ApolloError) => {
       logout();
       dispatch({ type: "SetAuthStatus", payload: "completed" });
-      toast({
-        type: "error",
-        title: error.name,
-        description: error.message,
-      });
     },
     [logout],
   );
@@ -186,20 +184,51 @@ export const AuthProvider: React.FC = ({ children }) => {
           }
         } else {
           // 常に匿名ユーザーとしてログインした状態にする
-          await signInAnonymously(firebaseAuth);
+          await signInAnonymously(firebaseAuth).catch((error) => {
+            toast({
+              type: "error",
+              title: error.name,
+              description: error.message,
+              time: 5000,
+            });
+          });
         }
       });
     },
     [fetchCurrentUser, firebaseApp, handleCompleteCurrentUser, handleErrorCurrentUser],
   );
 
-  const loginWithGoogle = useCallback(async () => {
+  const handleSignupError = useCallback((error: Error) => {
+    if (error.message.includes(AlreadyUseAccount)) {
+      toast({
+        type: "error",
+        title: "このアカウントは既に使用されています",
+        description: "ログインをお試しください",
+        time: 5000,
+      });
+      return null;
+    }
+
+    toast({
+      type: "error",
+      title: error.name,
+      description: error.message,
+      time: 5000,
+    });
+    return null;
+  }, []);
+
+  const signupWithGoogle = useCallback(async () => {
     if (firebaseUser === null) {
       return;
     }
-
     const provider = new GoogleAuthProvider();
-    const credential = await linkWithPopup(firebaseUser, provider);
+    const credential = await linkWithPopup(firebaseUser, provider).catch((error: Error) => handleSignupError(error));
+
+    if (credential === null) {
+      return;
+    }
+
     const {
       user: { accessToken, refreshToken, displayName, email },
     } = credential as Credential;
@@ -209,47 +238,85 @@ export const AuthProvider: React.FC = ({ children }) => {
     });
 
     await setCurrentUser();
+  }, [firebaseUser, handleSignupError, setCurrentUser, upsertGoogleAuthCredential]);
 
-    dispatch({ type: "SetIsLoginModalOpen", payload: false });
-  }, [firebaseUser, setCurrentUser, upsertGoogleAuthCredential]);
-
-  const loginWithTwitter = useCallback(async () => {
+  const signupWithTwitter = useCallback(async () => {
     if (firebaseUser === null) {
       return;
     }
     const provider = new TwitterAuthProvider();
     provider.setCustomParameters({ force_login: "true" });
-    // TODO: ログアウト後の再ログインで別の匿名アカウントに紐づかないように修正する
-    const credential = await linkWithPopup(firebaseUser, provider);
+    const credential = await linkWithPopup(firebaseUser, provider).catch((error: Error) => handleSignupError(error));
+
+    if (credential === null) {
+      return;
+    }
+
+    // TODO: Twitterの認証情報を保存する
     // eslint-disable-next-line no-console
     console.log(credential);
 
     await setCurrentUser();
+  }, [firebaseUser, handleSignupError, setCurrentUser]);
 
-    dispatch({ type: "SetIsLoginModalOpen", payload: false });
-  }, [firebaseUser, setCurrentUser]);
+  const loginWithGoogle = useCallback(async () => {
+    if (firebaseApp === null) {
+      return;
+    }
+    const firebaseAuth = getAuth(firebaseApp);
+    const provider = new GoogleAuthProvider();
+    const credential = await signInWithPopup(firebaseAuth, provider);
+
+    await setCurrentUser();
+
+    const {
+      user: { accessToken, refreshToken },
+    } = credential as Credential;
+
+    // AuthTokenが更新された後に認証情報を更新
+    await upsertGoogleAuthCredential({
+      variables: { googleAuthCredentialInput: { accessToken, refreshToken } },
+    });
+  }, [firebaseApp, setCurrentUser, upsertGoogleAuthCredential]);
+
+  const loginWithTwitter = useCallback(async () => {
+    if (firebaseApp === null) {
+      return;
+    }
+    const firebaseAuth = getAuth(firebaseApp);
+    const provider = new TwitterAuthProvider();
+    provider.setCustomParameters({ force_login: "true" });
+    const credential = await signInWithPopup(firebaseAuth, provider).catch((error: Error) => handleSignupError(error));
+
+    if (credential === null) {
+      return;
+    }
+
+    await setCurrentUser();
+  }, [firebaseApp, handleSignupError, setCurrentUser]);
 
   useEffect(() => {
-    if (firebaseUser === null) {
-      setCurrentUser(false);
-    }
-  }, [setCurrentUser, firebaseUser]);
+    setCurrentUser(false);
+  }, [setCurrentUser]);
 
   return (
     <AuthContext.Provider value={{ state, dispatch, logout }}>
       {children}
+      <SignupModal
+        isLoginModalOpen={modalStatus === "signup"}
+        signupWithTwitter={signupWithTwitter}
+        signupWithGoogle={signupWithGoogle}
+        onCloseLoginModal={handleCloseModal}
+        openLoginModal={() => dispatch({ type: "SetModalStatus", payload: "login" })}
+      />
       <LoginModal
-        isLoginModalOpen={isLoginModalOpen}
-        isLinkedGoogle={isLinkedGoogle}
+        isLoginModalOpen={modalStatus === "login"}
         loginWithTwitter={loginWithTwitter}
         loginWithGoogle={loginWithGoogle}
-        onCloseLoginModal={() => dispatch({ type: "SetIsLoginModalOpen", payload: false })}
+        onCloseLoginModal={handleCloseModal}
+        openSignupModal={() => dispatch({ type: "SetModalStatus", payload: "signup" })}
       />
-      <LogoutModal
-        isLogoutModalOpen={isLogoutModalOpen}
-        logout={logout}
-        onCloseLogoutModal={() => dispatch({ type: "SetIsLogoutModalOpen", payload: false })}
-      />
+      <LogoutModal isLogoutModalOpen={modalStatus === "logout"} logout={logout} onCloseLogoutModal={handleCloseModal} />
     </AuthContext.Provider>
   );
 };
