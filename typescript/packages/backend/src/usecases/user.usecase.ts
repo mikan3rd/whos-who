@@ -7,8 +7,8 @@ import { UserRepository } from "@/repositories/user.repository";
 export class UserUsecase {
   constructor(@Inject(UserRepository) private userRepository: UserRepository) {}
 
-  async getDetailById(id: string) {
-    return await this.userRepository.findById(id);
+  async getDetailByAuthUid(authUid: string) {
+    return await this.userRepository.findByAuthUid(authUid);
   }
 
   async create(data: Prisma.UserCreateInput) {

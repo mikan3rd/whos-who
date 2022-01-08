@@ -6,9 +6,9 @@ import { Prisma, PrismaService } from "@/interfaces/services/prisma.service";
 export class UserRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findById(id: string) {
+  async findByAuthUid(authUid: string) {
     return await this.prisma.user.findUnique({
-      where: { id },
+      where: { authUid },
       include: {
         googleAuthCredential: true,
       },

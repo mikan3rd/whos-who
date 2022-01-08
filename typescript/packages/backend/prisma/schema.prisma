@@ -26,7 +26,8 @@ enum UserStatus {
 }
 
 model User {
-  id          String     @id @db.VarChar(255)
+  id          String     @id @default(uuid())
+  authUid     String     @unique @db.VarChar(255)
   displayName String?    @db.VarChar(255)
   email       String?    @db.VarChar(255)
   role        UserRole   @default(NONE)
@@ -164,6 +165,7 @@ model GoogleAuthCredential {
   userId       String   @unique @db.VarChar(255)
   accessToken  String   @db.Text
   refreshToken String   @db.Text
+  email        String   @unique @db.VarChar(255)
   createdAt    DateTime @default(now()) @db.DateTime(0)
   updatedAt    DateTime @default(now()) @updatedAt @db.DateTime(0)
 

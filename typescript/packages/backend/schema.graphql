@@ -137,6 +137,7 @@ type UserCount {
 
 type User {
   id: ID!
+  authUid: String!
   displayName: String
   email: String
   role: UserRole!
@@ -168,6 +169,7 @@ type GoogleAuthCredential {
   userId: String!
   accessToken: String!
   refreshToken: String!
+  email: String!
   createdAt: Date!
   updatedAt: Date!
   user: User!
@@ -200,6 +202,6 @@ input PersonSuggestionCreateInput {
 input GoogleAuthCredentialInput {
   accessToken: String!
   refreshToken: String!
+  email: String!
   displayName: String
-  email: String
 }

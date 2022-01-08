@@ -5,6 +5,7 @@ export enum GoogleAuthCredentialScalarFieldEnum {
     userId = "userId",
     accessToken = "accessToken",
     refreshToken = "refreshToken",
+    email = "email",
     createdAt = "createdAt",
     updatedAt = "updatedAt"
 }

@@ -79,7 +79,8 @@ export const AuthContext = React.createContext<
   | {
       state: State;
       dispatch: React.Dispatch<Action>;
-      logout: () => void;
+      signupWithGoogle: () => Promise<void>;
+      signupWithTwitter: () => Promise<void>;
     }
   | undefined
 >(undefined);
@@ -97,12 +98,6 @@ export const AuthProvider: React.FC = ({ children }) => {
     modalStatus: "none",
   });
   const { firebaseUser, modalStatus } = state;
-
-  // TODO: アカウントに複数の連携をする場合に使用
-  // const isLinkedGoogle = useMemo(
-  //   () => currentUser?.googleAuthCredential !== null && currentUser?.googleAuthCredential !== undefined,
-  //   [currentUser?.googleAuthCredential],
-  // );
 
   const handleCloseModal = useCallback(() => {
     dispatch({ type: "SetModalStatus", payload: "none" });
@@ -270,12 +265,12 @@ export const AuthProvider: React.FC = ({ children }) => {
     await setCurrentUser();
 
     const {
-      user: { accessToken, refreshToken },
+      user: { accessToken, refreshToken, email },
     } = credential as Credential;
 
     // AuthTokenが更新された後に認証情報を更新
     await upsertGoogleAuthCredential({
-      variables: { googleAuthCredentialInput: { accessToken, refreshToken } },
+      variables: { googleAuthCredentialInput: { accessToken, refreshToken, email: email as string } },
     });
   }, [firebaseApp, setCurrentUser, upsertGoogleAuthCredential]);
 
@@ -300,7 +295,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   }, [setCurrentUser]);
 
   return (
-    <AuthContext.Provider value={{ state, dispatch, logout }}>
+    <AuthContext.Provider value={{ state, dispatch, signupWithGoogle, signupWithTwitter }}>
       {children}
       <SignupModal
         isLoginModalOpen={modalStatus === "signup"}

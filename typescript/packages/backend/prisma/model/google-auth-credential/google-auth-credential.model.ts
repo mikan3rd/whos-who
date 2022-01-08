@@ -18,6 +18,9 @@ export class GoogleAuthCredential {
     @Field(() => String, {nullable:false})
     refreshToken!: string;
 
+    @Field(() => String, {nullable:false})
+    email!: string;
+
     @Field(() => Date, {nullable:false})
     createdAt!: Date;
 

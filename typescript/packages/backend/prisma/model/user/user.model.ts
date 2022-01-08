@@ -17,6 +17,9 @@ export class User {
     @Field(() => ID, {nullable:false})
     id!: string;
 
+    @Field(() => String, {nullable:false})
+    authUid!: string;
+
     @Field(() => String, {nullable:true})
     displayName!: string | null;
 

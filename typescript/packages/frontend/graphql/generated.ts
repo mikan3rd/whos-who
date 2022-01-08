@@ -31,6 +31,7 @@ export type ExternalImage = {
 export type GoogleAuthCredential = {
   accessToken: Scalars['String'];
   createdAt: Scalars['Date'];
+  email: Scalars['String'];
   id: Scalars['ID'];
   refreshToken: Scalars['String'];
   updatedAt: Scalars['Date'];
@@ -41,7 +42,7 @@ export type GoogleAuthCredential = {
 export type GoogleAuthCredentialInput = {
   accessToken: Scalars['String'];
   displayName?: InputMaybe<Scalars['String']>;
-  email?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
   refreshToken: Scalars['String'];
 };
 
@@ -222,6 +223,7 @@ export type UploadedImage = {
 
 export type User = {
   _count: UserCount;
+  authUid: Scalars['String'];
   createdAt: Scalars['Date'];
   displayName?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;

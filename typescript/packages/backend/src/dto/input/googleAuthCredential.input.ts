@@ -8,9 +8,9 @@ export class GoogleAuthCredentialInput {
   @Field()
   refreshToken!: string;
 
-  @Field({ nullable: true })
-  displayName?: string;
+  @Field()
+  email!: string;
 
   @Field({ nullable: true })
-  email?: string;
+  displayName?: string;
 }
