@@ -293,7 +293,7 @@ export type UpsertGoogleAuthCredentialMutation = { upsertGoogleAuthCredential: {
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { getCurrentUser: { id: string, displayName?: string | null | undefined, role: UserRole } };
+export type GetCurrentUserQuery = { getCurrentUser: { id: string, displayName?: string | null | undefined, role: UserRole, googleAuthCredential?: { id: string } | null | undefined } };
 
 export type GetTicketByExternalImageUrlQueryVariables = Exact<{
   externalImageUrl: Scalars['String'];
@@ -490,6 +490,9 @@ export const GetCurrentUserDocument = gql`
     id
     displayName
     role
+    googleAuthCredential {
+      id
+    }
   }
 }
     `;

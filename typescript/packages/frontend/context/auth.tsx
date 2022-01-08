@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 
 import { ApolloError } from "@apollo/client";
 import { css } from "@emotion/react";
@@ -90,25 +90,35 @@ export const AuthProvider: React.FC = ({ children }) => {
     currentUser: null,
     isLoginModalOpen: false,
   });
-  const { firebaseUser, isLoginModalOpen, authStatus } = state;
+  const { firebaseUser, isLoginModalOpen, authStatus, currentUser } = state;
+  // console.log({ firebaseUser, currentUser });
+
+  const isLinkedGoogle = useMemo(
+    () => currentUser?.googleAuthCredential !== null && currentUser?.googleAuthCredential !== undefined,
+    [currentUser?.googleAuthCredential],
+  );
 
   const logout = useCallback(async () => {
     // TODO: 複数のソーシャルアカウントを使い分ける場合の考慮
     if (firebaseApp !== null) {
       const firebaseAuth = getAuth(firebaseApp);
       await signOut(firebaseAuth);
+      dispatch({ type: "SetFirebaseUser", payload: null });
     }
 
     localStorage.removeItem("token");
     client.clearStore();
-
     dispatch({ type: "SetCurrentUser", payload: null });
-    dispatch({ type: "SetFirebaseUser", payload: null });
 
     toast({
       type: "success",
       title: "ログアウトしました！",
     });
+
+    // if (firebaseApp !== null) {
+    //   const firebaseAuth = getAuth(firebaseApp);
+    //   await signInAnonymously(firebaseAuth);
+    // }
   }, [firebaseApp]);
 
   const handleCompleteCurrentUser = useCallback((data: GetCurrentUserQuery) => {
@@ -159,6 +169,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         localStorage.setItem("token", idToken);
         fetchCurrentUser();
       } else {
+        // 常に匿名ユーザーとしてログインする
         await signInAnonymously(firebaseAuth);
       }
     });
@@ -171,11 +182,19 @@ export const AuthProvider: React.FC = ({ children }) => {
     const provider = new GoogleAuthProvider();
     // TODO: ログアウト後の再ログインで別の匿名アカウントに紐づかないように修正する
     const credential = await linkWithPopup(firebaseUser, provider);
-    // TODO: 初回のみ displayName, email, role を更新
-    // eslint-disable-next-line no-console
-    console.log(credential);
+
+    const {
+      user: { accessToken, refreshToken, displayName, email },
+    } = credential as Credential;
+
+    await upsertGoogleAuthCredential({
+      variables: { googleAuthCredentialInput: { accessToken, refreshToken, displayName, email: email as string } },
+    });
+
     await setCurrentUser();
-  }, [firebaseUser, setCurrentUser]);
+
+    dispatch({ type: "SetIsLoginModalOpen", payload: false });
+  }, [firebaseUser, setCurrentUser, upsertGoogleAuthCredential]);
 
   const loginWithTwitter = useCallback(async () => {
     if (firebaseUser === null) {
@@ -188,15 +207,10 @@ export const AuthProvider: React.FC = ({ children }) => {
     // eslint-disable-next-line no-console
     console.log(credential);
 
-    const {
-      user: { accessToken, refreshToken, displayName, email },
-    } = credential as Credential;
-    await upsertGoogleAuthCredential({
-      variables: { googleAuthCredentialInput: { accessToken, refreshToken, displayName, email: email as string } },
-    });
-
     await setCurrentUser();
-  }, [firebaseUser, setCurrentUser, upsertGoogleAuthCredential]);
+
+    dispatch({ type: "SetIsLoginModalOpen", payload: false });
+  }, [firebaseUser, setCurrentUser]);
 
   useEffect(() => {
     if (firebaseUser === null) {
@@ -238,9 +252,14 @@ export const AuthProvider: React.FC = ({ children }) => {
               margin: 8px 0;
             `}
           />
-          <Button color="black" size="huge" disabled={authStatus === "loading"} onClick={loginWithGoogle}>
+          <Button
+            color="black"
+            size="huge"
+            disabled={authStatus === "loading" || isLinkedGoogle}
+            onClick={loginWithGoogle}
+          >
             <Icon name="google" />
-            Googleログイン
+            {isLinkedGoogle ? "Googleログイン済" : "Googleログイン"}
           </Button>
         </Modal.Content>
       </Modal>

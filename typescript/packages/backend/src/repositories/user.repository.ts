@@ -9,6 +9,9 @@ export class UserRepository {
   async findById(id: string) {
     return await this.prisma.user.findUnique({
       where: { id },
+      include: {
+        googleAuthCredential: true,
+      },
     });
   }
 
