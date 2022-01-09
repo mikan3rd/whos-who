@@ -220,7 +220,6 @@ export const TicketCreatePage: React.VFC = () => {
                     </Message>
                   </Link>
                 )}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={externalImageUrl}
                   alt={externalImageUrl}
@@ -232,7 +231,6 @@ export const TicketCreatePage: React.VFC = () => {
             )}
 
             {imageType === "uploadImage" && uploadImageUrl !== null && (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={uploadImageUrl}
                 alt={uploadFile?.name ?? ""}

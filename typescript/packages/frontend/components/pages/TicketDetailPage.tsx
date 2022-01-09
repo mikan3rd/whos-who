@@ -213,7 +213,6 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
           <label>作成日: {dayjs(createdAt).format("YYYY/MM/DD HH:mm")}</label>
         </div>
 
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imageUrl}
           alt={imageUrl}

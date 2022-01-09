@@ -15,12 +15,7 @@ export const SidebarContent = React.memo(() => {
   return (
     <>
       <Link href="/" passHref>
-        <Menu.Item
-          css={css`
-            &&& {
-            }
-          `}
-        >
+        <Menu.Item>
           <img src="/title_logo.png" alt="WHO'S WHO!?" />
         </Menu.Item>
       </Link>
