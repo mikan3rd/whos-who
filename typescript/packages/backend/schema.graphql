@@ -192,7 +192,26 @@ type Query {
   getCurrentUser: User!
   getTicketByExternalImageUrl(externalImageUrl: String!): Ticket
   getTicketById(id: String!): Ticket
+  getTicketList(ticketListInput: TicketListInput!): [Ticket!]!
   searchPersonByWord(word: String!): [Person!]!
+}
+
+input TicketListInput {
+  take: Int!
+  page: Int
+  sortOrder: SortOrder
+  sortKey: SortKey
+  filterByAnswered: Boolean
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+enum SortKey {
+  createdAt
+  ticketUserLikes
 }
 
 type Mutation {

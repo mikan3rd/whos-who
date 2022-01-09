@@ -23,7 +23,6 @@ export class TicketRepository {
         user: true,
         externalImage: true,
         uploadedImage: true,
-        ticketUserLikes: true,
         person: true,
         personSuggestions: {
           include: { person: true, user: true, _count: true },
@@ -38,6 +37,26 @@ export class TicketRepository {
     return await this.prisma.ticket.update({
       data,
       where: { id },
+    });
+  }
+
+  async getList(args: {
+    take: number;
+    page?: number;
+    where: Prisma.TicketWhereInput;
+    orderBy: Prisma.TicketOrderByWithRelationInput;
+  }) {
+    const { take, page, where, orderBy } = args;
+    return await this.prisma.ticket.findMany({
+      include: {
+        externalImage: true,
+        uploadedImage: true,
+        _count: true,
+      },
+      where,
+      orderBy,
+      take,
+      skip: page !== undefined ? take * (page - 1) : undefined,
     });
   }
 }
