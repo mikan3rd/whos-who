@@ -165,6 +165,7 @@ export type Query = {
   getCurrentUser: User;
   getTicketByExternalImageUrl?: Maybe<Ticket>;
   getTicketById?: Maybe<Ticket>;
+  getTicketList: Array<Ticket>;
   searchPersonByWord: Array<Person>;
 };
 
@@ -179,9 +180,24 @@ export type QueryGetTicketByIdArgs = {
 };
 
 
+export type QueryGetTicketListArgs = {
+  ticketListInput: TicketListInput;
+};
+
+
 export type QuerySearchPersonByWordArgs = {
   word: Scalars['String'];
 };
+
+export enum SortKey {
+  CreatedAt = 'createdAt',
+  TicketUserLikes = 'ticketUserLikes'
+}
+
+export enum SortOrder {
+  Asc = 'asc',
+  Desc = 'desc'
+}
 
 export type Ticket = {
   _count: TicketCount;
@@ -207,6 +223,14 @@ export type TicketCount = {
   personSuggestionLikes: Scalars['Int'];
   personSuggestions: Scalars['Int'];
   ticketUserLikes: Scalars['Int'];
+};
+
+export type TicketListInput = {
+  filterByAnswered?: InputMaybe<Scalars['Boolean']>;
+  page?: InputMaybe<Scalars['Int']>;
+  sortKey?: InputMaybe<SortKey>;
+  sortOrder?: InputMaybe<SortOrder>;
+  take: Scalars['Int'];
 };
 
 export type TicketUserLike = {
@@ -350,6 +374,13 @@ export type GetTicketByIdQueryVariables = Exact<{
 
 
 export type GetTicketByIdQuery = { getTicketById?: { id: string, personId?: string | null | undefined, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, url: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined, personSuggestions?: Array<{ id: string, person: { id: string, name: string }, user: { id: string }, _count: { personSuggestionLikes: number } }> | null | undefined, _count: { ticketUserLikes: number } } | null | undefined };
+
+export type GetTicketListQueryVariables = Exact<{
+  ticketListInput: TicketListInput;
+}>;
+
+
+export type GetTicketListQuery = { getTicketList: Array<{ id: string, personId?: string | null | undefined, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, url: string } | null | undefined, _count: { ticketUserLikes: number } }> };
 
 export type SearchPersonByWordQueryVariables = Exact<{
   word: Scalars['String'];
@@ -711,6 +742,56 @@ export function useGetTicketByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetTicketByIdQueryHookResult = ReturnType<typeof useGetTicketByIdQuery>;
 export type GetTicketByIdLazyQueryHookResult = ReturnType<typeof useGetTicketByIdLazyQuery>;
 export type GetTicketByIdQueryResult = Apollo.QueryResult<GetTicketByIdQuery, GetTicketByIdQueryVariables>;
+export const GetTicketListDocument = gql`
+    query getTicketList($ticketListInput: TicketListInput!) {
+  getTicketList(ticketListInput: $ticketListInput) {
+    id
+    personId
+    createdAt
+    updatedAt
+    externalImage {
+      id
+      url
+      statusCode
+    }
+    uploadedImage {
+      id
+      url
+    }
+    _count {
+      ticketUserLikes
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTicketListQuery__
+ *
+ * To run a query within a React component, call `useGetTicketListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTicketListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTicketListQuery({
+ *   variables: {
+ *      ticketListInput: // value for 'ticketListInput'
+ *   },
+ * });
+ */
+export function useGetTicketListQuery(baseOptions: Apollo.QueryHookOptions<GetTicketListQuery, GetTicketListQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTicketListQuery, GetTicketListQueryVariables>(GetTicketListDocument, options);
+      }
+export function useGetTicketListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTicketListQuery, GetTicketListQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTicketListQuery, GetTicketListQueryVariables>(GetTicketListDocument, options);
+        }
+export type GetTicketListQueryHookResult = ReturnType<typeof useGetTicketListQuery>;
+export type GetTicketListLazyQueryHookResult = ReturnType<typeof useGetTicketListLazyQuery>;
+export type GetTicketListQueryResult = Apollo.QueryResult<GetTicketListQuery, GetTicketListQueryVariables>;
 export const SearchPersonByWordDocument = gql`
     query searchPersonByWord($word: String!) {
   searchPersonByWord(word: $word) {

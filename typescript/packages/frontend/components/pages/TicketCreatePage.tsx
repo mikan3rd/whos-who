@@ -17,7 +17,7 @@ type ImageType = "externalImageUrl" | "uploadImage";
 
 export const TicketCreatePage: React.VFC = () => {
   const router = useRouter();
-  const [getTicket, { data: getTicketData }] = useGetTicketByExternalImageUrlLazyQuery({ fetchPolicy: "network-only" });
+  const [getTicket, { data: getTicketData }] = useGetTicketByExternalImageUrlLazyQuery({ fetchPolicy: "no-cache" });
   const [createTicketByExternalImageUrl, { loading: createTicketLoading }] =
     useCreateTicketByExternalImageUrlMutation();
   const [createTicketByUploadImageFile, { loading: uploadImageLoading }] = useCreateTicketByUploadImageFileMutation();

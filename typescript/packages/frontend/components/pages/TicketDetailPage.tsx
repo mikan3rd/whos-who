@@ -178,7 +178,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
           `}
         >
           <Label
-            content={isAccepting ? `募集中` : `回答済み`}
+            content={isAccepting ? `回答募集中` : `回答あり`}
             color={isAccepting ? "red" : "green"}
             css={css`
               &&& {
@@ -187,9 +187,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
               }
             `}
           />
-          {isAccepting
-            ? `この画像の人物の名前を知っている人を探しています！`
-            : `この画像の人物の名前を確認してみよう！`}
+          {isAccepting ? `この人の名前を知っている人を探しています！` : `この人の名前を確認してみよう！`}
         </Header.Content>
       </Header>
 
@@ -210,7 +208,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
             // TODO: basic when user liked
           />
 
-          <label>作成日: {dayjs(createdAt).format("YYYY/MM/DD HH:mm")}</label>
+          <label>投稿日: {dayjs(createdAt).format("YYYY/MM/DD HH:mm")}</label>
         </div>
 
         <img

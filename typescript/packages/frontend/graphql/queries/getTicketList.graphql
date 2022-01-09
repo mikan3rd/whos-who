@@ -1,0 +1,20 @@
+query getTicketList($ticketListInput: TicketListInput!) {
+  getTicketList(ticketListInput: $ticketListInput) {
+    id
+    personId
+    createdAt
+    updatedAt
+    externalImage {
+      id
+      url
+      statusCode
+    }
+    uploadedImage {
+      id
+      url
+    }
+    _count {
+      ticketUserLikes
+    }
+  }
+}

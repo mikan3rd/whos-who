@@ -47,6 +47,7 @@ export class TicketResolver {
     return this.ticketUsecase.getById(id);
   }
 
+  @UseGuards(GqlAuthGuard)
   @Query((returns) => [Ticket])
   async getTicketList(@Args("ticketListInput") ticketListInput: TicketListInput): Promise<Ticket[]> {
     return this.ticketUsecase.getList(ticketListInput);
