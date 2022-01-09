@@ -30,6 +30,7 @@ model User {
   authUid     String     @unique @db.VarChar(255)
   displayName String?    @db.VarChar(255)
   photoUrl    String?    @db.VarChar(255)
+  /// @HideField()
   email       String?    @db.VarChar(255)
   role        UserRole   @default(NONE)
   status      UserStatus @default(ACTIVE)
@@ -168,8 +169,11 @@ model GoogleAuthCredential {
   uid          String   @unique @db.VarChar(255)
   displayName  String?  @db.VarChar(255)
   photoUrl     String?  @db.VarChar(255)
+  /// @HideField()
   accessToken  String   @db.Text
+  /// @HideField()
   refreshToken String   @db.Text
+  /// @HideField()
   email        String   @unique @db.VarChar(255)
   createdAt    DateTime @default(now()) @db.DateTime(0)
   updatedAt    DateTime @default(now()) @updatedAt @db.DateTime(0)
@@ -181,13 +185,18 @@ model TwitterAuthCredential {
   id               String   @id @default(uuid())
   userId           String   @unique @db.VarChar(255)
   uid              String   @unique @db.VarChar(255)
+  /// @HideField()
   email            String?  @unique @db.VarChar(255)
   displayName      String?  @db.VarChar(255)
   screenName       String?  @db.VarChar(255)
   photoUrl         String?  @db.VarChar(255)
+  /// @HideField()
   accessToken      String   @db.Text
+  /// @HideField()
   refreshToken     String   @db.Text
+  /// @HideField()
   oauthAccessToken String   @db.Text
+  /// @HideField()
   oauthTokenSecret String   @db.Text
   createdAt        DateTime @default(now()) @db.DateTime(0)
   updatedAt        DateTime @default(now()) @updatedAt @db.DateTime(0)

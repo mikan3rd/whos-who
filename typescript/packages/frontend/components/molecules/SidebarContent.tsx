@@ -1,9 +1,9 @@
 import React from "react";
 
 import { css } from "@emotion/react";
-import Image from "next/image";
+import NextImage from "next/image";
 import Link from "next/link";
-import { Menu } from "semantic-ui-react";
+import { Card, Image, Menu } from "semantic-ui-react";
 
 import { useAuthContext } from "@/context/auth";
 
@@ -23,7 +23,7 @@ export const SidebarContent = React.memo(() => {
             }
           `}
         >
-          <Image src="/vercel.svg" alt="Vercel" layout="fill" />
+          <NextImage src="/vercel.svg" alt="Vercel" layout="fill" />
         </Menu.Item>
       </Link>
 
@@ -56,6 +56,45 @@ export const SidebarContent = React.memo(() => {
         <Link href="/admin" passHref>
           <Menu.Item content="管理用" />
         </Link>
+      )}
+
+      {currentUser !== null && (
+        <div
+          css={css`
+            &&& {
+              position: absolute;
+              bottom: 0;
+              width: 100%;
+              padding: 8px;
+            }
+          `}
+        >
+          <Link href="/mypage" passHref>
+            <Card>
+              <Card.Content>
+                {currentUser.photoUrl !== null && currentUser.photoUrl !== undefined && (
+                  <Image
+                    floated="right"
+                    size="mini"
+                    src={currentUser.photoUrl}
+                    alt={currentUser.photoUrl}
+                    css={css`
+                      &&& {
+                        margin-bottom: 0 !important;
+                      }
+                    `}
+                  />
+                )}
+                <Card.Header>
+                  {currentUser.role === "NONE"
+                    ? `ゲスト${currentUser.id.slice(0, 5)}`
+                    : currentUser.displayName ?? `ユーザー${currentUser.id.slice(0, 5)}`}
+                </Card.Header>
+                <Card.Meta>{currentUser.role === "NONE" ? `ログインが必要です` : `ログイン中`}</Card.Meta>
+              </Card.Content>
+            </Card>
+          </Link>
+        </div>
       )}
     </>
   );

@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { User } from '../user/user.model';
 
 @ObjectType()
@@ -21,13 +22,13 @@ export class GoogleAuthCredential {
     @Field(() => String, {nullable:true})
     photoUrl!: string | null;
 
-    @Field(() => String, {nullable:false})
+    @HideField()
     accessToken!: string;
 
-    @Field(() => String, {nullable:false})
+    @HideField()
     refreshToken!: string;
 
-    @Field(() => String, {nullable:false})
+    @HideField()
     email!: string;
 
     @Field(() => Date, {nullable:false})

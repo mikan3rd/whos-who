@@ -29,13 +29,10 @@ export type ExternalImage = {
 };
 
 export type GoogleAuthCredential = {
-  accessToken: Scalars['String'];
   createdAt: Scalars['Date'];
   displayName?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
   id: Scalars['ID'];
   photoUrl?: Maybe<Scalars['String']>;
-  refreshToken: Scalars['String'];
   uid: Scalars['String'];
   updatedAt: Scalars['Date'];
   user: User;
@@ -223,15 +220,10 @@ export type TicketUserLike = {
 };
 
 export type TwitterAuthCredential = {
-  accessToken: Scalars['String'];
   createdAt: Scalars['Date'];
   displayName?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  oauthAccessToken: Scalars['String'];
-  oauthTokenSecret: Scalars['String'];
   photoUrl?: Maybe<Scalars['String']>;
-  refreshToken: Scalars['String'];
   screenName?: Maybe<Scalars['String']>;
   uid: Scalars['String'];
   updatedAt: Scalars['Date'];
@@ -266,7 +258,6 @@ export type User = {
   authUid: Scalars['String'];
   createdAt: Scalars['Date'];
   displayName?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
   googleAuthCredential?: Maybe<GoogleAuthCredential>;
   id: Scalars['ID'];
   personSuggestionLikes?: Maybe<Array<PersonSuggestionLike>>;
@@ -344,7 +335,7 @@ export type UpsertTwitterAuthCredentialMutation = { upsertTwitterAuthCredential:
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { getCurrentUser: { id: string, displayName?: string | null | undefined, role: UserRole, googleAuthCredential?: { id: string } | null | undefined, twitterAuthCredential?: { id: string } | null | undefined } };
+export type GetCurrentUserQuery = { getCurrentUser: { id: string, displayName?: string | null | undefined, role: UserRole, photoUrl?: string | null | undefined, googleAuthCredential?: { id: string } | null | undefined, twitterAuthCredential?: { id: string } | null | undefined } };
 
 export type GetTicketByExternalImageUrlQueryVariables = Exact<{
   externalImageUrl: Scalars['String'];
@@ -576,6 +567,7 @@ export const GetCurrentUserDocument = gql`
     id
     displayName
     role
+    photoUrl
     googleAuthCredential {
       id
     }
