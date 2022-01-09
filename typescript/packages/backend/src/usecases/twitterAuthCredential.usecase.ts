@@ -2,19 +2,19 @@ import { Inject, Injectable } from "@nestjs/common";
 
 import { Prisma } from "@/interfaces/services/prisma.service";
 import {
-  GoogleAuthCredentialRepository,
-  GoogoleAuthCredentialUpsertInput,
-} from "@/repositories/googleAuthCredential.repository";
+  TwitterAuthCredentialRepository,
+  TwitterAuthCredentialUpsertInput,
+} from "@/repositories/twitterAuthCredential.reopsitory";
 import { UserUsecase } from "@/usecases/user.usecase";
 
 @Injectable()
-export class GoogleAuthCredentialUsecase {
+export class TwitterAuthCredentialUsecase {
   constructor(
-    @Inject(GoogleAuthCredentialRepository) private credentialRepository: GoogleAuthCredentialRepository,
+    @Inject(TwitterAuthCredentialRepository) private credentialRepository: TwitterAuthCredentialRepository,
     private userUsecase: UserUsecase,
   ) {}
 
-  async upsertAuth(args: { userId: string; data: GoogoleAuthCredentialUpsertInput }) {
+  async upsertAuth(args: { userId: string; data: TwitterAuthCredentialUpsertInput }) {
     const {
       userId,
       data,

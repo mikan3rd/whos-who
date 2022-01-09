@@ -4,7 +4,7 @@ import { ID } from '@nestjs/graphql';
 import { User } from '../user/user.model';
 
 @ObjectType()
-export class GoogleAuthCredential {
+export class TwitterAuthCredential {
 
     @Field(() => ID, {nullable:false})
     id!: string;
@@ -16,7 +16,13 @@ export class GoogleAuthCredential {
     uid!: string;
 
     @Field(() => String, {nullable:true})
+    email!: string | null;
+
+    @Field(() => String, {nullable:true})
     displayName!: string | null;
+
+    @Field(() => String, {nullable:true})
+    screenName!: string | null;
 
     @Field(() => String, {nullable:true})
     photoUrl!: string | null;
@@ -28,7 +34,10 @@ export class GoogleAuthCredential {
     refreshToken!: string;
 
     @Field(() => String, {nullable:false})
-    email!: string;
+    oauthAccessToken!: string;
+
+    @Field(() => String, {nullable:false})
+    oauthTokenSecret!: string;
 
     @Field(() => Date, {nullable:false})
     createdAt!: Date;

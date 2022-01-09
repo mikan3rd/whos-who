@@ -30,13 +30,7 @@ export const LoginModal: React.VFC<Props> = (props) => {
             margin: 8px 0;
           `}
         />
-        <Button
-          color="twitter"
-          size="huge"
-          disabled
-          // disabled={authStatus === "loading"} // TODO: Twitter APIの Elevated アクセス権が必要
-          onClick={loginWithTwitter}
-        >
+        <Button color="twitter" size="huge" onClick={loginWithTwitter}>
           <Icon name="twitter" />
           Twitterログイン
         </Button>

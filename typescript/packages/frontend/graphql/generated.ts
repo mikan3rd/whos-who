@@ -31,8 +31,12 @@ export type ExternalImage = {
 export type GoogleAuthCredential = {
   accessToken: Scalars['String'];
   createdAt: Scalars['Date'];
+  displayName?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
   id: Scalars['ID'];
+  photoUrl?: Maybe<Scalars['String']>;
   refreshToken: Scalars['String'];
+  uid: Scalars['String'];
   updatedAt: Scalars['Date'];
   user: User;
   userId: Scalars['String'];
@@ -41,8 +45,10 @@ export type GoogleAuthCredential = {
 export type GoogleAuthCredentialInput = {
   accessToken: Scalars['String'];
   displayName?: InputMaybe<Scalars['String']>;
-  email?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  photoUrl?: InputMaybe<Scalars['String']>;
   refreshToken: Scalars['String'];
+  uid: Scalars['String'];
 };
 
 export type Mutation = {
@@ -51,6 +57,7 @@ export type Mutation = {
   createTicketByExternalImageUrl: Ticket;
   createTicketByUploadImageFile: Ticket;
   upsertGoogleAuthCredential: GoogleAuthCredential;
+  upsertTwitterAuthCredential: TwitterAuthCredential;
 };
 
 
@@ -76,6 +83,11 @@ export type MutationCreateTicketByUploadImageFileArgs = {
 
 export type MutationUpsertGoogleAuthCredentialArgs = {
   googleAuthCredentialInput: GoogleAuthCredentialInput;
+};
+
+
+export type MutationUpsertTwitterAuthCredentialArgs = {
+  twitterAuthCredentialInput: TwitterAuthCredentialInput;
 };
 
 export type Occupation = {
@@ -210,6 +222,35 @@ export type TicketUserLike = {
   userId: Scalars['String'];
 };
 
+export type TwitterAuthCredential = {
+  accessToken: Scalars['String'];
+  createdAt: Scalars['Date'];
+  displayName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  oauthAccessToken: Scalars['String'];
+  oauthTokenSecret: Scalars['String'];
+  photoUrl?: Maybe<Scalars['String']>;
+  refreshToken: Scalars['String'];
+  screenName?: Maybe<Scalars['String']>;
+  uid: Scalars['String'];
+  updatedAt: Scalars['Date'];
+  user: User;
+  userId: Scalars['String'];
+};
+
+export type TwitterAuthCredentialInput = {
+  accessToken: Scalars['String'];
+  displayName?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
+  oauthAccessToken: Scalars['String'];
+  oauthTokenSecret: Scalars['String'];
+  photoUrl?: InputMaybe<Scalars['String']>;
+  refreshToken: Scalars['String'];
+  screenName?: InputMaybe<Scalars['String']>;
+  uid: Scalars['String'];
+};
+
 export type UploadedImage = {
   bucketName: Scalars['String'];
   createdAt: Scalars['Date'];
@@ -222,6 +263,7 @@ export type UploadedImage = {
 
 export type User = {
   _count: UserCount;
+  authUid: Scalars['String'];
   createdAt: Scalars['Date'];
   displayName?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
@@ -229,11 +271,13 @@ export type User = {
   id: Scalars['ID'];
   personSuggestionLikes?: Maybe<Array<PersonSuggestionLike>>;
   personSuggestions?: Maybe<Array<PersonSuggestion>>;
+  photoUrl?: Maybe<Scalars['String']>;
   point: Scalars['Int'];
   role: UserRole;
   status: UserStatus;
   ticketUserLikes?: Maybe<Array<TicketUserLike>>;
   tickets?: Maybe<Array<Ticket>>;
+  twitterAuthCredential?: Maybe<TwitterAuthCredential>;
   updatedAt: Scalars['Date'];
 };
 
@@ -290,10 +334,17 @@ export type UpsertGoogleAuthCredentialMutationVariables = Exact<{
 
 export type UpsertGoogleAuthCredentialMutation = { upsertGoogleAuthCredential: { id: string } };
 
+export type UpsertTwitterAuthCredentialMutationVariables = Exact<{
+  twitterAuthCredentialInput: TwitterAuthCredentialInput;
+}>;
+
+
+export type UpsertTwitterAuthCredentialMutation = { upsertTwitterAuthCredential: { id: string } };
+
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { getCurrentUser: { id: string, displayName?: string | null | undefined, role: UserRole, googleAuthCredential?: { id: string } | null | undefined } };
+export type GetCurrentUserQuery = { getCurrentUser: { id: string, displayName?: string | null | undefined, role: UserRole, googleAuthCredential?: { id: string } | null | undefined, twitterAuthCredential?: { id: string } | null | undefined } };
 
 export type GetTicketByExternalImageUrlQueryVariables = Exact<{
   externalImageUrl: Scalars['String'];
@@ -484,6 +535,41 @@ export function useUpsertGoogleAuthCredentialMutation(baseOptions?: Apollo.Mutat
 export type UpsertGoogleAuthCredentialMutationHookResult = ReturnType<typeof useUpsertGoogleAuthCredentialMutation>;
 export type UpsertGoogleAuthCredentialMutationResult = Apollo.MutationResult<UpsertGoogleAuthCredentialMutation>;
 export type UpsertGoogleAuthCredentialMutationOptions = Apollo.BaseMutationOptions<UpsertGoogleAuthCredentialMutation, UpsertGoogleAuthCredentialMutationVariables>;
+export const UpsertTwitterAuthCredentialDocument = gql`
+    mutation upsertTwitterAuthCredential($twitterAuthCredentialInput: TwitterAuthCredentialInput!) {
+  upsertTwitterAuthCredential(
+    twitterAuthCredentialInput: $twitterAuthCredentialInput
+  ) {
+    id
+  }
+}
+    `;
+export type UpsertTwitterAuthCredentialMutationFn = Apollo.MutationFunction<UpsertTwitterAuthCredentialMutation, UpsertTwitterAuthCredentialMutationVariables>;
+
+/**
+ * __useUpsertTwitterAuthCredentialMutation__
+ *
+ * To run a mutation, you first call `useUpsertTwitterAuthCredentialMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsertTwitterAuthCredentialMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertTwitterAuthCredentialMutation, { data, loading, error }] = useUpsertTwitterAuthCredentialMutation({
+ *   variables: {
+ *      twitterAuthCredentialInput: // value for 'twitterAuthCredentialInput'
+ *   },
+ * });
+ */
+export function useUpsertTwitterAuthCredentialMutation(baseOptions?: Apollo.MutationHookOptions<UpsertTwitterAuthCredentialMutation, UpsertTwitterAuthCredentialMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpsertTwitterAuthCredentialMutation, UpsertTwitterAuthCredentialMutationVariables>(UpsertTwitterAuthCredentialDocument, options);
+      }
+export type UpsertTwitterAuthCredentialMutationHookResult = ReturnType<typeof useUpsertTwitterAuthCredentialMutation>;
+export type UpsertTwitterAuthCredentialMutationResult = Apollo.MutationResult<UpsertTwitterAuthCredentialMutation>;
+export type UpsertTwitterAuthCredentialMutationOptions = Apollo.BaseMutationOptions<UpsertTwitterAuthCredentialMutation, UpsertTwitterAuthCredentialMutationVariables>;
 export const GetCurrentUserDocument = gql`
     query getCurrentUser {
   getCurrentUser {
@@ -491,6 +577,9 @@ export const GetCurrentUserDocument = gql`
     displayName
     role
     googleAuthCredential {
+      id
+    }
+    twitterAuthCredential {
       id
     }
   }

@@ -17,14 +17,9 @@ export class GoogleAuthCredentialResolver {
     @CurrentUser() { currentUser }: CurrentUserType,
     @Args("googleAuthCredentialInput") googleAuthCredentialInput: GoogleAuthCredentialInput,
   ): Promise<GoogleAuthCredential> {
-    const { accessToken, refreshToken, displayName, email } = googleAuthCredentialInput;
-
     return await this.googleUsecase.upsertAuth({
       userId: currentUser.id,
-      accessToken,
-      refreshToken,
-      displayName,
-      email,
+      data: googleAuthCredentialInput,
     });
   }
 }

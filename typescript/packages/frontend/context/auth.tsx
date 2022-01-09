@@ -24,10 +24,18 @@ import {
   GetCurrentUserQuery,
   useGetCurrentUserLazyQuery,
   useUpsertGoogleAuthCredentialMutation,
+  useUpsertTwitterAuthCredentialMutation,
 } from "@/graphql/generated";
 import { useFirebase } from "@/hooks/useFirebase";
 
 type Credential = UserCredential & { user: { accessToken: string } };
+
+const GoogleProviderId = "google.com" as const;
+const TwitterProviderId = "twitter.com" as const;
+
+type TwitterCredential = Credential & {
+  _tokenResponse: { oauthAccessToken: string; oauthTokenSecret: string };
+};
 
 const AlreadyUseAccount = "auth/credential-already-in-use" as const;
 
@@ -79,7 +87,8 @@ export const AuthContext = React.createContext<
   | {
       state: State;
       dispatch: React.Dispatch<Action>;
-      logout: () => void;
+      signupWithGoogle: () => Promise<void>;
+      signupWithTwitter: () => Promise<void>;
     }
   | undefined
 >(undefined);
@@ -89,6 +98,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   const router = useRouter();
 
   const [upsertGoogleAuthCredential] = useUpsertGoogleAuthCredentialMutation();
+  const [upsertTwitterAuthCredential] = useUpsertTwitterAuthCredentialMutation();
 
   const [state, dispatch] = React.useReducer(reducer, {
     authStatus: "initial",
@@ -97,12 +107,6 @@ export const AuthProvider: React.FC = ({ children }) => {
     modalStatus: "none",
   });
   const { firebaseUser, modalStatus } = state;
-
-  // TODO: アカウントに複数の連携をする場合に使用
-  // const isLinkedGoogle = useMemo(
-  //   () => currentUser?.googleAuthCredential !== null && currentUser?.googleAuthCredential !== undefined,
-  //   [currentUser?.googleAuthCredential],
-  // );
 
   const handleCloseModal = useCallback(() => {
     dispatch({ type: "SetModalStatus", payload: "none" });
@@ -230,11 +234,27 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
 
     const {
-      user: { accessToken, refreshToken, displayName, email },
+      user: { providerData, accessToken, refreshToken },
     } = credential as Credential;
+    const userData = providerData.find((d) => d.providerId === GoogleProviderId);
+
+    if (userData === undefined) {
+      return;
+    }
+
+    const { uid, displayName, email, photoURL } = userData;
 
     await upsertGoogleAuthCredential({
-      variables: { googleAuthCredentialInput: { accessToken, refreshToken, displayName, email: email as string } },
+      variables: {
+        googleAuthCredentialInput: {
+          accessToken,
+          refreshToken,
+          uid,
+          displayName,
+          email: email as string,
+          photoUrl: photoURL,
+        },
+      },
     });
 
     await setCurrentUser();
@@ -252,12 +272,35 @@ export const AuthProvider: React.FC = ({ children }) => {
       return;
     }
 
-    // TODO: Twitterの認証情報を保存する
-    // eslint-disable-next-line no-console
-    console.log(credential);
+    const {
+      user: { providerData, accessToken, refreshToken },
+      _tokenResponse: { oauthAccessToken, oauthTokenSecret },
+    } = credential as TwitterCredential;
+    const userData = providerData.find((d) => d.providerId === TwitterProviderId);
+
+    if (userData === undefined) {
+      return;
+    }
+
+    const { uid, displayName, email, photoURL } = userData;
+
+    await upsertTwitterAuthCredential({
+      variables: {
+        twitterAuthCredentialInput: {
+          accessToken,
+          refreshToken,
+          oauthAccessToken,
+          oauthTokenSecret,
+          uid,
+          displayName,
+          email,
+          photoUrl: photoURL,
+        },
+      },
+    });
 
     await setCurrentUser();
-  }, [firebaseUser, handleSignupError, setCurrentUser]);
+  }, [firebaseUser, handleSignupError, setCurrentUser, upsertTwitterAuthCredential]);
 
   const loginWithGoogle = useCallback(async () => {
     if (firebaseApp === null) {
@@ -270,12 +313,28 @@ export const AuthProvider: React.FC = ({ children }) => {
     await setCurrentUser();
 
     const {
-      user: { accessToken, refreshToken },
+      user: { providerData, accessToken, refreshToken },
     } = credential as Credential;
+    const userData = providerData.find((d) => d.providerId === GoogleProviderId);
+
+    if (userData === undefined) {
+      return;
+    }
+
+    const { uid, displayName, email, photoURL } = userData;
 
     // AuthTokenが更新された後に認証情報を更新
     await upsertGoogleAuthCredential({
-      variables: { googleAuthCredentialInput: { accessToken, refreshToken } },
+      variables: {
+        googleAuthCredentialInput: {
+          accessToken,
+          refreshToken,
+          uid,
+          displayName,
+          email: email as string,
+          photoUrl: photoURL,
+        },
+      },
     });
   }, [firebaseApp, setCurrentUser, upsertGoogleAuthCredential]);
 
@@ -293,14 +352,42 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
 
     await setCurrentUser();
-  }, [firebaseApp, handleSignupError, setCurrentUser]);
+
+    const {
+      user: { providerData, accessToken, refreshToken },
+      _tokenResponse: { oauthAccessToken, oauthTokenSecret },
+    } = credential as TwitterCredential;
+    const userData = providerData.find((d) => d.providerId === TwitterProviderId);
+
+    if (userData === undefined) {
+      return;
+    }
+
+    const { uid, displayName, email, photoURL } = userData;
+
+    // AuthTokenが更新された後に認証情報を更新
+    await upsertTwitterAuthCredential({
+      variables: {
+        twitterAuthCredentialInput: {
+          accessToken,
+          refreshToken,
+          oauthAccessToken,
+          oauthTokenSecret,
+          uid,
+          displayName,
+          email,
+          photoUrl: photoURL,
+        },
+      },
+    });
+  }, [firebaseApp, handleSignupError, setCurrentUser, upsertTwitterAuthCredential]);
 
   useEffect(() => {
     setCurrentUser(false);
   }, [setCurrentUser]);
 
   return (
-    <AuthContext.Provider value={{ state, dispatch, logout }}>
+    <AuthContext.Provider value={{ state, dispatch, signupWithGoogle, signupWithTwitter }}>
       {children}
       <SignupModal
         isLoginModalOpen={modalStatus === "signup"}
