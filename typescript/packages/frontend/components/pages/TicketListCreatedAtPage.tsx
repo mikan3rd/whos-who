@@ -39,60 +39,46 @@ export const TicketListCreatedAtPage: React.VFC = () => {
             const isAccepting = personId === undefined || personId === null;
             const imageUrl = externalImage?.url ?? uploadedImage?.url ?? "";
             return (
-              <Link key={id} href={`/ticket/detail/${ticket.id}`} passHref>
-                <div
-                  css={css`
-                    position: relative;
-                    height: 100%;
-                  `}
-                >
-                  <Image
-                    src={imageUrl}
-                    alt={imageUrl}
-                    rounded
-                    label={{
-                      color: isAccepting ? "red" : "green",
-                      content: isAccepting ? `回答募集中` : `回答あり`,
-                      ribbon: true,
-                    }}
-                    css={css`
-                      &&& {
-                        img {
-                          object-fit: cover;
-                          width: 100%;
+              <div
+                key={id}
+                css={css`
+                  position: relative;
+                  height: 100%;
+                  margin: 0 8px 8px;
+                `}
+              >
+                <Link href={`/ticket/detail/${ticket.id}`} passHref>
+                  <a>
+                    <Image
+                      src={imageUrl}
+                      alt={imageUrl}
+                      rounded
+                      label={{
+                        color: isAccepting ? "red" : "green",
+                        content: isAccepting ? `回答募集中` : `回答あり`,
+                        ribbon: true,
+                      }}
+                      css={css`
+                        &&& {
                           height: 100%;
+                          margin: 0;
+                          img {
+                            object-fit: cover;
+                            width: 100%;
+                            height: 100%;
+                          }
                         }
-                      }
-                    `}
-                  />
-
-                  <Label
-                    attached="bottom left"
-                    color="red"
-                    basic
-                    css={css`
-                      &&& {
-                        bottom: 7px;
-                        left: 4px;
-                      }
-                    `}
-                  >
-                    Like: {_count.ticketUserLikes}
-                  </Label>
-                  <Label
-                    attached="bottom right"
-                    basic
-                    css={css`
-                      &&& {
-                        right: 3px;
-                        bottom: 7px;
-                      }
-                    `}
-                  >
-                    投稿日: {dayjs(createdAt).format("YYYY/MM/DD")}
-                  </Label>
-                </div>
-              </Link>
+                      `}
+                    />
+                  </a>
+                </Link>
+                <Label attached="bottom left" color="red" basic>
+                  Like: {_count.ticketUserLikes}
+                </Label>
+                <Label attached="bottom right" basic>
+                  投稿日: {dayjs(createdAt).format("YYYY/MM/DD")}
+                </Label>
+              </div>
             );
           })}
         </Image.Group>
