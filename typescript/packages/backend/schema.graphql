@@ -132,14 +132,9 @@ type TwitterAuthCredential {
   id: ID!
   userId: String!
   uid: String!
-  email: String
   displayName: String
   screenName: String
   photoUrl: String
-  accessToken: String!
-  refreshToken: String!
-  oauthAccessToken: String!
-  oauthTokenSecret: String!
   createdAt: Date!
   updatedAt: Date!
   user: User!
@@ -157,7 +152,6 @@ type User {
   authUid: String!
   displayName: String
   photoUrl: String
-  email: String
   role: UserRole!
   status: UserStatus!
   point: Int!
@@ -189,9 +183,6 @@ type GoogleAuthCredential {
   uid: String!
   displayName: String
   photoUrl: String
-  accessToken: String!
-  refreshToken: String!
-  email: String!
   createdAt: Date!
   updatedAt: Date!
   user: User!

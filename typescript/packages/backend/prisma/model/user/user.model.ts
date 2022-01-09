@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { UserRole } from '../prisma/user-role.enum';
 import { UserStatus } from '../prisma/user-status.enum';
 import { Int } from '@nestjs/graphql';
@@ -27,7 +28,7 @@ export class User {
     @Field(() => String, {nullable:true})
     photoUrl!: string | null;
 
-    @Field(() => String, {nullable:true})
+    @HideField()
     email!: string | null;
 
     @Field(() => UserRole, {nullable:false,defaultValue:'NONE'})
