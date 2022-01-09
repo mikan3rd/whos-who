@@ -16,6 +16,9 @@ export class TwitterAuthCredential {
     uid!: string;
 
     @Field(() => String, {nullable:true})
+    email!: string | null;
+
+    @Field(() => String, {nullable:true})
     displayName!: string | null;
 
     @Field(() => String, {nullable:true})

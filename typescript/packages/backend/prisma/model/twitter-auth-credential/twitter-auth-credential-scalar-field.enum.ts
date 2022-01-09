@@ -4,6 +4,7 @@ export enum TwitterAuthCredentialScalarFieldEnum {
     id = "id",
     userId = "userId",
     uid = "uid",
+    email = "email",
     displayName = "displayName",
     screenName = "screenName",
     photoUrl = "photoUrl",

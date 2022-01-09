@@ -132,6 +132,7 @@ type TwitterAuthCredential {
   id: ID!
   userId: String!
   uid: String!
+  email: String
   displayName: String
   screenName: String
   photoUrl: String
@@ -208,7 +209,7 @@ type Mutation {
   createTicketByUploadImageFile(file: Upload!): Ticket!
   createPersonSuggestion(personSuggestionCreate: PersonSuggestionCreateInput!): PersonSuggestion!
   createPersonSuggestionLike(personSuggestionId: String!): PersonSuggestionLike!
-  upsertGoogleAuthCredential(googleAuthCredentialInput: GoogleAuthCredentialInput!): GoogleAuthCredential!
+  upsertGoogleAuthCredential(twitterAuthCredentialInput: TwitterAuthCredentialInput!): TwitterAuthCredential!
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -220,11 +221,14 @@ input PersonSuggestionCreateInput {
   personName: String
 }
 
-input GoogleAuthCredentialInput {
+input TwitterAuthCredentialInput {
   accessToken: String!
   refreshToken: String!
+  oauthAccessToken: String!
+  oauthTokenSecret: String!
   uid: String!
-  email: String!
+  email: String
   displayName: String
+  screenName: String
   photoUrl: String
 }

@@ -11,6 +11,7 @@ import { PersonSuggestionLikeModule } from "@/modules/personSuggestionLike.modul
 import { PrismaModule } from "@/modules/prisma.module";
 import { StorageModule } from "@/modules/storage.module";
 import { TicketModule } from "@/modules/ticket.module";
+import { TwitterAuthCredentialModule } from "@/modules/twitterAuthCredential.module";
 import { UserModule } from "@/modules/user.module";
 
 @Module({
@@ -29,6 +30,7 @@ import { UserModule } from "@/modules/user.module";
     PersonSuggestionModule,
     PersonSuggestionLikeModule,
     GoogleAuthCredentialModule,
+    TwitterAuthCredentialModule,
   ],
   controllers: [],
   providers: [DateScalar],

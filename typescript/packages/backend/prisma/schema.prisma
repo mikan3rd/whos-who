@@ -181,6 +181,7 @@ model TwitterAuthCredential {
   id               String   @id @default(uuid())
   userId           String   @unique @db.VarChar(255)
   uid              String   @unique @db.VarChar(255)
+  email            String?  @unique @db.VarChar(255)
   displayName      String?  @db.VarChar(255)
   screenName       String?  @db.VarChar(255)
   photoUrl         String?  @db.VarChar(255)
