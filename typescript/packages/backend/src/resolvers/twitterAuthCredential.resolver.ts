@@ -13,7 +13,7 @@ export class TwitterAuthCredentialResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation((returns) => TwitterAuthCredential)
-  async upsertGoogleAuthCredential(
+  async upsertTwitterAuthCredential(
     @CurrentUser() { currentUser }: CurrentUserType,
     @Args("twitterAuthCredentialInput") twitterAuthCredentialInput: TwitterAuthCredentialInput,
   ): Promise<TwitterAuthCredential> {

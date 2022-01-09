@@ -11,6 +11,7 @@ export class UserRepository {
       where: { authUid },
       include: {
         googleAuthCredential: true,
+        twitterAuthCredential: true,
       },
     });
   }

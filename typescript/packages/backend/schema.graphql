@@ -209,7 +209,8 @@ type Mutation {
   createTicketByUploadImageFile(file: Upload!): Ticket!
   createPersonSuggestion(personSuggestionCreate: PersonSuggestionCreateInput!): PersonSuggestion!
   createPersonSuggestionLike(personSuggestionId: String!): PersonSuggestionLike!
-  upsertGoogleAuthCredential(twitterAuthCredentialInput: TwitterAuthCredentialInput!): TwitterAuthCredential!
+  upsertGoogleAuthCredential(googleAuthCredentialInput: GoogleAuthCredentialInput!): GoogleAuthCredential!
+  upsertTwitterAuthCredential(twitterAuthCredentialInput: TwitterAuthCredentialInput!): TwitterAuthCredential!
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -219,6 +220,15 @@ input PersonSuggestionCreateInput {
   ticketId: String!
   personId: String
   personName: String
+}
+
+input GoogleAuthCredentialInput {
+  accessToken: String!
+  refreshToken: String!
+  uid: String!
+  email: String!
+  displayName: String
+  photoUrl: String
 }
 
 input TwitterAuthCredentialInput {

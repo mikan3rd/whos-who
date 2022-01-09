@@ -24,6 +24,7 @@ import {
   GetCurrentUserQuery,
   useGetCurrentUserLazyQuery,
   useUpsertGoogleAuthCredentialMutation,
+  useUpsertTwitterAuthCredentialMutation,
 } from "@/graphql/generated";
 import { useFirebase } from "@/hooks/useFirebase";
 
@@ -97,6 +98,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   const router = useRouter();
 
   const [upsertGoogleAuthCredential] = useUpsertGoogleAuthCredentialMutation();
+  const [upsertTwitterAuthCredential] = useUpsertTwitterAuthCredentialMutation();
 
   const [state, dispatch] = React.useReducer(reducer, {
     authStatus: "initial",
@@ -282,11 +284,23 @@ export const AuthProvider: React.FC = ({ children }) => {
 
     const { uid, displayName, email, photoURL } = userData;
 
-    // TODO: Twitterの認証情報を保存する
-    console.log(credential);
+    await upsertTwitterAuthCredential({
+      variables: {
+        twitterAuthCredentialInput: {
+          accessToken,
+          refreshToken,
+          oauthAccessToken,
+          oauthTokenSecret,
+          uid,
+          displayName,
+          email,
+          photoUrl: photoURL,
+        },
+      },
+    });
 
     await setCurrentUser();
-  }, [firebaseUser, handleSignupError, setCurrentUser]);
+  }, [firebaseUser, handleSignupError, setCurrentUser, upsertTwitterAuthCredential]);
 
   const loginWithGoogle = useCallback(async () => {
     if (firebaseApp === null) {
@@ -352,7 +366,21 @@ export const AuthProvider: React.FC = ({ children }) => {
     const { uid, displayName, email, photoURL } = userData;
 
     // AuthTokenが更新された後に認証情報を更新
-  }, [firebaseApp, handleSignupError, setCurrentUser]);
+    await upsertTwitterAuthCredential({
+      variables: {
+        twitterAuthCredentialInput: {
+          accessToken,
+          refreshToken,
+          oauthAccessToken,
+          oauthTokenSecret,
+          uid,
+          displayName,
+          email,
+          photoUrl: photoURL,
+        },
+      },
+    });
+  }, [firebaseApp, handleSignupError, setCurrentUser, upsertTwitterAuthCredential]);
 
   useEffect(() => {
     setCurrentUser(false);

@@ -17,6 +17,11 @@ export const MyPage: React.VFC = () => {
     [currentUser?.googleAuthCredential],
   );
 
+  const isLinkedTwitter = useMemo(
+    () => currentUser?.twitterAuthCredential !== null && currentUser?.twitterAuthCredential !== undefined,
+    [currentUser?.twitterAuthCredential],
+  );
+
   return (
     <>
       <Header content="マイページ" />
@@ -48,14 +53,9 @@ export const MyPage: React.VFC = () => {
         <Segment>
           <Header content="アカウント連携" />
 
-          <Button
-            color="twitter"
-            disabled
-            // disabled={authStatus === "loading"} // TODO: Twitter APIの Elevated アクセス権が必要
-            onClick={signupWithTwitter}
-          >
+          <Button color="twitter" disabled={isLinkedTwitter} onClick={signupWithTwitter}>
             <Icon name="twitter" />
-            Twitterで連携
+            {isLinkedTwitter ? "Twitterで登録済み" : "Twitterで連携"}
           </Button>
 
           <Button color="black" disabled={isLinkedGoogle} onClick={signupWithGoogle}>
