@@ -53,6 +53,8 @@ export const MyPage: React.VFC = () => {
         <Segment>
           <Header content="アカウント連携" />
 
+          <p>連携しておくと別のログイン方法で同じアカウントを使用することができるようになります</p>
+
           <Button color="twitter" disabled={isLinkedTwitter} onClick={signupWithTwitter}>
             <Icon name="twitter" />
             {isLinkedTwitter ? "Twitterで登録済み" : "Twitterで連携"}

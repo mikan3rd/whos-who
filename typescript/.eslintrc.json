@@ -134,6 +134,9 @@
         "react/display-name": [
           "off"
         ],
+        "@next/next/no-img-element": [
+          "off"
+        ],
         "react/prop-types": [
           "error",
           {
