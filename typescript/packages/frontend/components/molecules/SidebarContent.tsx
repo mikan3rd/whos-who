@@ -1,7 +1,6 @@
 import React from "react";
 
 import { css } from "@emotion/react";
-import NextImage from "next/image";
 import Link from "next/link";
 import { Card, Image, Menu } from "semantic-ui-react";
 
@@ -19,11 +18,10 @@ export const SidebarContent = React.memo(() => {
         <Menu.Item
           css={css`
             &&& {
-              height: 60px;
             }
           `}
         >
-          <NextImage src="/vercel.svg" alt="Vercel" layout="fill" />
+          <img src="/title_logo.png" alt="WHO'S WHO!?" />
         </Menu.Item>
       </Link>
 

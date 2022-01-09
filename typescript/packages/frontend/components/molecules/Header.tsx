@@ -1,7 +1,6 @@
 import React from "react";
 
 import { css } from "@emotion/react";
-import Image from "next/image";
 import Link from "next/link";
 import { Button, Container, Icon } from "semantic-ui-react";
 
@@ -19,7 +18,7 @@ export const Header = React.memo<{ handleOpenSidebar: () => void }>(({ handleOpe
         left: 0;
         right: 0;
         height: 60px;
-        background-color: black;
+        background-color: #1b1c1d;
         z-index: 1;
         transition: all 0.5s ease;
         display: none;
@@ -45,7 +44,13 @@ export const Header = React.memo<{ handleOpenSidebar: () => void }>(({ handleOpe
               height: 80%;
             `}
           >
-            <Image src="/vercel.svg" alt="Vercel" layout="fill" />
+            <img
+              src="/title_logo.png"
+              alt="WHO'S WHO!?"
+              css={css`
+                height: 100%;
+              `}
+            />
           </a>
         </Link>
 
