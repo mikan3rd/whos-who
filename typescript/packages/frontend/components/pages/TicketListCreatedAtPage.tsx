@@ -25,7 +25,6 @@ export const TicketListCreatedAtPage: React.VFC = () => {
       <Header content="新しい投稿一覧" />
       <Segment>
         <Image.Group
-          size="medium"
           css={css`
             &&& {
               display: flex;
@@ -60,12 +59,12 @@ export const TicketListCreatedAtPage: React.VFC = () => {
                       }}
                       css={css`
                         &&& {
-                          height: 100%;
+                          height: 100% !important;
                           margin: 0;
                           img {
                             object-fit: cover;
-                            width: 100%;
-                            height: 100%;
+                            width: 256px;
+                            height: 256px;
                           }
                         }
                       `}
