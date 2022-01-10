@@ -11,6 +11,7 @@ import { PersonSuggestionLikeModule } from "@/modules/personSuggestionLike.modul
 import { PrismaModule } from "@/modules/prisma.module";
 import { StorageModule } from "@/modules/storage.module";
 import { TicketModule } from "@/modules/ticket.module";
+import { TicketUserLikeModule } from "@/modules/ticketUserLike.module";
 import { TwitterAuthCredentialModule } from "@/modules/twitterAuthCredential.module";
 import { UserModule } from "@/modules/user.module";
 
@@ -26,6 +27,7 @@ import { UserModule } from "@/modules/user.module";
     StorageModule,
     UserModule,
     TicketModule,
+    TicketUserLikeModule,
     PersonModule,
     PersonSuggestionModule,
     PersonSuggestionLikeModule,
