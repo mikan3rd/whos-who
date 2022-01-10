@@ -2,6 +2,7 @@ import { Inject, UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 
+import { TicketListInput } from "@/dto/input/ticketList.input";
 import { CurrentUser, CurrentUserType } from "@/interfaces/decorators/auth.decorator";
 import { GqlAuthGuard } from "@/interfaces/guards/gqlAuthGuard.guard";
 import { TicketUsecase } from "@/usecases/ticket.usecase";
@@ -44,5 +45,11 @@ export class TicketResolver {
   @Query((returns) => Ticket, { nullable: true })
   async getTicketById(@Args("id") id: string): Promise<Ticket | null> {
     return this.ticketUsecase.getById(id);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query((returns) => [Ticket])
+  async getTicketList(@Args("ticketListInput") ticketListInput: TicketListInput): Promise<Ticket[]> {
+    return this.ticketUsecase.getList(ticketListInput);
   }
 }

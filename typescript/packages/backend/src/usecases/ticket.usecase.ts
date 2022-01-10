@@ -1,6 +1,7 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { FileUpload } from "graphql-upload";
 
+import { TicketListInput } from "@/dto/input/ticketList.input";
 import { Prisma } from "@/interfaces/services/prisma.service";
 import { StorageRepository } from "@/repositories/storage.repository";
 import { TicketRepository } from "@/repositories/ticket.repository";
@@ -63,5 +64,35 @@ export class TicketUsecase {
     if (targetPersonSuggestion.personId !== ticket.personId) {
       await this.update(id, { person: { connect: { id: targetPersonSuggestion.personId } } });
     }
+  }
+
+  async getList(args: TicketListInput) {
+    const { sortKey, sortOrder, filterByAnswered, take, page } = args;
+
+    let where: Prisma.TicketWhereInput = {};
+    if (filterByAnswered === true) {
+      where = {
+        personId: { not: null },
+      };
+    } else if (filterByAnswered === false) {
+      where = {
+        personId: null,
+      };
+    }
+
+    let orderBy: Prisma.TicketOrderByWithRelationInput = {};
+    if (sortOrder !== undefined) {
+      if (sortKey === "createdAt") {
+        orderBy = {
+          createdAt: sortOrder,
+        };
+      } else if (sortKey === "ticketUserLikes") {
+        orderBy = {
+          ticketUserLikes: { _count: sortOrder },
+        };
+      }
+    }
+
+    return await this.ticketRepository.getList({ take, page, where, orderBy });
   }
 }

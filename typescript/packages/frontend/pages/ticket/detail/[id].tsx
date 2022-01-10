@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps<ServerSideProps, { id: strin
   const { data } = await client.query<GetTicketByIdQuery, GetTicketByIdQueryVariables>({
     query: GetTicketByIdDocument,
     variables: { id: params.id },
-    fetchPolicy: "network-only",
+    fetchPolicy: "no-cache",
   });
 
   const { getTicketById } = data;

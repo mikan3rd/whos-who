@@ -15,12 +15,7 @@ export const SidebarContent = React.memo(() => {
   return (
     <>
       <Link href="/" passHref>
-        <Menu.Item
-          css={css`
-            &&& {
-            }
-          `}
-        >
+        <Menu.Item>
           <img src="/title_logo.png" alt="WHO'S WHO!?" />
         </Menu.Item>
       </Link>
@@ -31,6 +26,10 @@ export const SidebarContent = React.memo(() => {
 
       <Link href="/ticket/create" passHref>
         <Menu.Item content="画像から人物を探す" />
+      </Link>
+
+      <Link href="/ticket/list/createdAt" passHref>
+        <Menu.Item content="新しい投稿一覧" />
       </Link>
 
       <Menu.Item>

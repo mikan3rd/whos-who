@@ -161,7 +161,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   );
 
   const [fetchCurrentUser] = useGetCurrentUserLazyQuery({
-    fetchPolicy: "network-only",
+    fetchPolicy: "no-cache",
   });
 
   const setCurrentUser = useCallback(
