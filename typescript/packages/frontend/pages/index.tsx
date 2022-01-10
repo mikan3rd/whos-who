@@ -1,3 +1,5 @@
+import React from "react";
+
 import type { NextPage } from "next";
 
 import { Meta } from "@/components/templates/Meta";
