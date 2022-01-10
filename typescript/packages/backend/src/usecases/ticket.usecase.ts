@@ -44,8 +44,9 @@ export class TicketUsecase {
     return await this.ticketRepository.getByExternalImageUrl(externalImageUrl);
   }
 
-  async getById(id: string) {
-    return await this.ticketRepository.getById(id);
+  async getById(args: { id: string; userId?: string }) {
+    const { id, userId } = args;
+    return await this.ticketRepository.getById({ id, userId });
   }
 
   async update(id: string, data: Prisma.TicketUpdateInput) {
@@ -53,7 +54,7 @@ export class TicketUsecase {
   }
 
   async checkPersonId(id: string) {
-    const ticket = await this.getById(id);
+    const ticket = await this.getById({ id });
     if (ticket === null) {
       throw BadRequestException;
     }

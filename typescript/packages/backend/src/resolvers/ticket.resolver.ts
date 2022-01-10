@@ -3,7 +3,12 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 
 import { TicketListInput } from "@/dto/input/ticketList.input";
-import { CurrentUser, CurrentUserType } from "@/interfaces/decorators/auth.decorator";
+import {
+  CurrentUser,
+  CurrentUserType,
+  IsAllowNoCurrentUser,
+  OptionalCurrentUserType,
+} from "@/interfaces/decorators/auth.decorator";
 import { GqlAuthGuard } from "@/interfaces/guards/gqlAuthGuard.guard";
 import { TicketUsecase } from "@/usecases/ticket.usecase";
 import { Ticket } from "@prisma-model/ticket/ticket.model";
@@ -42,9 +47,14 @@ export class TicketResolver {
     return this.ticketUsecase.getByExternalImageUrl(externalImageUrl);
   }
 
+  @IsAllowNoCurrentUser()
+  @UseGuards(GqlAuthGuard)
   @Query((returns) => Ticket, { nullable: true })
-  async getTicketById(@Args("id") id: string): Promise<Ticket | null> {
-    return this.ticketUsecase.getById(id);
+  async getTicketById(
+    @CurrentUser() { currentUser }: OptionalCurrentUserType,
+    @Args("id") id: string,
+  ): Promise<Ticket | null> {
+    return this.ticketUsecase.getById({ id, userId: currentUser?.id });
   }
 
   @UseGuards(GqlAuthGuard)

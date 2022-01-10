@@ -172,6 +172,7 @@ export type Query = {
   getTicketByExternalImageUrl?: Maybe<Ticket>;
   getTicketById?: Maybe<Ticket>;
   getTicketList: Array<Ticket>;
+  getTicketUserLike: TicketUserLike;
   searchPersonByWord: Array<Person>;
 };
 
@@ -188,6 +189,11 @@ export type QueryGetTicketByIdArgs = {
 
 export type QueryGetTicketListArgs = {
   ticketListInput: TicketListInput;
+};
+
+
+export type QueryGetTicketUserLikeArgs = {
+  ticketId: Scalars['String'];
 };
 
 
@@ -386,7 +392,7 @@ export type GetTicketByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTicketByIdQuery = { getTicketById?: { id: string, personId?: string | null | undefined, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, url: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined, personSuggestions?: Array<{ id: string, person: { id: string, name: string }, user: { id: string }, _count: { personSuggestionLikes: number } }> | null | undefined, _count: { ticketUserLikes: number } } | null | undefined };
+export type GetTicketByIdQuery = { getTicketById?: { id: string, personId?: string | null | undefined, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, url: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined, ticketUserLikes?: Array<{ userId: string }> | null | undefined, personSuggestions?: Array<{ id: string, person: { id: string, name: string }, user: { id: string }, _count: { personSuggestionLikes: number } }> | null | undefined, _count: { ticketUserLikes: number } } | null | undefined };
 
 export type GetTicketListQueryVariables = Exact<{
   ticketListInput: TicketListInput;
@@ -740,6 +746,9 @@ export const GetTicketByIdDocument = gql`
     person {
       id
       name
+    }
+    ticketUserLikes {
+      userId
     }
     personSuggestions {
       id

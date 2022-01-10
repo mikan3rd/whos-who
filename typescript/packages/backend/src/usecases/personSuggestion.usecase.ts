@@ -52,7 +52,7 @@ export class PersonSuggestionUsecase {
     };
     const personSuggestion = await this.personSuggestionRepository.create(data);
 
-    const ticket = await this.ticketUsecase.getById(ticketId);
+    const ticket = await this.ticketUsecase.getById({ id: ticketId });
     if (ticket !== null && ticket.personId === null) {
       await this.ticketUsecase.update(ticketId, { person: { connect: { id: personSuggestion.personId } } });
     }
