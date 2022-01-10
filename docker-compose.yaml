@@ -4,10 +4,10 @@ x-base: &base
   environment:
     TZ: Asia/Tokyo
     MYSQL_ROOT_PASSWORD: docker_root_password
-    MYSQL_USER: docker_user
-    MYSQL_PASSWORD: docker_password
+    MYSQL_USER: root
+    MYSQL_PASSWORD: docker_root_password
     MYSQL_DATABASE: whos-who
-    DATABASE_URL: mysql://docker_user:docker_password@mysql:3306/whos-who
+    DATABASE_URL: mysql://root:docker_root_password@mysql:3306/whos-who
     SERVER_APOLLO_URI: http://backend:3300
     PUBLIC_APOLLO_URI: http://localhost:3300
 
