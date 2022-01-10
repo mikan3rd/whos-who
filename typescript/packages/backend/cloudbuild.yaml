@@ -43,10 +43,13 @@ steps:
   #   entrypoint: 'bash'
   #   args: ['-c', 'docker ps -q --filter ancestor="gcr.io/cloudsql-docker/gce-proxy:1.16"|xargs docker stop']
 
+  # - name: 'gcr.io/cloud-builders/docker'
+  #   args: ['push', 'gcr.io/$PROJECT_ID/backend/build:$COMMIT_SHA']
+  #   waitFor:
+  #     - 'Migrate: database'
+
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/backend/build:$COMMIT_SHA']
-    # waitFor:
-    #   - 'Migrate: database'
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
