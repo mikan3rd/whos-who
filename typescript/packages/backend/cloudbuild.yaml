@@ -3,7 +3,7 @@ steps:
   - id: 'Build: docker image'
     name: 'gcr.io/cloud-builders/docker'
     args: [
-      'build', '.',
+      'build', './typescript',
       '-f', 'typescript/packages/backend/Dockerfile.prod',
       '-t', 'gcr.io/$PROJECT_ID/build:$COMMIT_SHA',
     ]
