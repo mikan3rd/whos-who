@@ -83,7 +83,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
       currentUser !== null &&
       ticketUserLikes !== null &&
       ticketUserLikes !== undefined &&
-      ticketUserLikes?.some((like) => like.userId === currentUser.id),
+      ticketUserLikes.some((like) => like.userId === currentUser.id),
     [currentUser, ticketUserLikes],
   );
 
