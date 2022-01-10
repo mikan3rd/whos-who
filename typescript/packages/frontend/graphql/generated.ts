@@ -49,12 +49,18 @@ export type GoogleAuthCredentialInput = {
 };
 
 export type Mutation = {
+  createOrDeleteTicketUserLike: TicketUserLike;
   createPersonSuggestion: PersonSuggestion;
   createPersonSuggestionLike: PersonSuggestionLike;
   createTicketByExternalImageUrl: Ticket;
   createTicketByUploadImageFile: Ticket;
   upsertGoogleAuthCredential: GoogleAuthCredential;
   upsertTwitterAuthCredential: TwitterAuthCredential;
+};
+
+
+export type MutationCreateOrDeleteTicketUserLikeArgs = {
+  ticketId: Scalars['String'];
 };
 
 
@@ -314,6 +320,13 @@ export enum UserStatus {
   Disabled = 'DISABLED'
 }
 
+export type CreateOrDeleteTicketUserLikeMutationVariables = Exact<{
+  ticketId: Scalars['String'];
+}>;
+
+
+export type CreateOrDeleteTicketUserLikeMutation = { createOrDeleteTicketUserLike: { id: string } };
+
 export type CreatePersonSuggestionMutationVariables = Exact<{
   personSuggestionCreate: PersonSuggestionCreateInput;
 }>;
@@ -390,6 +403,39 @@ export type SearchPersonByWordQueryVariables = Exact<{
 export type SearchPersonByWordQuery = { searchPersonByWord: Array<{ id: string, name: string }> };
 
 
+export const CreateOrDeleteTicketUserLikeDocument = gql`
+    mutation createOrDeleteTicketUserLike($ticketId: String!) {
+  createOrDeleteTicketUserLike(ticketId: $ticketId) {
+    id
+  }
+}
+    `;
+export type CreateOrDeleteTicketUserLikeMutationFn = Apollo.MutationFunction<CreateOrDeleteTicketUserLikeMutation, CreateOrDeleteTicketUserLikeMutationVariables>;
+
+/**
+ * __useCreateOrDeleteTicketUserLikeMutation__
+ *
+ * To run a mutation, you first call `useCreateOrDeleteTicketUserLikeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrDeleteTicketUserLikeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrDeleteTicketUserLikeMutation, { data, loading, error }] = useCreateOrDeleteTicketUserLikeMutation({
+ *   variables: {
+ *      ticketId: // value for 'ticketId'
+ *   },
+ * });
+ */
+export function useCreateOrDeleteTicketUserLikeMutation(baseOptions?: Apollo.MutationHookOptions<CreateOrDeleteTicketUserLikeMutation, CreateOrDeleteTicketUserLikeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOrDeleteTicketUserLikeMutation, CreateOrDeleteTicketUserLikeMutationVariables>(CreateOrDeleteTicketUserLikeDocument, options);
+      }
+export type CreateOrDeleteTicketUserLikeMutationHookResult = ReturnType<typeof useCreateOrDeleteTicketUserLikeMutation>;
+export type CreateOrDeleteTicketUserLikeMutationResult = Apollo.MutationResult<CreateOrDeleteTicketUserLikeMutation>;
+export type CreateOrDeleteTicketUserLikeMutationOptions = Apollo.BaseMutationOptions<CreateOrDeleteTicketUserLikeMutation, CreateOrDeleteTicketUserLikeMutationVariables>;
 export const CreatePersonSuggestionDocument = gql`
     mutation createPersonSuggestion($personSuggestionCreate: PersonSuggestionCreateInput!) {
   createPersonSuggestion(personSuggestionCreate: $personSuggestionCreate) {

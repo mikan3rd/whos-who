@@ -1,0 +1,5 @@
+mutation createOrDeleteTicketUserLike($ticketId: String!) {
+  createOrDeleteTicketUserLike(ticketId: $ticketId) {
+    id
+  }
+}

@@ -23,6 +23,7 @@ import {
 import { useAuthContext } from "@/context/auth";
 import {
   GetTicketByIdQuery,
+  useCreateOrDeleteTicketUserLikeMutation,
   useCreatePersonSuggestionLikeMutation,
   useCreatePersonSuggestionMutation,
   useSearchPersonByWordLazyQuery,
@@ -56,6 +57,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
     state: { currentUser },
   } = useAuthContext();
 
+  const [createOrDeleteTicketUserLike] = useCreateOrDeleteTicketUserLikeMutation();
   const [searchPersonByWord, { data: searchPersonResult, loading: searchLoading }] = useSearchPersonByWordLazyQuery();
   const [createPersonSuggestion, { loading: createLoading }] = useCreatePersonSuggestionMutation();
   const [createPersonSuggestionLike, { loading: createLikeLoading }] = useCreatePersonSuggestionLikeMutation();
@@ -167,6 +169,17 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
     [createPersonSuggestionLike, refetchTicket],
   );
 
+  const handleCreateOrDeleteTicketUserLike = useCallback(async () => {
+    const { data } = await createOrDeleteTicketUserLike({ variables: { ticketId } });
+    if (data !== undefined && data !== null) {
+      // TODO: Likeの変更によって表示を変える
+      toast({
+        type: "success",
+        title: "Likeしました！",
+      });
+    }
+  }, [createOrDeleteTicketUserLike, ticketId]);
+
   return (
     <>
       <Header>
@@ -204,7 +217,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
             content="Like"
             icon="heart"
             label={{ basic: true, color: "red", pointing: "left", content: _count.ticketUserLikes }}
-            // TODO: onClick
+            onClick={handleCreateOrDeleteTicketUserLike}
             // TODO: basic when user liked
           />
 
