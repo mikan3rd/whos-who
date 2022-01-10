@@ -1,0 +1,82 @@
+steps:
+
+  - id: 'Build: docker image'
+    name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build', '.',
+      '-f', 'typescript/packages/backend/Dockerfile.prod',
+      '-t', 'gcr.io/$PROJECT_ID/build:$COMMIT_SHA',
+    ]
+
+  # - id: 'Run: cloudsql-proxy'
+  #   name: 'gcr.io/cloudsql-docker/gce-proxy:1.17'
+  #   args: [
+  #     '/cloud_sql_proxy',
+  #     '-dir=/cloudsql',
+  #     '-instances=${_CLOUD_SQL_CONNECTION_NAME}',
+  #     # '-ip_address_types=PRIVATE',
+  #   ]
+  #   volumes:
+  #     - name: cloudsql
+  #       path: /cloudsql
+
+  # - id: 'Migrate: database'
+  #   name: 'gcr.io/cloud-builders/docker'
+  #   args: [
+  #     'run',
+  #     '-v', 'cloudsql:/cloudsql',
+  #     '-w', '/app/packages/backend',
+  #     '-e', 'DATABASE_URL=${_DATABASE_URL}',
+  #     'gcr.io/$PROJECT_ID/build:$COMMIT_SHA',
+  #     'yarn', 'migrate:deploy'
+  #   ]
+  #   volumes:
+  #     - name: cloudsql
+  #       path: /cloudsql
+  #   waitFor:
+  #     - 'Build: docker image'
+
+  # - id: 'Kill: cloudsql-proxy'
+  #   name: 'gcr.io/cloud-builders/docker'
+  #   waitFor:
+  #     - 'Migrate: database'
+  #   entrypoint: 'bash'
+  #   args: ['-c', 'docker ps -q --filter ancestor="gcr.io/cloudsql-docker/gce-proxy:1.16"|xargs docker stop']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/build:$COMMIT_SHA']
+    # waitFor:
+    #   - 'Migrate: database'
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [
+      'beta', 'run', 'deploy', '$_CLOUD_RUN_SERVICE_NAME',
+      '--image', 'gcr.io/$PROJECT_ID/build:$COMMIT_SHA',
+      '--region', 'asia-northeast1',
+      '--platform', 'managed',
+      # '--memory', '1Gi',
+      '--set-cloudsql-instances', '${_CLOUD_SQL_CONNECTION_NAME}',
+      '--allow-unauthenticated',
+      '--set-env-vars', '
+        NO_COLOR=true,
+        TZ=Asia/Tokyo,
+        DATABASE_URL=${_DATABASE_URL},
+        FIREBASE_PROJECT_ID=${_FIREBASE_PROJECT_ID},
+        FIREBASE_CLIENT_EMAIL=${_FIREBASE_CLIENT_EMAIL},
+        FIREBASE_PRIVATE_KEY=${_FIREBASE_PRIVATE_KEY},
+        GCP_PROJECT_ID=${_GCP_PROJECT_ID},
+        GCP_CLIENT_EMAIL=${_GCP_CLIENT_EMAIL},
+        GCP_PRIVATE_KEY=${_GCP_PRIVATE_KEY},
+        CLOUD_STORAGE_PUBLIC_BUCKET=${_CLOUD_STORAGE_PUBLIC_BUCKET},
+        TWITTER_BEARER_TOKEN=${_TWITTER_BEARER_TOKEN},
+        TWITTER_API_KEY=${_TWITTER_API_KEY},
+        TWITTER_API_SECRET=${_TWITTER_API_SECRET},
+        TWITTER_CLIENT_ID=${_TWITTER_CLIENT_ID},
+        TWITTER_CLIENT_SECRET=${_TWITTER_CLIENT_SECRET}'
+    ]
+
+images:
+  - gcr.io/$PROJECT_ID/build:$COMMIT_SHA
+
+timeout: 1200s
