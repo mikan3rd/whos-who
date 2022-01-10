@@ -27,7 +27,7 @@ steps:
       '-w', '/app/packages/backend',
       '-e', 'DATABASE_URL=${_DATABASE_URL}',
       'gcr.io/$PROJECT_ID/backend/build:$COMMIT_SHA',
-      'yarn', '@backend', 'migrate:deploy'
+      'yarn', 'migrate:deploy'
     ]
     volumes:
       - name: cloudsql
