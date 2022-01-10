@@ -5,17 +5,17 @@ steps:
     args: [
       'build', './typescript',
       '-f', 'typescript/packages/frontend/Dockerfile.prod',
-      '-t', 'gcr.io/$PROJECT_ID/build:$COMMIT_SHA',
+      '-t', 'gcr.io/$PROJECT_ID/frontend/build:$COMMIT_SHA',
     ]
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/build:$COMMIT_SHA']
+    args: ['push', 'gcr.io/$PROJECT_ID/frontend/build:$COMMIT_SHA']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args: [
       'beta', 'run', 'deploy', '$_CLOUD_RUN_SERVICE_NAME',
-      '--image', 'gcr.io/$PROJECT_ID/build:$COMMIT_SHA',
+      '--image', 'gcr.io/$PROJECT_ID/frontend/build:$COMMIT_SHA',
       '--region', 'asia-northeast1',
       '--platform', 'managed',
       # '--memory', '1Gi',

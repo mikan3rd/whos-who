@@ -5,7 +5,7 @@ steps:
     args: [
       'build', './typescript',
       '-f', 'typescript/packages/backend/Dockerfile.prod',
-      '-t', 'gcr.io/$PROJECT_ID/build:$COMMIT_SHA',
+      '-t', 'gcr.io/$PROJECT_ID/backend/build:$COMMIT_SHA',
     ]
 
   # - id: 'Run: cloudsql-proxy'
@@ -27,7 +27,7 @@ steps:
   #     '-v', 'cloudsql:/cloudsql',
   #     '-w', '/app/packages/backend',
   #     '-e', 'DATABASE_URL=${_DATABASE_URL}',
-  #     'gcr.io/$PROJECT_ID/build:$COMMIT_SHA',
+  #     'gcr.io/$PROJECT_ID/backend/build:$COMMIT_SHA',
   #     'yarn', 'migrate:deploy'
   #   ]
   #   volumes:
@@ -44,7 +44,7 @@ steps:
   #   args: ['-c', 'docker ps -q --filter ancestor="gcr.io/cloudsql-docker/gce-proxy:1.16"|xargs docker stop']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/build:$COMMIT_SHA']
+    args: ['push', 'gcr.io/$PROJECT_ID/backend/build:$COMMIT_SHA']
     # waitFor:
     #   - 'Migrate: database'
 
@@ -52,7 +52,7 @@ steps:
     entrypoint: gcloud
     args: [
       'beta', 'run', 'deploy', '$_CLOUD_RUN_SERVICE_NAME',
-      '--image', 'gcr.io/$PROJECT_ID/build:$COMMIT_SHA',
+      '--image', 'gcr.io/$PROJECT_ID/backend/build:$COMMIT_SHA',
       '--region', 'asia-northeast1',
       '--platform', 'managed',
       # '--memory', '1Gi',
@@ -77,6 +77,6 @@ steps:
     ]
 
 images:
-  - gcr.io/$PROJECT_ID/build:$COMMIT_SHA
+  - gcr.io/$PROJECT_ID/backend/build:$COMMIT_SHA
 
 timeout: 1200s
