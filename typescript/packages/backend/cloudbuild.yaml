@@ -34,6 +34,7 @@ steps:
         path: /cloudsql
     waitFor:
       - 'Build: docker image'
+      - 'Run: cloudsql-proxy'
 
   - id: 'Kill: cloudsql-proxy'
     name: 'gcr.io/cloud-builders/docker'
