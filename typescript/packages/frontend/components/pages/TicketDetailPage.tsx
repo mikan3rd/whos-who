@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { css } from "@emotion/react";
 import dayjs from "dayjs";
@@ -23,6 +23,7 @@ import {
 import { useAuthContext } from "@/context/auth";
 import {
   GetTicketByIdQuery,
+  useCreateOrDeleteTicketUserLikeMutation,
   useCreatePersonSuggestionLikeMutation,
   useCreatePersonSuggestionMutation,
   useSearchPersonByWordLazyQuery,
@@ -33,6 +34,7 @@ const NewPersonValue = "new" as const;
 export type Props = {
   getTicketByIdData: NonNullable<GetTicketByIdQuery["getTicketById"]>;
   isAccepting: boolean;
+  imageUrl: string;
   refetchTicket: () => Promise<void>;
 };
 
@@ -43,12 +45,13 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
       personId,
       user,
       externalImage,
-      uploadedImage,
+      ticketUserLikes,
       personSuggestions,
       createdAt,
       _count,
     },
     isAccepting,
+    imageUrl,
     refetchTicket,
   } = props;
 
@@ -56,6 +59,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
     state: { currentUser },
   } = useAuthContext();
 
+  const [createOrDeleteTicketUserLike] = useCreateOrDeleteTicketUserLikeMutation();
   const [searchPersonByWord, { data: searchPersonResult, loading: searchLoading }] = useSearchPersonByWordLazyQuery();
   const [createPersonSuggestion, { loading: createLoading }] = useCreatePersonSuggestionMutation();
   const [createPersonSuggestionLike, { loading: createLikeLoading }] = useCreatePersonSuggestionLikeMutation();
@@ -73,11 +77,15 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
   const [newPerson, setNewPerson] = useState<DropdownItemProps | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<DropdownItemProps | null>(null);
 
-  const imageUrl = useMemo(
-    () => externalImage?.url ?? uploadedImage?.url ?? "",
-    [externalImage?.url, uploadedImage?.url],
-  );
   const isExternalUrl = useMemo(() => externalImage?.url !== undefined, [externalImage?.url]);
+  const isLiked = useMemo(
+    () =>
+      currentUser !== null &&
+      ticketUserLikes !== null &&
+      ticketUserLikes !== undefined &&
+      ticketUserLikes.some((like) => like.userId === currentUser.id),
+    [currentUser, ticketUserLikes],
+  );
 
   const isSuggested = useMemo(() => {
     if (selectedPerson === null || selectedPerson.value === NewPersonValue) {
@@ -167,6 +175,23 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
     [createPersonSuggestionLike, refetchTicket],
   );
 
+  const handleCreateOrDeleteTicketUserLike = useCallback(async () => {
+    const { data } = await createOrDeleteTicketUserLike({ variables: { ticketId } });
+    if (data !== undefined && data !== null) {
+      await refetchTicket();
+      toast({
+        type: "success",
+        title: isLiked === true ? "Likeを取り消しました！" : "Likeしました！",
+      });
+    }
+  }, [createOrDeleteTicketUserLike, isLiked, refetchTicket, ticketId]);
+
+  useEffect(() => {
+    if (currentUser !== null) {
+      refetchTicket();
+    }
+  }, [currentUser, refetchTicket]);
+
   return (
     <>
       <Header>
@@ -204,8 +229,8 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
             content="Like"
             icon="heart"
             label={{ basic: true, color: "red", pointing: "left", content: _count.ticketUserLikes }}
-            // TODO: onClick
-            // TODO: basic when user liked
+            onClick={handleCreateOrDeleteTicketUserLike}
+            basic={isLiked === false}
           />
 
           <label>投稿日: {dayjs(createdAt).format("YYYY/MM/DD HH:mm")}</label>

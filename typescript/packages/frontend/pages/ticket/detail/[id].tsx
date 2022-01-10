@@ -38,15 +38,20 @@ export const getServerSideProps: GetServerSideProps<ServerSideProps, { id: strin
 };
 
 const TicketDetail = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const [fetch, { data }] = useGetTicketByIdLazyQuery();
+  const [fetch, { data }] = useGetTicketByIdLazyQuery({ fetchPolicy: "cache-and-network" });
 
   const getTicketByIdData = useMemo(
     () => data?.getTicketById ?? props.getTicketByIdData,
     [data?.getTicketById, props.getTicketByIdData],
   );
 
-  const { person, externalImage } = getTicketByIdData;
+  const { person, externalImage, uploadedImage } = getTicketByIdData;
   const isAccepting = person === undefined || person === null;
+
+  const imageUrl = useMemo(
+    () => externalImage?.url ?? uploadedImage?.url ?? "",
+    [externalImage?.url, uploadedImage?.url],
+  );
 
   const refetchTicket = useCallback(async () => {
     await fetch({ variables: { id: getTicketByIdData.id } });
@@ -59,9 +64,14 @@ const TicketDetail = (props: InferGetServerSidePropsType<typeof getServerSidePro
         description={
           isAccepting ? `この画像の人物の名前を知っている人を探しています！` : `この画像の人物の名前を確認してみよう！`
         }
-        imageUrl={externalImage?.url} // TODO: uploadedImageに対応
+        imageUrl={imageUrl}
       />
-      <TicketDetailPage getTicketByIdData={getTicketByIdData} isAccepting={isAccepting} refetchTicket={refetchTicket} />
+      <TicketDetailPage
+        getTicketByIdData={getTicketByIdData}
+        isAccepting={isAccepting}
+        imageUrl={imageUrl}
+        refetchTicket={refetchTicket}
+      />
     </>
   );
 };

@@ -4,13 +4,14 @@ import { GqlExecutionContext } from "@nestjs/graphql";
 import { Request } from "express";
 import admin from "firebase-admin";
 
+import { IsAllowNoCurrentUserKey } from "@/interfaces/decorators/auth.decorator";
 import { UserUsecase } from "@/usecases/user.usecase";
 import { User } from "@prisma-model/user/user.model";
 
 export type ContextType = {
   req: Request;
-  currentUser: User;
-  decodedIdToken: admin.auth.DecodedIdToken;
+  currentUser?: User;
+  decodedIdToken?: admin.auth.DecodedIdToken;
 };
 
 @Injectable()
@@ -21,10 +22,14 @@ export class GqlAuthGuard implements CanActivate {
 
   public async canActivate(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context).getContext<ContextType>();
+    const isAllowNoCurrentUser = this.reflector.get<boolean | undefined>(IsAllowNoCurrentUserKey, context.getHandler());
 
     const idToken = this.getIdToken(ctx.req);
 
     if (idToken === null) {
+      if (isAllowNoCurrentUser === true) {
+        return true;
+      }
       throw new UnauthorizedException();
     }
 

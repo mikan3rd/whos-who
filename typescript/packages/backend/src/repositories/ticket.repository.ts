@@ -16,7 +16,8 @@ export class TicketRepository {
     });
   }
 
-  async getById(id: string) {
+  async getById(args: { id: string; userId?: string }) {
+    const { id, userId } = args;
     return await this.prisma.ticket.findUnique({
       where: { id },
       include: {
@@ -24,6 +25,9 @@ export class TicketRepository {
         externalImage: true,
         uploadedImage: true,
         person: true,
+        ticketUserLikes: {
+          where: { userId },
+        },
         personSuggestions: {
           include: { person: true, user: true, _count: true },
           orderBy: { personSuggestionLikes: { _count: "desc" } },

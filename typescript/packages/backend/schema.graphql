@@ -217,6 +217,7 @@ enum SortKey {
 type Mutation {
   createTicketByExternalImageUrl(externalImageUrl: String!): Ticket!
   createTicketByUploadImageFile(file: Upload!): Ticket!
+  createOrDeleteTicketUserLike(ticketId: String!): TicketUserLike!
   createPersonSuggestion(personSuggestionCreate: PersonSuggestionCreateInput!): PersonSuggestion!
   createPersonSuggestionLike(personSuggestionId: String!): PersonSuggestionLike!
   upsertGoogleAuthCredential(googleAuthCredentialInput: GoogleAuthCredentialInput!): GoogleAuthCredential!

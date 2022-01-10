@@ -22,6 +22,9 @@ query getTicketById($id: String!) {
       id
       name
     }
+    ticketUserLikes {
+      userId
+    }
     personSuggestions {
       id
       person {
