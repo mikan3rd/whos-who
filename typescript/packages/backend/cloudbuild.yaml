@@ -8,45 +8,11 @@ steps:
       '-t', 'gcr.io/$PROJECT_ID/backend/build:$COMMIT_SHA',
     ]
 
-  - id: 'Run: cloudsql-proxy'
-    name: 'gcr.io/cloudsql-docker/gce-proxy'
-    args: [
-      '/cloud_sql_proxy',
-      '-dir=/cloudsql',
-      '-instances=${_CLOUD_SQL_CONNECTION_NAME}',
-    ]
-    volumes:
-      - name: cloudsql
-        path: /cloudsql
-
-  - id: 'Migrate: database'
+  - id: 'Push: docker image'
     name: 'gcr.io/cloud-builders/docker'
-    args: [
-      'run',
-      '-v', 'cloudsql:/cloudsql',
-      '-w', '/app/packages/backend',
-      '-e', 'DATABASE_URL=${_DATABASE_URL}',
-      'gcr.io/$PROJECT_ID/backend/build:$COMMIT_SHA',
-      'yarn', 'migrate:deploy'
-    ]
-    volumes:
-      - name: cloudsql
-        path: /cloudsql
-    waitFor:
-      - 'Build: docker image'
-      - 'Run: cloudsql-proxy'
-
-  - id: 'Kill: cloudsql-proxy'
-    name: 'gcr.io/cloud-builders/docker'
-    waitFor:
-      - 'Migrate: database'
-    entrypoint: 'bash'
-    args: ['-c', 'docker ps -q --filter ancestor="gcr.io/cloudsql-docker/gce-proxy"|xargs docker stop']
-
-  - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/backend/build:$COMMIT_SHA']
     waitFor:
-      - 'Migrate: database'
+      - 'Build: docker image'
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
@@ -70,6 +36,8 @@ steps:
         GCP_PRIVATE_KEY=${_GCP_PRIVATE_KEY},
         CLOUD_STORAGE_PUBLIC_BUCKET=${_CLOUD_STORAGE_PUBLIC_BUCKET}'
     ]
+    # waitFor:
+    #   - 'Migrate: database'
 
 images:
   - gcr.io/$PROJECT_ID/backend/build:$COMMIT_SHA
