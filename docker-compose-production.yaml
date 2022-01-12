@@ -39,7 +39,7 @@ services:
       dockerfile: ./packages/backend/Dockerfile.prod
     tty: true
     depends_on:
-      - mysql
+      - mysql-prod
     ports:
       - "3301:3301"
 
@@ -50,7 +50,7 @@ services:
       dockerfile: ./packages/frontend/Dockerfile.prod
     tty: true
     environment:
-      - PORT: 3401
+      PORT: 3401
     depends_on:
       - backend-prod
     ports:
