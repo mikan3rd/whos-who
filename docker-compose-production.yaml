@@ -7,9 +7,9 @@ x-base: &base
     MYSQL_USER: docker_user
     MYSQL_PASSWORD: docker_password
     MYSQL_DATABASE: whos-who
-    DATABASE_URL: mysql://docker_user:docker_password@mysql:3306/whos-who
-    SERVER_APOLLO_URI: http://backend:3300
-    PUBLIC_APOLLO_URI: http://localhost:3300
+    DATABASE_URL: mysql://docker_user:docker_password@mysql-prod:3306/whos-who
+    SERVER_APOLLO_URI: http://backend:3301
+    PUBLIC_APOLLO_URI: http://localhost:3301
 
 x-ts-base: &ts-base
   <<: *base
@@ -57,6 +57,8 @@ services:
       - "3401:3401"
 
 volumes:
+  mysql-prod:
+    driver: local
   backend-prod:
     driver: local
   frontend-prod:
