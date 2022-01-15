@@ -1,18 +1,16 @@
 version: "3"
 
-x-base: &base
-  environment:
-    TZ: Asia/Tokyo
-    MYSQL_ROOT_PASSWORD: docker_root_password
-    MYSQL_USER: docker_user
-    MYSQL_PASSWORD: docker_password
-    MYSQL_DATABASE: whos-who
-    DATABASE_URL: mysql://docker_user:docker_password@mysql-prod:3306/whos-who
-    SERVER_APOLLO_URI: http://backend:3301
-    PUBLIC_APOLLO_URI: http://localhost:3301
+x-env: &env
+  TZ: Asia/Tokyo
+  MYSQL_ROOT_PASSWORD: docker_root_password
+  MYSQL_USER: docker_user
+  MYSQL_PASSWORD: docker_password
+  MYSQL_DATABASE: whos-who
+  DATABASE_URL: mysql://docker_user:docker_password@mysql-prod:3306/whos-who
+  SERVER_APOLLO_URI: http://backend:3301
+  PUBLIC_APOLLO_URI: http://localhost:3301
 
 x-ts-base: &ts-base
-  <<: *base
   volumes:
     - ./typescript:/app
     - /app/node_modules
@@ -20,12 +18,14 @@ x-ts-base: &ts-base
     - /app/packages/backend/dist
     - /app/packages/frontend/node_modules
     - /app/packages/frontend/.next
+    - /app/packages/frontend/.env.production.local
 
 services:
   mysql-prod:
-    <<: *base
     image: mysql:8.0
     command: mysqld
+    environment:
+      <<: *env
     ports:
       - 4306:3306
     volumes:
@@ -38,6 +38,8 @@ services:
       context: ./typescript
       dockerfile: ./packages/backend/Dockerfile.prod
     tty: true
+    environment:
+      <<: *env
     depends_on:
       - mysql-prod
     ports:
@@ -50,6 +52,7 @@ services:
       dockerfile: ./packages/frontend/Dockerfile.prod
     tty: true
     environment:
+      <<: *env
       PORT: 3401
     depends_on:
       - backend-prod

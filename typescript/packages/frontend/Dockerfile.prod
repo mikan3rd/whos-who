@@ -6,11 +6,10 @@ ENV NODE_ENV=production
 
 COPY . .
 
-RUN printenv
+RUN yarn install --production
 
 RUN yarn @frontend create-env
 
-RUN yarn install --production
 RUN yarn @frontend build
 
 CMD yarn @frontend start:prod

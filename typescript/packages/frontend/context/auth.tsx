@@ -160,7 +160,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     [logout],
   );
 
-  const [fetchCurrentUser] = useGetCurrentUserLazyQuery({
+  const [fetchCurrentUser, { error }] = useGetCurrentUserLazyQuery({
     fetchPolicy: "no-cache",
   });
 
@@ -186,7 +186,7 @@ export const AuthProvider: React.FC = ({ children }) => {
           if (error !== undefined) {
             handleErrorCurrentUser(error);
           }
-        } else {
+        } else if (error !== undefined) {
           // 常に匿名ユーザーとしてログインした状態にする
           await signInAnonymously(firebaseAuth).catch((error) => {
             toast({
@@ -199,7 +199,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         }
       });
     },
-    [fetchCurrentUser, firebaseApp, handleCompleteCurrentUser, handleErrorCurrentUser],
+    [error, fetchCurrentUser, firebaseApp, handleCompleteCurrentUser, handleErrorCurrentUser],
   );
 
   const handleSignupError = useCallback((error: Error) => {
