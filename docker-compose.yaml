@@ -1,18 +1,24 @@
 version: "3"
 
-x-base: &base
-  environment:
-    TZ: Asia/Tokyo
-    MYSQL_ROOT_PASSWORD: docker_root_password
-    MYSQL_USER: root
-    MYSQL_PASSWORD: docker_root_password
-    MYSQL_DATABASE: whos-who
-    DATABASE_URL: mysql://root:docker_root_password@mysql:3306/whos-who
-    SERVER_APOLLO_URI: http://backend:3300
-    PUBLIC_APOLLO_URI: http://localhost:3300
+
+x-env: &env
+  TZ: Asia/Tokyo
+  MYSQL_ROOT_PASSWORD: docker_root_password
+  MYSQL_USER: root
+  MYSQL_PASSWORD: docker_root_password
+  MYSQL_DATABASE: whos-who
+  DATABASE_URL: mysql://root:docker_root_password@mysql:3306/whos-who
+  SERVER_APOLLO_URI: http://backend:3300
+  PUBLIC_APOLLO_URI: http://localhost:3300
+  NEXT_PUBLIC_FIREBASE_API_KEY: ${NEXT_PUBLIC_FIREBASE_API_KEY}
+  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}
+  NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${NEXT_PUBLIC_FIREBASE_PROJECT_ID}
+  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}
+  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID}
+  NEXT_PUBLIC_FIREBASE_APP_ID: ${NEXT_PUBLIC_FIREBASE_APP_ID}
+  NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID}
 
 x-ts-base: &ts-base
-  <<: *base
   volumes:
     - ./typescript:/app
     - /app/node_modules
@@ -23,9 +29,10 @@ x-ts-base: &ts-base
 
 services:
   mysql:
-    <<: *base
     image: mysql:8.0
     command: mysqld
+    environment:
+      <<: *env
     ports:
       - 4306:3306
     volumes:
@@ -37,7 +44,11 @@ services:
     build:
       context: ./typescript
       dockerfile: ./packages/backend/Dockerfile
+      args:
+        <<: *env
     command: yarn @backend start
+    environment:
+      <<: *env
     tty: true
     depends_on:
       - mysql
@@ -49,7 +60,11 @@ services:
     build:
       context: ./typescript
       dockerfile: ./packages/frontend/Dockerfile
+      args:
+        <<: *env
     command: yarn @frontend start
+    environment:
+      <<: *env
     tty: true
     depends_on:
       - backend

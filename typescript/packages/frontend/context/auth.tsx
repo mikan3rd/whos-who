@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 
 import { ApolloError } from "@apollo/client";
 import {
   User as FirebaseUser,
   GoogleAuthProvider,
   TwitterAuthProvider,
+  Unsubscribe,
   UserCredential,
   getAuth,
   linkWithPopup,
@@ -97,6 +98,8 @@ export const AuthProvider: React.FC = ({ children }) => {
   const { firebaseApp } = useFirebase();
   const router = useRouter();
 
+  const onAuthStateChangedUnsubscribeRef = useRef<Unsubscribe | null>(null);
+
   const [upsertGoogleAuthCredential] = useUpsertGoogleAuthCredentialMutation();
   const [upsertTwitterAuthCredential] = useUpsertTwitterAuthCredentialMutation();
 
@@ -173,7 +176,8 @@ export const AuthProvider: React.FC = ({ children }) => {
       dispatch({ type: "SetAuthStatus", payload: "loading" });
 
       const firebaseAuth = getAuth(firebaseApp);
-      onAuthStateChanged(firebaseAuth, async (currentUser) => {
+      onAuthStateChangedUnsubscribeRef.current?.();
+      onAuthStateChangedUnsubscribeRef.current = onAuthStateChanged(firebaseAuth, async (currentUser) => {
         dispatch({ type: "SetFirebaseUser", payload: currentUser });
 
         if (currentUser !== null) {
@@ -186,7 +190,7 @@ export const AuthProvider: React.FC = ({ children }) => {
           if (error !== undefined) {
             handleErrorCurrentUser(error);
           }
-        } else if (error !== undefined) {
+        } else if (error === undefined) {
           // 常に匿名ユーザーとしてログインした状態にする
           await signInAnonymously(firebaseAuth).catch((error) => {
             toast({
