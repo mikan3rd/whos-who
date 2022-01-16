@@ -1,18 +1,23 @@
 version: "3"
 
-x-base: &base
-  environment:
-    TZ: Asia/Tokyo
-    MYSQL_ROOT_PASSWORD: docker_root_password
-    MYSQL_USER: docker_user
-    MYSQL_PASSWORD: docker_password
-    MYSQL_DATABASE: whos-who
-    DATABASE_URL: mysql://docker_user:docker_password@mysql:3306/whos-who
-    SERVER_APOLLO_URI: http://backend:3300
-    PUBLIC_APOLLO_URI: http://localhost:3300
+x-env: &env
+  TZ: Asia/Tokyo
+  MYSQL_ROOT_PASSWORD: docker_root_password
+  MYSQL_USER: docker_user
+  MYSQL_PASSWORD: docker_password
+  MYSQL_DATABASE: whos-who
+  DATABASE_URL: mysql://docker_user:docker_password@mysql-prod:3306/whos-who
+  SERVER_APOLLO_URI: http://backend:3301
+  PUBLIC_APOLLO_URI: http://localhost:3301
+  NEXT_PUBLIC_FIREBASE_API_KEY: ${NEXT_PUBLIC_FIREBASE_API_KEY}
+  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}
+  NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${NEXT_PUBLIC_FIREBASE_PROJECT_ID}
+  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}
+  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID}
+  NEXT_PUBLIC_FIREBASE_APP_ID: ${NEXT_PUBLIC_FIREBASE_APP_ID}
+  NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID}
 
 x-ts-base: &ts-base
-  <<: *base
   volumes:
     - ./typescript:/app
     - /app/node_modules
@@ -20,12 +25,14 @@ x-ts-base: &ts-base
     - /app/packages/backend/dist
     - /app/packages/frontend/node_modules
     - /app/packages/frontend/.next
+    # - /app/packages/frontend/.env.production.local
 
 services:
   mysql-prod:
-    <<: *base
     image: mysql:8.0
     command: mysqld
+    environment:
+      <<: *env
     ports:
       - 4306:3306
     volumes:
@@ -37,9 +44,13 @@ services:
     build:
       context: ./typescript
       dockerfile: ./packages/backend/Dockerfile.prod
+      args:
+        <<: *env
     tty: true
+    environment:
+      <<: *env
     depends_on:
-      - mysql
+      - mysql-prod
     ports:
       - "3301:3301"
 
@@ -48,15 +59,20 @@ services:
     build:
       context: ./typescript
       dockerfile: ./packages/frontend/Dockerfile.prod
-    tty: true
+      args:
+        <<: *env
     environment:
-      - PORT: 3401
+      <<: *env
+      PORT: 3401
+    tty: true
     depends_on:
       - backend-prod
     ports:
       - "3401:3401"
 
 volumes:
+  mysql-prod:
+    driver: local
   backend-prod:
     driver: local
   frontend-prod:
