@@ -44,6 +44,8 @@ services:
     build:
       context: ./typescript
       dockerfile: ./packages/backend/Dockerfile.prod
+      args:
+        <<: *env
     tty: true
     environment:
       <<: *env
