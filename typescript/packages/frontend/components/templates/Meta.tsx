@@ -7,10 +7,11 @@ export const Meta = React.memo<{
   description?: string;
   imageUrl?: string;
 }>((props) => {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
   const {
     title,
     description = "Who's Whoは画像と人物名を合わせるためのサービスです。\n誰の画像なのか投稿して聞いてみよう！",
-    imageUrl = "https://talentee.jp/ogp.png",
+    imageUrl = `${appUrl}/ogp_logo.png`,
   } = props;
   const titleWithSiteName = `${title} | Who's Who （フーズ・フー）`;
   return (
