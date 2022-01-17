@@ -7,7 +7,7 @@ export const Meta = React.memo<{
   description?: string;
   imageUrl?: string;
 }>((props) => {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+  const appUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
   const {
     title,
     description = "Who's Whoは画像と人物名を合わせるためのサービスです。\n誰の画像なのか投稿して聞いてみよう！",
