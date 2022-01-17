@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN yarn install
+RUN yarn @backend install
 
 RUN yarn @backend schema:generate
