@@ -59,7 +59,7 @@ export class StorageRepository {
       projectId: this.configService.get("GCP_PROJECT_ID"),
       credentials: {
         client_email: this.configService.get("GCP_CLIENT_EMAIL"),
-        private_key: this.configService.get("GCP_PRIVATE_KEY"),
+        private_key: this.configService.get("GCP_PRIVATE_KEY").replace(/\\n/g, "\n"),
       },
     });
   }
