@@ -116,6 +116,9 @@ export const TicketCreatePage: React.VFC = () => {
         if (externalImageUrl === "") {
           return false;
         }
+        if (externalImageUrl.match(/\.(jpeg|jpg|png|webp)$/) === null) {
+          return false;
+        }
         const result = await loadImage(externalImageUrl);
         setIsImageValid(result);
         if (result) {
