@@ -188,11 +188,16 @@ type GoogleAuthCredential {
   user: User!
 }
 
+type TicketListOutput {
+  totalCount: Int!
+  tickets: [Ticket!]!
+}
+
 type Query {
   getCurrentUser: User!
   getTicketByExternalImageUrl(externalImageUrl: String!): Ticket
   getTicketById(id: String!): Ticket
-  getTicketList(ticketListInput: TicketListInput!): [Ticket!]!
+  getTicketList(ticketListInput: TicketListInput!): TicketListOutput!
   searchPersonByWord(word: String!): [Person!]!
 }
 

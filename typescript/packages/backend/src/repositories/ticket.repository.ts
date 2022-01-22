@@ -51,7 +51,8 @@ export class TicketRepository {
     orderBy: Prisma.TicketOrderByWithRelationInput;
   }) {
     const { take, page, where, orderBy } = args;
-    return await this.prisma.ticket.findMany({
+    const totalCount = await this.prisma.ticket.count({ where });
+    const tickets = await this.prisma.ticket.findMany({
       include: {
         externalImage: true,
         uploadedImage: true,
@@ -62,5 +63,6 @@ export class TicketRepository {
       take,
       skip: page !== undefined ? take * (page - 1) : undefined,
     });
+    return { tickets, totalCount };
   }
 }

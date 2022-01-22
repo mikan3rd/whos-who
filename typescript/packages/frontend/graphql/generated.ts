@@ -5,7 +5,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions =  {}
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -171,8 +171,7 @@ export type Query = {
   getCurrentUser: User;
   getTicketByExternalImageUrl?: Maybe<Ticket>;
   getTicketById?: Maybe<Ticket>;
-  getTicketList: Array<Ticket>;
-  getTicketUserLike: TicketUserLike;
+  getTicketList: TicketListOutput;
   searchPersonByWord: Array<Person>;
 };
 
@@ -189,11 +188,6 @@ export type QueryGetTicketByIdArgs = {
 
 export type QueryGetTicketListArgs = {
   ticketListInput: TicketListInput;
-};
-
-
-export type QueryGetTicketUserLikeArgs = {
-  ticketId: Scalars['String'];
 };
 
 
@@ -243,6 +237,11 @@ export type TicketListInput = {
   sortKey?: InputMaybe<SortKey>;
   sortOrder?: InputMaybe<SortOrder>;
   take: Scalars['Int'];
+};
+
+export type TicketListOutput = {
+  tickets: Array<Ticket>;
+  totalCount: Scalars['Int'];
 };
 
 export type TicketUserLike = {
@@ -399,7 +398,7 @@ export type GetTicketListQueryVariables = Exact<{
 }>;
 
 
-export type GetTicketListQuery = { getTicketList: Array<{ id: string, personId?: string | null | undefined, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, url: string } | null | undefined, _count: { ticketUserLikes: number } }> };
+export type GetTicketListQuery = { getTicketList: { totalCount: number, tickets: Array<{ id: string, personId?: string | null | undefined, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, url: string } | null | undefined, _count: { ticketUserLikes: number } }> } };
 
 export type SearchPersonByWordQueryVariables = Exact<{
   word: Scalars['String'];
@@ -800,22 +799,25 @@ export type GetTicketByIdQueryResult = Apollo.QueryResult<GetTicketByIdQuery, Ge
 export const GetTicketListDocument = gql`
     query getTicketList($ticketListInput: TicketListInput!) {
   getTicketList(ticketListInput: $ticketListInput) {
-    id
-    personId
-    createdAt
-    updatedAt
-    externalImage {
+    tickets {
       id
-      url
-      statusCode
+      personId
+      createdAt
+      updatedAt
+      externalImage {
+        id
+        url
+        statusCode
+      }
+      uploadedImage {
+        id
+        url
+      }
+      _count {
+        ticketUserLikes
+      }
     }
-    uploadedImage {
-      id
-      url
-    }
-    _count {
-      ticketUserLikes
-    }
+    totalCount
   }
 }
     `;
