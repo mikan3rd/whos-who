@@ -199,6 +199,7 @@ type Query {
   getTicketById(id: String!): Ticket
   getTicketList(ticketListInput: TicketListInput!): TicketListOutput!
   searchPersonByWord(word: String!): [Person!]!
+  getPersonById(id: String!): Person
 }
 
 input TicketListInput {
