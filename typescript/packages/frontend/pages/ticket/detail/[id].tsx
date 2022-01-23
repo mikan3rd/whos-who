@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-import { Props, TicketDetailPage } from "@/components/pages/TicketDetailPage";
+import { TicketDetailPage } from "@/components/pages/TicketDetailPage";
 import { Meta } from "@/components/templates/Meta";
 import { client } from "@/graphql/client";
 import {
@@ -12,7 +12,9 @@ import {
   useGetTicketByIdLazyQuery,
 } from "@/graphql/generated";
 
-type ServerSideProps = Pick<Props, "getTicketByIdData">;
+type ServerSideProps = {
+  getTicketByIdData: NonNullable<GetTicketByIdQuery["getTicketById"]>;
+};
 
 export const getServerSideProps: GetServerSideProps<ServerSideProps, { id: string }> = async ({ params }) => {
   if (params === undefined) {

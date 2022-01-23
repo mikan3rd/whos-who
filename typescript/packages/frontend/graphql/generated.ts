@@ -169,10 +169,16 @@ export type PersonSuggestionLike = {
 
 export type Query = {
   getCurrentUser: User;
+  getPersonById?: Maybe<Person>;
   getTicketByExternalImageUrl?: Maybe<Ticket>;
   getTicketById?: Maybe<Ticket>;
   getTicketList: TicketListOutput;
   searchPersonByWord: Array<Person>;
+};
+
+
+export type QueryGetPersonByIdArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -378,6 +384,13 @@ export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCurrentUserQuery = { getCurrentUser: { id: string, displayName?: string | null | undefined, role: UserRole, photoUrl?: string | null | undefined, googleAuthCredential?: { id: string } | null | undefined, twitterAuthCredential?: { id: string } | null | undefined } };
+
+export type GetPersonByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetPersonByIdQuery = { getPersonById?: { id: string, name: string, nameHiragana?: string | null | undefined, nameKatakana?: string | null | undefined, nameAlphabet?: string | null | undefined, birthDate?: string | null | undefined, tickets?: Array<{ id: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, url: string } | null | undefined }> | null | undefined } | null | undefined };
 
 export type GetTicketByExternalImageUrlQueryVariables = Exact<{
   externalImageUrl: Scalars['String'];
@@ -686,6 +699,58 @@ export function useGetCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQuery>;
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
 export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
+export const GetPersonByIdDocument = gql`
+    query getPersonById($id: String!) {
+  getPersonById(id: $id) {
+    id
+    name
+    nameHiragana
+    nameKatakana
+    nameAlphabet
+    birthDate
+    tickets {
+      id
+      externalImage {
+        id
+        url
+        statusCode
+      }
+      uploadedImage {
+        id
+        url
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPersonByIdQuery__
+ *
+ * To run a query within a React component, call `useGetPersonByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPersonByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPersonByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPersonByIdQuery(baseOptions: Apollo.QueryHookOptions<GetPersonByIdQuery, GetPersonByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPersonByIdQuery, GetPersonByIdQueryVariables>(GetPersonByIdDocument, options);
+      }
+export function useGetPersonByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPersonByIdQuery, GetPersonByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPersonByIdQuery, GetPersonByIdQueryVariables>(GetPersonByIdDocument, options);
+        }
+export type GetPersonByIdQueryHookResult = ReturnType<typeof useGetPersonByIdQuery>;
+export type GetPersonByIdLazyQueryHookResult = ReturnType<typeof useGetPersonByIdLazyQuery>;
+export type GetPersonByIdQueryResult = Apollo.QueryResult<GetPersonByIdQuery, GetPersonByIdQueryVariables>;
 export const GetTicketByExternalImageUrlDocument = gql`
     query getTicketByExternalImageUrl($externalImageUrl: String!) {
   getTicketByExternalImageUrl(externalImageUrl: $externalImageUrl) {

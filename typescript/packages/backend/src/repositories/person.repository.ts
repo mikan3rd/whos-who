@@ -29,6 +29,9 @@ export class PersonRepository {
             uploadedImage: true,
             externalImage: true,
           },
+          orderBy: {
+            ticketUserLikes: { _count: "desc" },
+          },
         },
       },
     });
