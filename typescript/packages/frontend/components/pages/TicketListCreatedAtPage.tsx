@@ -7,7 +7,7 @@ import { Header, Image, Label, Pagination, PaginationProps, Segment } from "sema
 
 import { SortKey, SortOrder, useGetTicketListQuery } from "@/graphql/generated";
 
-const take = 10;
+const take = 20;
 
 export const TicketListCreatedAtPage: React.VFC = () => {
   const [activePage, setActivePage] = useState(1);
