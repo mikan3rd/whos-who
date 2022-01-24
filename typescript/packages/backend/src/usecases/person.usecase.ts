@@ -9,4 +9,8 @@ export class PersonUsecase {
   async searchByWord(word: string) {
     return await this.personRepository.searchByWord(word);
   }
+
+  async getById(id: string) {
+    return await this.personRepository.getById(id);
+  }
 }

@@ -19,4 +19,22 @@ export class PersonRepository {
       },
     });
   }
+
+  async getById(id: string) {
+    return await this.prisma.person.findUnique({
+      where: { id },
+      include: {
+        tickets: {
+          include: {
+            uploadedImage: true,
+            externalImage: true,
+            _count: true,
+          },
+          orderBy: {
+            ticketUserLikes: { _count: "desc" },
+          },
+        },
+      },
+    });
+  }
 }

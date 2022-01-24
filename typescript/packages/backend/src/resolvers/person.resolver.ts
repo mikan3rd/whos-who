@@ -12,4 +12,9 @@ export class PersonResolver {
   async searchPersonByWord(@Args("word") word: string): Promise<Person[]> {
     return this.personUsecase.searchByWord(word);
   }
+
+  @Query((returns) => Person, { nullable: true })
+  async getPersonById(@Args("id") id: string): Promise<Person | null> {
+    return this.personUsecase.getById(id);
+  }
 }

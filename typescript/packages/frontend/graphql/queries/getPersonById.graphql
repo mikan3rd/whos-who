@@ -1,0 +1,26 @@
+query getPersonById($id: String!) {
+  getPersonById(id: $id) {
+    id
+    name
+    nameHiragana
+    nameKatakana
+    nameAlphabet
+    birthDate
+    tickets {
+      id
+      createdAt
+      externalImage {
+        id
+        url
+        statusCode
+      }
+      uploadedImage {
+        id
+        url
+      }
+      _count {
+        ticketUserLikes
+      }
+    }
+  }
+}
