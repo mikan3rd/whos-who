@@ -28,6 +28,7 @@ export class PersonRepository {
           include: {
             uploadedImage: true,
             externalImage: true,
+            _count: true,
           },
           orderBy: {
             ticketUserLikes: { _count: "desc" },

@@ -199,6 +199,9 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
           css={css`
             &&& {
               display: flex;
+              @media (max-width: 600px) {
+                align-items: baseline;
+              }
             }
           `}
         >
@@ -212,7 +215,7 @@ export const TicketDetailPage: React.VFC<Props> = (props) => {
               }
             `}
           />
-          {isAccepting ? `この人の名前を知っている人を探しています！` : `この人の名前を確認してみよう！`}
+          <div>{isAccepting ? `この人の名前を知っている人を探しています！` : `この人の名前を確認してみよう！`}</div>
         </Header.Content>
       </Header>
 

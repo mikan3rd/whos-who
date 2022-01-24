@@ -8,6 +8,7 @@ query getPersonById($id: String!) {
     birthDate
     tickets {
       id
+      createdAt
       externalImage {
         id
         url
@@ -16,6 +17,9 @@ query getPersonById($id: String!) {
       uploadedImage {
         id
         url
+      }
+      _count {
+        ticketUserLikes
       }
     }
   }

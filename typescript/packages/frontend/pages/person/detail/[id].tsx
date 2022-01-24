@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
@@ -8,7 +8,7 @@ import { client } from "@/graphql/client";
 import { GetPersonByIdDocument, GetPersonByIdQuery, GetPersonByIdQueryVariables } from "@/graphql/generated";
 
 type ServerSideProps = {
-  getPersonByIdData: NonNullable<GetPersonByIdQuery["getPersonById"]>;
+  getPersonById: NonNullable<GetPersonByIdQuery["getPersonById"]>;
 };
 
 export const getServerSideProps: GetServerSideProps<ServerSideProps, { id: string }> = async ({ params }) => {
@@ -29,17 +29,24 @@ export const getServerSideProps: GetServerSideProps<ServerSideProps, { id: strin
 
   return {
     props: {
-      getPersonByIdData: getPersonById,
+      getPersonById,
     },
   };
 };
 
 const PersonDetail = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const { getPersonByIdData } = props;
+  const { getPersonById } = props;
+  const { tickets } = getPersonById;
+
+  const imageUrl = useMemo(
+    () => tickets?.[0]?.externalImage?.url ?? tickets?.[0]?.uploadedImage?.url ?? undefined,
+    [tickets],
+  );
+
   return (
     <>
-      <Meta title={`${getPersonByIdData.name}の詳細`} />
-      <PersonDetailPage />
+      <Meta title={`${getPersonById.name}の投稿一覧`} imageUrl={imageUrl} />
+      <PersonDetailPage getPersonByIdData={getPersonById} />
     </>
   );
 };

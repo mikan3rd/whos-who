@@ -390,7 +390,7 @@ export type GetPersonByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetPersonByIdQuery = { getPersonById?: { id: string, name: string, nameHiragana?: string | null | undefined, nameKatakana?: string | null | undefined, nameAlphabet?: string | null | undefined, birthDate?: string | null | undefined, tickets?: Array<{ id: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, url: string } | null | undefined }> | null | undefined } | null | undefined };
+export type GetPersonByIdQuery = { getPersonById?: { id: string, name: string, nameHiragana?: string | null | undefined, nameKatakana?: string | null | undefined, nameAlphabet?: string | null | undefined, birthDate?: string | null | undefined, tickets?: Array<{ id: string, createdAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, url: string } | null | undefined, _count: { ticketUserLikes: number } }> | null | undefined } | null | undefined };
 
 export type GetTicketByExternalImageUrlQueryVariables = Exact<{
   externalImageUrl: Scalars['String'];
@@ -710,6 +710,7 @@ export const GetPersonByIdDocument = gql`
     birthDate
     tickets {
       id
+      createdAt
       externalImage {
         id
         url
@@ -718,6 +719,9 @@ export const GetPersonByIdDocument = gql`
       uploadedImage {
         id
         url
+      }
+      _count {
+        ticketUserLikes
       }
     }
   }
