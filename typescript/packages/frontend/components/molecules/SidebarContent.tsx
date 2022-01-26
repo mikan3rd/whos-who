@@ -32,6 +32,10 @@ export const SidebarContent = React.memo(() => {
         <Menu.Item content="新しい投稿一覧" />
       </Link>
 
+      <Link href="/ticket/list/like" passHref>
+        <Menu.Item content="人気の投稿一覧" />
+      </Link>
+
       <Menu.Item>
         <Menu.Header content="個人設定" />
         <Menu.Menu>

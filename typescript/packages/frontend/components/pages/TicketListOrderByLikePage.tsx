@@ -5,12 +5,12 @@ import { Header } from "semantic-ui-react";
 import { TicketList } from "@/components/organisms/TicketList";
 import { SortKey } from "@/graphql/generated";
 
-export const TicketListCreatedAtPage: React.VFC = () => {
+export const TicketListOrderByLikePage: React.VFC = () => {
   return (
     <>
-      <Header content="新しい投稿一覧" />
+      <Header content="人気の投稿一覧" />
 
-      <TicketList sortKey={SortKey.CreatedAt} />
+      <TicketList sortKey={SortKey.TicketUserLikes} />
     </>
   );
 };
