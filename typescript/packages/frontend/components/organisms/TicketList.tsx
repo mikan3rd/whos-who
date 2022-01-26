@@ -3,19 +3,25 @@ import React, { useMemo, useState } from "react";
 import { css } from "@emotion/react";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { Header, Image, Label, Pagination, PaginationProps, Segment } from "semantic-ui-react";
+import { Image, Label, Pagination, PaginationProps, Segment } from "semantic-ui-react";
 
 import { SortKey, SortOrder, useGetTicketListQuery } from "@/graphql/generated";
 
 const take = 20;
 
-export const TicketListCreatedAtPage: React.VFC = () => {
+type Props = {
+  sortKey: SortKey;
+};
+
+export const TicketList: React.VFC<Props> = (props) => {
+  const { sortKey } = props;
+
   const [activePage, setActivePage] = useState(1);
 
   const { data, refetch } = useGetTicketListQuery({
     variables: {
       ticketListInput: {
-        sortKey: SortKey.CreatedAt,
+        sortKey,
         sortOrder: SortOrder.Desc,
         take,
         page: activePage,
@@ -35,7 +41,7 @@ export const TicketListCreatedAtPage: React.VFC = () => {
       if (typeof page === "number") {
         await refetch({
           ticketListInput: {
-            sortKey: SortKey.CreatedAt,
+            sortKey,
             sortOrder: SortOrder.Desc,
             take,
             page,
@@ -44,13 +50,11 @@ export const TicketListCreatedAtPage: React.VFC = () => {
         setActivePage(page);
       }
     },
-    [refetch],
+    [refetch, sortKey],
   );
 
   return (
     <>
-      <Header content="新しい投稿一覧" />
-
       {data?.getTicketList !== undefined && (
         <Segment>
           <Image.Group
