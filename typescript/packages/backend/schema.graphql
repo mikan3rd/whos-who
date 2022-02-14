@@ -193,6 +193,11 @@ type TicketListOutput {
   tickets: [Ticket!]!
 }
 
+type TopPageDataOutput {
+  ticketsOrderByCreatedAt: [Ticket!]!
+  ticketsOrderByLike: [Ticket!]!
+}
+
 type Query {
   getCurrentUser: User!
   getTicketByExternalImageUrl(externalImageUrl: String!): Ticket
@@ -200,6 +205,7 @@ type Query {
   getTicketList(ticketListInput: TicketListInput!): TicketListOutput!
   searchPersonByWord(word: String!): [Person!]!
   getPersonById(id: String!): Person
+  getTopPageData: TopPageDataOutput!
 }
 
 input TicketListInput {

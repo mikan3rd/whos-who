@@ -2,7 +2,7 @@ import { Field, InputType, registerEnumType } from "@nestjs/graphql";
 
 import { PaginationWithSortOrderInput } from "@/dto/input/pagination.input";
 
-enum SortKey {
+export enum SortKey {
   createdAt = "createdAt",
   ticketUserLikes = "ticketUserLikes",
 }
