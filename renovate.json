@@ -7,6 +7,9 @@
   "labels": [
     "renovate"
   ],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "packageRules": [
     {
       "groupName": "minor dependencies",
