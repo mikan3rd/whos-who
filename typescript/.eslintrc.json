@@ -138,10 +138,7 @@
           "off"
         ],
         "react/prop-types": [
-          "error",
-          {
-            "skipUndeclared": true
-          }
+          "off"
         ],
         "import/order": [
           "error",
