@@ -1,0 +1,40 @@
+query getTopPageData {
+  getTopPageData {
+    ticketsOrderByCreatedAt {
+      id
+      personId
+      createdAt
+      updatedAt
+      externalImage {
+        id
+        url
+        statusCode
+      }
+      uploadedImage {
+        id
+        url
+      }
+      _count {
+        ticketUserLikes
+      }
+    }
+    ticketsOrderByLike {
+      id
+      personId
+      createdAt
+      updatedAt
+      externalImage {
+        id
+        url
+        statusCode
+      }
+      uploadedImage {
+        id
+        url
+      }
+      _count {
+        ticketUserLikes
+      }
+    }
+  }
+}

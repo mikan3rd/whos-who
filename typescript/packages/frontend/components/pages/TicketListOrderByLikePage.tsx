@@ -2,7 +2,7 @@ import React from "react";
 
 import { Header } from "semantic-ui-react";
 
-import { TicketList } from "@/components/organisms/TicketList";
+import { TicketListWithPagination } from "@/components/organisms/TicketListWithPagination";
 import { SortKey } from "@/graphql/generated";
 
 export const TicketListOrderByLikePage: React.VFC = () => {
@@ -10,7 +10,7 @@ export const TicketListOrderByLikePage: React.VFC = () => {
     <>
       <Header content="人気の投稿一覧" />
 
-      <TicketList sortKey={SortKey.TicketUserLikes} />
+      <TicketListWithPagination sortKey={SortKey.TicketUserLikes} />
     </>
   );
 };

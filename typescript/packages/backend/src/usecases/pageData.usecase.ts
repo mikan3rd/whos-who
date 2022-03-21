@@ -9,7 +9,7 @@ export class PageDataUsecase {
   constructor(@Inject(TicketUsecase) private ticketUsecase: TicketUsecase) {}
 
   async getTopPageData() {
-    const take = 3;
+    const take = 4;
     const ticketsOrderByCreatedAtData = await this.ticketUsecase.getList({
       sortKey: SortKey.createdAt,
       sortOrder: SortOrder.desc,

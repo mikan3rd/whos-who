@@ -173,6 +173,7 @@ export type Query = {
   getTicketByExternalImageUrl?: Maybe<Ticket>;
   getTicketById?: Maybe<Ticket>;
   getTicketList: TicketListOutput;
+  getTopPageData: TopPageDataOutput;
   searchPersonByWord: Array<Person>;
 };
 
@@ -258,6 +259,11 @@ export type TicketUserLike = {
   updatedAt: Scalars['Date'];
   user: User;
   userId: Scalars['String'];
+};
+
+export type TopPageDataOutput = {
+  ticketsOrderByCreatedAt: Array<Ticket>;
+  ticketsOrderByLike: Array<Ticket>;
 };
 
 export type TwitterAuthCredential = {
@@ -383,35 +389,40 @@ export type UpsertTwitterAuthCredentialMutation = { upsertTwitterAuthCredential:
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { getCurrentUser: { id: string, displayName?: string | null | undefined, role: UserRole, photoUrl?: string | null | undefined, googleAuthCredential?: { id: string } | null | undefined, twitterAuthCredential?: { id: string } | null | undefined } };
+export type GetCurrentUserQuery = { getCurrentUser: { id: string, displayName?: string | null, role: UserRole, photoUrl?: string | null, googleAuthCredential?: { id: string } | null, twitterAuthCredential?: { id: string } | null } };
 
 export type GetPersonByIdQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetPersonByIdQuery = { getPersonById?: { id: string, name: string, nameHiragana?: string | null | undefined, nameKatakana?: string | null | undefined, nameAlphabet?: string | null | undefined, birthDate?: string | null | undefined, tickets?: Array<{ id: string, createdAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, url: string } | null | undefined, _count: { ticketUserLikes: number } }> | null | undefined } | null | undefined };
+export type GetPersonByIdQuery = { getPersonById?: { id: string, name: string, nameHiragana?: string | null, nameKatakana?: string | null, nameAlphabet?: string | null, birthDate?: string | null, tickets?: Array<{ id: string, createdAt: string, externalImage?: { id: string, url: string, statusCode: number } | null, uploadedImage?: { id: string, url: string } | null, _count: { ticketUserLikes: number } }> | null } | null };
 
 export type GetTicketByExternalImageUrlQueryVariables = Exact<{
   externalImageUrl: Scalars['String'];
 }>;
 
 
-export type GetTicketByExternalImageUrlQuery = { getTicketByExternalImageUrl?: { id: string } | null | undefined };
+export type GetTicketByExternalImageUrlQuery = { getTicketByExternalImageUrl?: { id: string } | null };
 
 export type GetTicketByIdQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetTicketByIdQuery = { getTicketById?: { id: string, personId?: string | null | undefined, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, url: string } | null | undefined, user: { id: string, displayName?: string | null | undefined, role: UserRole }, person?: { id: string, name: string } | null | undefined, ticketUserLikes?: Array<{ userId: string }> | null | undefined, personSuggestions?: Array<{ id: string, person: { id: string, name: string }, user: { id: string }, _count: { personSuggestionLikes: number } }> | null | undefined, _count: { ticketUserLikes: number } } | null | undefined };
+export type GetTicketByIdQuery = { getTicketById?: { id: string, personId?: string | null, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null, uploadedImage?: { id: string, url: string } | null, user: { id: string, displayName?: string | null, role: UserRole }, person?: { id: string, name: string } | null, ticketUserLikes?: Array<{ userId: string }> | null, personSuggestions?: Array<{ id: string, person: { id: string, name: string }, user: { id: string }, _count: { personSuggestionLikes: number } }> | null, _count: { ticketUserLikes: number } } | null };
 
 export type GetTicketListQueryVariables = Exact<{
   ticketListInput: TicketListInput;
 }>;
 
 
-export type GetTicketListQuery = { getTicketList: { totalCount: number, tickets: Array<{ id: string, personId?: string | null | undefined, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null | undefined, uploadedImage?: { id: string, url: string } | null | undefined, _count: { ticketUserLikes: number } }> } };
+export type GetTicketListQuery = { getTicketList: { totalCount: number, tickets: Array<{ id: string, personId?: string | null, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null, uploadedImage?: { id: string, url: string } | null, _count: { ticketUserLikes: number } }> } };
+
+export type GetTopPageDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTopPageDataQuery = { getTopPageData: { ticketsOrderByCreatedAt: Array<{ id: string, personId?: string | null, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null, uploadedImage?: { id: string, url: string } | null, _count: { ticketUserLikes: number } }>, ticketsOrderByLike: Array<{ id: string, personId?: string | null, createdAt: string, updatedAt: string, externalImage?: { id: string, url: string, statusCode: number } | null, uploadedImage?: { id: string, url: string } | null, _count: { ticketUserLikes: number } }> } };
 
 export type SearchPersonByWordQueryVariables = Exact<{
   word: Scalars['String'];
@@ -918,6 +929,75 @@ export function useGetTicketListLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetTicketListQueryHookResult = ReturnType<typeof useGetTicketListQuery>;
 export type GetTicketListLazyQueryHookResult = ReturnType<typeof useGetTicketListLazyQuery>;
 export type GetTicketListQueryResult = Apollo.QueryResult<GetTicketListQuery, GetTicketListQueryVariables>;
+export const GetTopPageDataDocument = gql`
+    query getTopPageData {
+  getTopPageData {
+    ticketsOrderByCreatedAt {
+      id
+      personId
+      createdAt
+      updatedAt
+      externalImage {
+        id
+        url
+        statusCode
+      }
+      uploadedImage {
+        id
+        url
+      }
+      _count {
+        ticketUserLikes
+      }
+    }
+    ticketsOrderByLike {
+      id
+      personId
+      createdAt
+      updatedAt
+      externalImage {
+        id
+        url
+        statusCode
+      }
+      uploadedImage {
+        id
+        url
+      }
+      _count {
+        ticketUserLikes
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTopPageDataQuery__
+ *
+ * To run a query within a React component, call `useGetTopPageDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTopPageDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTopPageDataQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTopPageDataQuery(baseOptions?: Apollo.QueryHookOptions<GetTopPageDataQuery, GetTopPageDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTopPageDataQuery, GetTopPageDataQueryVariables>(GetTopPageDataDocument, options);
+      }
+export function useGetTopPageDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopPageDataQuery, GetTopPageDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTopPageDataQuery, GetTopPageDataQueryVariables>(GetTopPageDataDocument, options);
+        }
+export type GetTopPageDataQueryHookResult = ReturnType<typeof useGetTopPageDataQuery>;
+export type GetTopPageDataLazyQueryHookResult = ReturnType<typeof useGetTopPageDataLazyQuery>;
+export type GetTopPageDataQueryResult = Apollo.QueryResult<GetTopPageDataQuery, GetTopPageDataQueryVariables>;
 export const SearchPersonByWordDocument = gql`
     query searchPersonByWord($word: String!) {
   searchPersonByWord(word: $word) {
