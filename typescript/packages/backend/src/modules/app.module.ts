@@ -5,6 +5,7 @@ import { graphqlUploadExpress } from "graphql-upload";
 
 import { DateScalar } from "@/interfaces/scalars/index.scalar";
 import { GoogleAuthCredentialModule } from "@/modules/googleAuthCredential.module";
+import { PageDataeModule } from "@/modules/pageData.module";
 import { PersonModule } from "@/modules/person.module";
 import { PersonSuggestionModule } from "@/modules/personSuggestion.module";
 import { PersonSuggestionLikeModule } from "@/modules/personSuggestionLike.module";
@@ -33,6 +34,7 @@ import { UserModule } from "@/modules/user.module";
     PersonSuggestionLikeModule,
     GoogleAuthCredentialModule,
     TwitterAuthCredentialModule,
+    PageDataeModule,
   ],
   controllers: [],
   providers: [DateScalar],
