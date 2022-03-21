@@ -1,7 +1,7 @@
 import React from "react";
 
 import Link from "next/link";
-import { Divider, Header, Segment } from "semantic-ui-react";
+import { Button, Divider, Header, Segment } from "semantic-ui-react";
 
 import { TicketList } from "@/components/molecules/TicketList";
 import { useGetTopPageDataQuery } from "@/graphql/generated";
@@ -21,6 +21,9 @@ export const TopPage: React.VFC = (props) => {
           <Segment>
             <TicketList tickets={data.getTopPageData.ticketsOrderByLike} />
           </Segment>
+          <Link href="/ticket/list/like" passHref>
+            <Button content="人気の投稿一覧を見る" fluid />
+          </Link>
 
           <Divider />
 
@@ -32,6 +35,9 @@ export const TopPage: React.VFC = (props) => {
           <Segment>
             <TicketList tickets={data.getTopPageData.ticketsOrderByCreatedAt} />
           </Segment>
+          <Link href="/ticket/list/createdAt" passHref>
+            <Button content="新しい投稿一覧を見る" fluid />
+          </Link>
         </>
       )}
     </>
