@@ -42,7 +42,7 @@
     "morgan": "1.10.0",
     "mysql": "2.18.1",
     "prisma": "3.13.0",
-    "prisma-nestjs-graphql": "14.7.1",
+    "prisma-nestjs-graphql": "15.3.3",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
     "rxjs": "7.5.5"

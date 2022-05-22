@@ -1892,15 +1892,6 @@
   resolved "https://registry.yarnpkg.com/@n1ru4l/graphql-live-query/-/graphql-live-query-0.9.0.tgz#defaebdd31f625bee49e6745934f36312532b2bc"
   integrity sha512-BTpWy1e+FxN82RnLz4x1+JcEewVdfmUhV1C6/XYD5AjS7PQp9QFF7K8bCD6gzPTr2l+prvqOyVueQhFJxB1vfg==
 
-"@nestjs/apollo@^10.0.6":
-  version "10.0.9"
-  resolved "https://registry.yarnpkg.com/@nestjs/apollo/-/apollo-10.0.9.tgz#03e406d1b31e18455fc0de5082aa6f3491341e03"
-  integrity sha512-1UmqDhyA+hvJrlbvvWGsY+eaYmlQVWWezT3JeBHIO6YcbkDGyfm/anPYCOE3fh4zeu45oFrLoh13ikyEYDvDKg==
-  dependencies:
-    iterall "1.3.0"
-    lodash.omit "4.5.0"
-    tslib "2.3.1"
-
 "@nestjs/cli@8.2.5":
   version "8.2.5"
   resolved "https://registry.yarnpkg.com/@nestjs/cli/-/cli-8.2.5.tgz#02094177f4eac576d1a559b259d541393e49e0bb"
@@ -2136,10 +2127,10 @@
   dependencies:
     "@prisma/engines-version" "3.13.0-17.efdf9b1183dddfd4258cd181a72125755215ab7b"
 
-"@prisma/debug@3.13.0":
-  version "3.13.0"
-  resolved "https://registry.yarnpkg.com/@prisma/debug/-/debug-3.13.0.tgz#37e783e46262e637bf27e5d8b2149df09f1dfcc5"
-  integrity sha512-uzL4ug7pWbiodTSW/WMAJ9SOP/ulxn6EVlV4YTpKaidgPMOLPqSV7iLZP7P4w7q3HGSpWZp+kr2a4nq7+ANEfg==
+"@prisma/debug@3.14.0":
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/@prisma/debug/-/debug-3.14.0.tgz#4bc87b6c5e28e018063799ef01fd03f3e4628030"
+  integrity sha512-cvA2NRJU6oLCFpYcOJO6jjUZZcPwQqdKYVpa6OY+jFrSwLdYLgSPjrfbnBPOD2z1gzODdnrWYfpz3wPKVhZ0IQ==
   dependencies:
     "@types/debug" "4.1.7"
     ms "2.1.3"
@@ -2155,12 +2146,12 @@
   resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-3.13.0-17.efdf9b1183dddfd4258cd181a72125755215ab7b.tgz#d3a457cec4ef7a3b3412c45b1f2eac68c974474b"
   integrity sha512-Ip9CcCeUocH61eXu4BUGpvl5KleQyhcUVLpWCv+0ZmDv44bFaDpREqjGHHdRupvPN/ugB6gTlD9b9ewdj02yVA==
 
-"@prisma/generator-helper@^3.10.0":
-  version "3.13.0"
-  resolved "https://registry.yarnpkg.com/@prisma/generator-helper/-/generator-helper-3.13.0.tgz#903f7c861663c94ab10a0be986f6064848dfb122"
-  integrity sha512-PgSqCaDPfnr0txfxnJFyqGkhobOzWNBX+8uQK/qgBde83Lb0Q58JEkWn1QzisUl6IHtVwL9Us0D7G2K77ph5yw==
+"@prisma/generator-helper@^3.14.0":
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/@prisma/generator-helper/-/generator-helper-3.14.0.tgz#d0eb3b6c0d72c35da1644e134ef953059d3208d7"
+  integrity sha512-WuYhXMOr2rJ+A0D93QLoKJvu7FlHORPZz/72LwZlJT2GXQi2WNtS2xKJzgCI+Auc0JlLjijV5/7mDrUa4iHUbw==
   dependencies:
-    "@prisma/debug" "3.13.0"
+    "@prisma/debug" "3.14.0"
     "@types/cross-spawn" "6.0.2"
     chalk "4.1.2"
     cross-spawn "7.0.3"
@@ -6943,7 +6934,7 @@ json-to-pretty-yaml@^1.2.2:
     remedial "^1.0.7"
     remove-trailing-spaces "^1.0.6"
 
-json5@2.x, json5@^2.2.0, json5@^2.2.1:
+json5@2.x, json5@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.1.tgz#655d50ed1e6f95ad1a3caababd2b0efda10b395c"
   integrity sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==
@@ -7250,11 +7241,6 @@ lodash.merge@^4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
-
-lodash.omit@4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.omit/-/lodash.omit-4.5.0.tgz#6eb19ae5a1ee1dd9df0b969e66ce0b7fa30b5e60"
-  integrity sha1-brGa5aHuHdnfC5aeZs4Lf6MLXmA=
 
 lodash.once@^4.0.0:
   version "4.1.1"
@@ -8162,18 +8148,17 @@ pretty-format@^27.0.0, pretty-format@^27.5.1:
     ansi-styles "^5.0.0"
     react-is "^17.0.1"
 
-prisma-nestjs-graphql@14.7.1:
-  version "14.7.1"
-  resolved "https://registry.yarnpkg.com/prisma-nestjs-graphql/-/prisma-nestjs-graphql-14.7.1.tgz#90e3a63a406b8bf1c2d4f329ad688042b9a57740"
-  integrity sha512-vQz5XTrQ8nxLOCWS8ky5uKKOQ5gIJXmZVNKNOqfAjuobIkoXvKu0jUh8xcCAvkkG2XQUMoKUYcHdHl+HzUUzoA==
+prisma-nestjs-graphql@15.3.3:
+  version "15.3.3"
+  resolved "https://registry.yarnpkg.com/prisma-nestjs-graphql/-/prisma-nestjs-graphql-15.3.3.tgz#c9ae284a432aab45e3c666f5fe078a84f58e7bd8"
+  integrity sha512-VJefHjUUplFdfH/3Q5YjM8vgIGWG48837H2Tbvqs9OFrHsbOppSVv8CcXJxQRh/MaOzcg5AqrePAkOWG06cLuA==
   dependencies:
-    "@nestjs/apollo" "^10.0.6"
-    "@prisma/generator-helper" "^3.10.0"
+    "@prisma/generator-helper" "^3.14.0"
     await-event-emitter "^2.0.2"
     filenamify "4.X"
     flat "^5.0.2"
     get-relative-path "^1.0.2"
-    json5 "^2.2.0"
+    json5 "^2.2.1"
     lodash "^4.17.21"
     outmatch "^0.7.0"
     pluralize "^8.0.0"
