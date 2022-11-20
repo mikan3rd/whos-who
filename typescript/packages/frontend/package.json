@@ -15,7 +15,7 @@
     "@babel/core": "7.17.10",
     "@emotion/babel-preset-css-prop": "11.2.0",
     "@emotion/react": "11.9.0",
-    "@types/react": "17.0.44",
+    "@types/react": "18.0.25",
     "apollo-upload-client": "17.0.0",
     "next": "12.1.5",
     "react": "17.0.2",
