@@ -36,7 +36,7 @@
     "@typescript-eslint/parser": "5.21.0",
     "eslint": "8.14.0",
     "eslint-config-next": "12.1.5",
-    "eslint-config-prettier": "8.5.0",
+    "eslint-config-prettier": "9.1.0",
     "eslint-import-resolver-typescript": "2.7.1",
     "eslint-import-resolver-webpack": "0.13.2",
     "eslint-plugin-emotion": "11.0.0",
