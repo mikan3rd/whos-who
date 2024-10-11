@@ -18,7 +18,7 @@
   "resolutions": {
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-react": "7.29.4",
-    "eslint-plugin-react-hooks": "4.5.0"
+    "eslint-plugin-react-hooks": "5.0.0"
   },
   "dependencies": {
     "@types/node": "16.11.32",
@@ -42,7 +42,7 @@
     "eslint-plugin-emotion": "11.0.0",
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-react": "7.29.4",
-    "eslint-plugin-react-hooks": "4.5.0",
+    "eslint-plugin-react-hooks": "5.0.0",
     "prettier": "2.6.2",
     "ts-node": "10.7.0",
     "tsconfig-paths": "3.14.1"
