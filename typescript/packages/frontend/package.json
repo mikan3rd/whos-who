@@ -11,30 +11,30 @@
     "create-env": "printenv > .env.production.local"
   },
   "dependencies": {
-    "@apollo/client": "3.6.1",
-    "@babel/core": "7.17.10",
-    "@emotion/babel-preset-css-prop": "11.2.0",
-    "@emotion/react": "11.9.0",
-    "@types/react": "17.0.44",
+    "@apollo/client": "3.14.1",
+    "@babel/core": "7.29.7",
+    "@emotion/babel-preset-css-prop": "11.12.0",
+    "@emotion/react": "11.14.0",
+    "@types/react": "17.0.93",
     "apollo-upload-client": "17.0.0",
-    "next": "12.1.5",
+    "next": "12.3.7",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-semantic-toasts": "0.6.6",
     "react-topbar-progress-indicator": "4.1.1",
-    "react-use": "17.3.2",
-    "semantic-ui-css": "2.4.1",
-    "semantic-ui-react": "2.1.2",
+    "react-use": "17.6.1",
+    "semantic-ui-css": "2.5.0",
+    "semantic-ui-react": "2.1.5",
     "smoothscroll-polyfill": "0.4.4"
   },
   "devDependencies": {
-    "@emotion/babel-plugin": "11.9.2",
-    "@graphql-codegen/cli": "2.6.2",
-    "@graphql-codegen/introspection": "2.1.1",
-    "@graphql-codegen/typescript": "2.4.8",
-    "@graphql-codegen/typescript-operations": "2.3.5",
-    "@graphql-codegen/typescript-react-apollo": "3.2.11",
-    "@types/apollo-upload-client": "17.0.0",
-    "@types/smoothscroll-polyfill": "0.3.1"
+    "@emotion/babel-plugin": "11.13.5",
+    "@graphql-codegen/cli": "2.16.5",
+    "@graphql-codegen/introspection": "2.2.3",
+    "@graphql-codegen/typescript": "2.8.8",
+    "@graphql-codegen/typescript-operations": "2.5.13",
+    "@graphql-codegen/typescript-react-apollo": "3.3.7",
+    "@types/apollo-upload-client": "17.0.5",
+    "@types/smoothscroll-polyfill": "0.3.4"
   }
 }
